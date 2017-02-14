@@ -23,12 +23,10 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
 
-    // define seconde
     private static final Integer SECONDE = 1000;
 
-    // set time out get json
-    private static final Integer GET_CONNECTION_TIMEOUT = 3*SECONDE;
-    private static final Integer GET_READ_TIMEOUT = 15*SECONDE;
+    private static final Integer GET_CONNECTION_TIMEOUT = 3 * SECONDE;
+    private static final Integer GET_READ_TIMEOUT = 15 * SECONDE;
 
     protected HttpsURLConnection httpsURLConnection;
     protected Integer httpResponseCode = null;
@@ -42,10 +40,6 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
         this.context = context;
     }
 
-/**
- * Public methode
- */
-
     public void execute() {
         executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
@@ -58,10 +52,6 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
     protected Context getContext() {
         return (context);
     }
-
-/**
- * Override protected methode
- */
 
     @Override
     protected void onPreExecute() {
@@ -123,10 +113,6 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
         }
         return;
     }
-
-/**
- * Private methode
- */
 
     private void initHttp(String path) throws IOException {
         try {
@@ -190,32 +176,6 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
             e.printStackTrace();
         }
 
-    }
-
-
-
-/**
- * Object for http connection
- */
-
-    /**
-     * object param for body url encode
-     */
-    public class ParamBody {
-        private String name;
-        private String content;
-
-        public ParamBody(String name, String content) {
-            this.name = name;
-            this.content = content;
-        }
-
-        public String getName() {
-            return this.name;
-        }
-        public String getContent() {
-            return this.content;
-        }
     }
 
 }

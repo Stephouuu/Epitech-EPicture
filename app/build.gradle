@@ -7,6 +7,7 @@ android {
         applicationId "fr.epicture.epicture"
         minSdkVersion 19
         targetSdkVersion 24
+        multiDexEnabled true
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -24,6 +25,11 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    android{
+        useLibrary  'org.apache.http.legacy'
+    }
     compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'commons-codec:commons-codec:1.10'
+    compile 'com.android.support:multidex:1.0.1'
     testCompile 'junit:junit:4.12'
 }

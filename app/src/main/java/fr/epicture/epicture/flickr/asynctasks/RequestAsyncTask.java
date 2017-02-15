@@ -1,6 +1,8 @@
 package fr.epicture.epicture.flickr.asynctasks;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,14 +21,17 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
 
+    protected static final String BASE_URL = "https://www.flickr.com/services";
+
     private static final Integer SECONDE = 1000;
 
     private static final Integer GET_CONNECTION_TIMEOUT = 3 * SECONDE;
     private static final Integer GET_READ_TIMEOUT = 15 * SECONDE;
 
-    protected HttpsURLConnection httpsURLConnection;
+    private HttpsURLConnection httpsURLConnection;
     protected Integer httpResponseCode = null;
     protected String response;
+    protected Bitmap image;
 
     private Context context;
     private boolean running;
@@ -106,16 +111,37 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return;
+    }
+
+    protected void GETImage(String url) {
+        try {
+            this.initHttp(url);
+
+            httpsURLConnection.setConnectTimeout(GET_CONNECTION_TIMEOUT);
+            httpsURLConnection.setReadTimeout(GET_READ_TIMEOUT);
+            httpsURLConnection.setRequestMethod("GET");
+            httpsURLConnection.setUseCaches(false);
+
+            try {
+                this.getResponseImage();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                this.closeHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void initHttp(String path) throws IOException {
-        try {
-            URL url = new URL(path);
-            httpsURLConnection = (HttpsURLConnection)url.openConnection();
-        } catch (IOException e) {
-            throw e;
-        }
+        URL url = new URL(path);
+        httpsURLConnection = (HttpsURLConnection)url.openConnection();
     }
 
     private void getResponse() throws Exception {
@@ -152,7 +178,37 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
                 error.close();
             }
         }
-        return;
+    }
+
+    private void getResponseImage() throws Exception {
+        httpResponseCode = httpsURLConnection.getResponseCode();
+
+        if (httpResponseCode == 200) {
+            InputStream input = httpsURLConnection.getInputStream();
+            if (input != null) {
+                try {
+                    image = BitmapFactory.decodeStream(input);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                input.close();
+            }
+        } else {
+            InputStream error = httpsURLConnection.getErrorStream();
+            if (error != null) {
+                try {
+                    StringBuilder errorStrBuilder = new StringBuilder();
+                    BufferedReader streamReader = new BufferedReader(new InputStreamReader(error, "UTF-8"));
+                    String inputStr;
+                    while ((inputStr = streamReader.readLine()) != null)
+                        errorStrBuilder.append(inputStr);
+                    response = errorStrBuilder.toString();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                error.close();
+            }
+        }
     }
 
     private void closeHttpClient() {

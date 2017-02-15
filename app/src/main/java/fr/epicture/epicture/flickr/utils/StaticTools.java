@@ -1,7 +1,14 @@
 package fr.epicture.epicture.flickr.utils;
 
-import org.apache.commons.codec.binary.Base64;
+import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 
+import org.apache.commons.codec.binary.Base64;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -46,6 +53,32 @@ public class StaticTools {
         macInstance.init(keySpec);
         byte[] signedBytes = macInstance.doFinal(data.getBytes());
         return (new String(Base64.encodeBase64(signedBytes)));
+    }
+
+    public static boolean isJSON(String content) {
+        try {
+            new JSONObject(content);
+        } catch (Exception e) {
+            try {
+                new JSONArray(content);
+            } catch (Exception ex) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean saveBitmapToJpegFile(@NonNull Bitmap bitmap, @NonNull File target) {
+        try {
+            target.getParentFile().mkdirs();
+            FileOutputStream output = new FileOutputStream(target);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, output);
+            output.close();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }

@@ -44,6 +44,7 @@ public class AuthentificationManager {
             getRequestTokenRequest = new GetRequestTokenRequest(activity, new GetRequestTokenInterface() {
                 @Override
                 public void onFinish(TokenRequest tokenRequest) {
+                    FlickrClient.tokenRequest = tokenRequest;
                     requestUserPermission(tokenRequest);
                 }
 
@@ -64,7 +65,7 @@ public class AuthentificationManager {
             getAccessTokenRequest = new GetAccessTokenRequest(activity, tokenRequest, new GetAccessTokenInterface() {
                 @Override
                 public void onFinish(TokenAccess tokenAccess) {
-                    listener.onFinish(tokenAccess);
+                    listener.onAuthentificationFinished(tokenAccess);
                 }
 
                 @Override

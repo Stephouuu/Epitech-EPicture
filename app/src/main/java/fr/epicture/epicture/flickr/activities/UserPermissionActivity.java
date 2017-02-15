@@ -12,7 +12,7 @@ import android.webkit.WebViewClient;
 import fr.epicture.epicture.R;
 import fr.epicture.epicture.flickr.model.TokenRequest;
 
-public class FlickrUserPermissionActivity extends AppCompatActivity {
+public class UserPermissionActivity extends AppCompatActivity {
 
     public static final String EXTRA_TOKENREQUEST = "token.request";
 

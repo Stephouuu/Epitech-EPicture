@@ -24,7 +24,7 @@ import fr.epicture.epicture.flickr.utils.StaticTools;
 
 public class GetAccessTokenRequest extends RequestAsyncTask {
 
-    private static final String BASE_URL = "https://www.flickr.com/services/oauth/access_token";
+    private static final String URL = "/oauth/access_token";
 
     private TokenRequest tokenRequest;
     private GetAccessTokenInterface listener;
@@ -62,7 +62,7 @@ public class GetAccessTokenRequest extends RequestAsyncTask {
 
     private String getURL() throws Exception {
         String part1 = "GET";
-        String part2 = BASE_URL;
+        String part2 = BASE_URL + URL;
 
         String random = RequestIdentifierGenerator.Generate();
         long unixTime = StaticTools.GetCurrentUnixTime();
@@ -95,7 +95,7 @@ public class GetAccessTokenRequest extends RequestAsyncTask {
         String encoded = part1Encoded + "&" + part2Encoded + "&" + part3Encoded;
         String signature = StaticTools.OAuthEncode(StaticTools.getSignature(encoded, FlickrClient.CONSUMER_SECRET + "&" + tokenRequest.tokenSecret));
 
-        return BASE_URL + "?oauth_nonce=" + random
+        return BASE_URL + URL + "?oauth_nonce=" + random
                 + "&oauth_timestamp=" + unixTime
                 + "&oauth_verifier=" + tokenRequest.verifier
                 + "&oauth_consumer_key=" + FlickrClient.CONSUMER_KEY

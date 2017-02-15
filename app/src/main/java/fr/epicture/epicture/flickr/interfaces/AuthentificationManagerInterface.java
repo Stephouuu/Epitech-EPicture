@@ -10,6 +10,6 @@ import fr.epicture.epicture.flickr.model.TokenRequest;
 public interface AuthentificationManagerInterface {
 
     void onRequestUserPermission(TokenRequest tokenRequest);
-    void onFinish(TokenAccess tokenAccess);
+    void onAuthentificationFinished(TokenAccess tokenAccess);
 
 }

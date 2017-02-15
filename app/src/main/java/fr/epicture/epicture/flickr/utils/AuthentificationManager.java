@@ -1,8 +1,14 @@
 package fr.epicture.epicture.flickr.utils;
 
-import android.content.Context;
+import android.app.Activity;
 
-import fr.epicture.epicture.flickr.requests.AuthRequestAsyncTask;
+import fr.epicture.epicture.flickr.interfaces.AuthentificationManagerInterface;
+import fr.epicture.epicture.flickr.interfaces.GetAccessTokenInterface;
+import fr.epicture.epicture.flickr.interfaces.GetRequestTokenInterface;
+import fr.epicture.epicture.flickr.model.TokenAccess;
+import fr.epicture.epicture.flickr.model.TokenRequest;
+import fr.epicture.epicture.flickr.requests.GetAccessTokenRequest;
+import fr.epicture.epicture.flickr.requests.GetRequestTokenRequest;
 
 /**
  * Created by Stephane on 14/02/2017.
@@ -10,30 +16,67 @@ import fr.epicture.epicture.flickr.requests.AuthRequestAsyncTask;
 
 public class AuthentificationManager {
 
-    private Context context;
-    private AuthRequestAsyncTask authRequestAsyncTask;
+    private Activity activity;
+    private AuthentificationManagerInterface listener;
 
-    public AuthentificationManager(Context context) {
-        authRequestAsyncTask = null;
-        this.context = context;
+    private GetRequestTokenRequest getRequestTokenRequest;
+    private GetAccessTokenRequest getAccessTokenRequest;
+
+    public AuthentificationManager(Activity activity, AuthentificationManagerInterface listener) {
+        this.activity = activity;
+        this.listener = listener;
     }
 
     public void authentify() {
-        if (!isAuthentificationRequestRunning()) {
-            try {
-                authRequestAsyncTask = new AuthRequestAsyncTask(context);
-                authRequestAsyncTask.execute();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        requestTokenRequest();
+    }
+
+    public void getAccessToken(TokenRequest tokenRequest) {
+        requestTokenAccess(tokenRequest);
+    }
+
+    private boolean isGetRequestTokenRequestRunning() {
+        return (getRequestTokenRequest != null && !getRequestTokenRequest.isRunning());
+    }
+
+    private void requestTokenRequest() {
+        if (!isGetRequestTokenRequestRunning()) {
+            getRequestTokenRequest = new GetRequestTokenRequest(activity, new GetRequestTokenInterface() {
+                @Override
+                public void onFinish(TokenRequest tokenRequest) {
+                    requestUserPermission(tokenRequest);
+                }
+
+                @Override
+                public void onError(int code) {
+                }
+            });
+            getRequestTokenRequest.execute();
         }
     }
 
-    private boolean isAuthentificationRequestRunning() {
-        return (authRequestAsyncTask != null && !authRequestAsyncTask.isRunning());
+    private boolean isGetAccessTokenRequestRunning() {
+        return (getAccessTokenRequest != null && !getAccessTokenRequest.isRunning());
     }
 
+    private void requestTokenAccess(TokenRequest tokenRequest) {
+        if (!isGetAccessTokenRequestRunning()) {
+            getAccessTokenRequest = new GetAccessTokenRequest(activity, tokenRequest, new GetAccessTokenInterface() {
+                @Override
+                public void onFinish(TokenAccess tokenAccess) {
+                    listener.onFinish(tokenAccess);
+                }
 
+                @Override
+                public void onError(int code) {
+                }
+            });
+            getAccessTokenRequest.execute();
+        }
+    }
 
+    private void requestUserPermission(TokenRequest tokenRequest) {
+        listener.onRequestUserPermission(tokenRequest);
+    }
 
 }

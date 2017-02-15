@@ -1,13 +1,9 @@
-package fr.epicture.epicture.flickr.utils;
+package fr.epicture.epicture.flickr.asynctasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
-
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,8 +26,7 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
 
     protected HttpsURLConnection httpsURLConnection;
     protected Integer httpResponseCode = null;
-    protected Object json = null;
-    protected JSONObject jsonError = null;
+    protected String response;
 
     private Context context;
     private boolean running;
@@ -124,45 +119,39 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
     }
 
     private void getResponse() throws Exception {
-            httpResponseCode = httpsURLConnection.getResponseCode();
+        httpResponseCode = httpsURLConnection.getResponseCode();
 
-            Log.i("httpResponseCode", httpResponseCode + "");
-            if (httpResponseCode == 200) {
-                InputStream input = httpsURLConnection.getInputStream();
-                if (input != null) {
-                    try {
-                        StringBuilder responseStrBuilder = new StringBuilder();
-                        BufferedReader streamReader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
-                        String inputStr;
-                        while ((inputStr = streamReader.readLine()) != null)
-                            responseStrBuilder.append(inputStr);
-                        Log.i("response", responseStrBuilder.toString());
-                        json = new JSONTokener(responseStrBuilder.toString()).nextValue();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    input.close();
-                } else {
-                    Log.i("response", "null");
+        if (httpResponseCode == 200) {
+            InputStream input = httpsURLConnection.getInputStream();
+            if (input != null) {
+                try {
+                    StringBuilder responseStrBuilder = new StringBuilder();
+                    BufferedReader streamReader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
+                    String inputStr;
+                    while ((inputStr = streamReader.readLine()) != null)
+                        responseStrBuilder.append(inputStr);
+                    response = responseStrBuilder.toString();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } else {
-                InputStream error = httpsURLConnection.getErrorStream();
-                if (error != null) {
-                    try {
-                        StringBuilder errorStrBuilder = new StringBuilder();
-                        BufferedReader streamReader = new BufferedReader(new InputStreamReader(error, "UTF-8"));
-                        String inputStr;
-                        while ((inputStr = streamReader.readLine()) != null)
-                            errorStrBuilder.append(inputStr);
-
-                        Log.i("response", errorStrBuilder.toString());
-                        jsonError = new JSONObject(errorStrBuilder.toString());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    error.close();
-                }
+                input.close();
             }
+        } else {
+            InputStream error = httpsURLConnection.getErrorStream();
+            if (error != null) {
+                try {
+                    StringBuilder errorStrBuilder = new StringBuilder();
+                    BufferedReader streamReader = new BufferedReader(new InputStreamReader(error, "UTF-8"));
+                    String inputStr;
+                    while ((inputStr = streamReader.readLine()) != null)
+                        errorStrBuilder.append(inputStr);
+                    response = errorStrBuilder.toString();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                error.close();
+            }
+        }
         return;
     }
 

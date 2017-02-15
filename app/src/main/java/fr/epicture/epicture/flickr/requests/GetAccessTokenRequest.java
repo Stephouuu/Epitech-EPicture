@@ -5,42 +5,41 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
-import org.apache.commons.codec.binary.Base64;
-
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
+import fr.epicture.epicture.flickr.asynctasks.RequestAsyncTask;
+import fr.epicture.epicture.flickr.interfaces.GetAccessTokenInterface;
+import fr.epicture.epicture.flickr.model.TokenAccess;
+import fr.epicture.epicture.flickr.model.TokenRequest;
 import fr.epicture.epicture.flickr.utils.FlickrClient;
-import fr.epicture.epicture.flickr.utils.RequestAsyncTask;
 import fr.epicture.epicture.flickr.utils.RequestIdentifierGenerator;
 import fr.epicture.epicture.flickr.utils.StaticTools;
 
 /**
- * Created by Stephane on 14/02/2017.
+ * Created by Stephane on 15/02/2017.
  */
 
-public class AuthRequestAsyncTask extends RequestAsyncTask {
+public class GetAccessTokenRequest extends RequestAsyncTask {
 
-    public static final String BASE_URL = "https://www.flickr.com/services/oauth/request_token";
+    private static final String BASE_URL = "https://www.flickr.com/services/oauth/access_token";
 
-    public AuthRequestAsyncTask(@NonNull Context context) {
+    private TokenRequest tokenRequest;
+    private GetAccessTokenInterface listener;
+
+    public GetAccessTokenRequest(@NonNull Context context, TokenRequest tokenRequest, GetAccessTokenInterface listener) {
         super(context);
+        this.tokenRequest = tokenRequest;
+        this.listener = listener;
     }
 
     @Override
     protected Void doInBackground(Void... params) {
         try {
             GET(getURL());
-
-            if (json != null) {
-                Log.i("auth response", json.toString());
-            } else if (jsonError != null) {
-                Log.i("auth response error", jsonError.toString());
-            }
+            Log.i("GetAccessToken", response);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -50,12 +49,15 @@ public class AuthRequestAsyncTask extends RequestAsyncTask {
 
     @Override
     protected void onPostExecute(Void result) {
-
-    }
-
-    @Override
-    protected void onPreExecute() {
-
+        try {
+            if (httpResponseCode == 200) {
+                listener.onFinish(retrieveToken());
+            } else {
+                listener.onError(httpResponseCode);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private String getURL() throws Exception {
@@ -68,9 +70,10 @@ public class AuthRequestAsyncTask extends RequestAsyncTask {
         String[] params = new String[] {
                 "oauth_nonce=" + random,
                 "oauth_timestamp=" + unixTime,
+                "oauth_verifier=" + tokenRequest.verifier,
                 "oauth_consumer_key=" + FlickrClient.CONSUMER_KEY,
                 "oauth_signature_method=HMAC-SHA1",
-                "oauth_callback=http://www.example.com"
+                "oauth_token=" + tokenRequest.token
         };
         List<String> encodedParams = new ArrayList<>();
 
@@ -90,23 +93,28 @@ public class AuthRequestAsyncTask extends RequestAsyncTask {
         String part2Encoded = StaticTools.OAuthEncode(part2);
         String part3Encoded = TextUtils.join("", encodedParams);
         String encoded = part1Encoded + "&" + part2Encoded + "&" + part3Encoded;
-        String signature = StaticTools.OAuthEncode(getSignature(encoded, FlickrClient.CONSUMER_SECRET + "&"));
+        String signature = StaticTools.OAuthEncode(StaticTools.getSignature(encoded, FlickrClient.CONSUMER_SECRET + "&" + tokenRequest.tokenSecret));
 
-        return "https://www.flickr.com/services/oauth/request_token"
-                + "?oauth_nonce=" + random
+        return BASE_URL + "?oauth_nonce=" + random
                 + "&oauth_timestamp=" + unixTime
+                + "&oauth_verifier=" + tokenRequest.verifier
                 + "&oauth_consumer_key=" + FlickrClient.CONSUMER_KEY
                 + "&oauth_signature_method=HMAC-SHA1"
-                + "&oauth_signature=" + signature
-                + "&oauth_callback=http://www.example.com";
+                + "&oauth_token=" + tokenRequest.token
+                + "&oauth_signature=" + signature;
     }
 
-    private String getSignature(String data, String key) throws Exception {
-        final String HMAC_ALGORITHM = "HmacSHA1";
-        SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(), HMAC_ALGORITHM);
-        Mac macInstance = Mac.getInstance(HMAC_ALGORITHM);
-        macInstance.init(keySpec);
-        byte[] signedBytes = macInstance.doFinal(data.getBytes());
-        return (new String(Base64.encodeBase64(signedBytes)));
+    private TokenAccess retrieveToken() throws Exception {
+        TokenAccess tokenAccess = new TokenAccess();
+        String[] datas = response.split("&");
+        if (datas.length == 5) {
+            tokenAccess.fullname = URLDecoder.decode(datas[0].substring(datas[0].indexOf('=') + 1), "UTF-8");
+            tokenAccess.token = datas[1].substring(datas[1].indexOf('=') + 1);
+            tokenAccess.tokenSecret = datas[2].substring(datas[2].indexOf('=') + 1);
+            tokenAccess.nsid = datas[3].substring(datas[3].indexOf('=') + 1);
+            tokenAccess.username = URLDecoder.decode(datas[4].substring(datas[4].indexOf('=') + 1), "UTF-8");
+        }
+        return tokenAccess;
     }
+
 }

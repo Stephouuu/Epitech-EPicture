@@ -1,7 +1,5 @@
 package fr.epicture.epicture.activities;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -21,8 +19,8 @@ import fr.epicture.epicture.Utils;
 import fr.epicture.epicture.api.API;
 import fr.epicture.epicture.api.APIAccount;
 import fr.epicture.epicture.api.APIManager;
-import fr.epicture.epicture.api.component.AccountOverviewAdapter;
-import fr.epicture.epicture.api.component.APIOverviewAdapter;
+import fr.epicture.epicture.activities.component.AccountOverviewAdapter;
+import fr.epicture.epicture.activities.component.APIOverviewAdapter;
 import fr.epicture.epicture.api.imgur.Imgur;
 
 public class OAuthLinkerActivity extends AppCompatActivity {

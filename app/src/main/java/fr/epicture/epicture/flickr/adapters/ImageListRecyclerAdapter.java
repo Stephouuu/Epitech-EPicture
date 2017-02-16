@@ -41,6 +41,7 @@ public class ImageListRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
 
     public void clear() {
         imageElementList.clear();
+        notifyDataSetChanged();
     }
 
     public void addList(List<ImageElement> imageElementList) {

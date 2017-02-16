@@ -18,7 +18,6 @@ import android.view.animation.DecelerateInterpolator;
 import java.util.List;
 
 import fr.epicture.epicture.R;
-import fr.epicture.epicture.flickr.activities.FlickrMainActivity;
 import fr.epicture.epicture.flickr.adapters.ImageListRecyclerAdapter;
 import fr.epicture.epicture.flickr.interfaces.ImageListAdapterInterface;
 import fr.epicture.epicture.flickr.interfaces.ImageListInterface;
@@ -33,8 +32,7 @@ public class ImageListFragment extends Fragment {
 
     private boolean init;
     private int page;
-    private boolean end;
-    private boolean retractableToolbar;
+    private int maxPage;
 
     private ImageListRecyclerAdapter adapter;
 
@@ -44,14 +42,12 @@ public class ImageListFragment extends Fragment {
 
         init = false;
         page = 1;
-        end = false;
+        maxPage = 0;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.image_list_fragment, container, false);
-
-        retractableToolbar = getActivity() instanceof FlickrMainActivity;
 
         swipe = (SwipeRefreshLayout)view.findViewById(R.id.imagelist_swipe);
         recyclerView = (RecyclerView)view.findViewById(R.id.imagelist_recyclerview);
@@ -64,7 +60,7 @@ public class ImageListFragment extends Fragment {
         });
 
         TypedValue tv = new TypedValue();
-        if (retractableToolbar && getActivity().getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+        if (getActivity().getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
             int toolbarSize = TypedValue.complexToDimensionPixelSize(tv.data, getActivity().getResources().getDisplayMetrics());
             int top = (int) StaticTools.convertDpToPixel(12.f, getContext());
             swipe.setProgressViewOffset(false, 0, toolbarSize + top);
@@ -84,8 +80,7 @@ public class ImageListFragment extends Fragment {
             }
         });
 
-
-        adapter = new ImageListRecyclerAdapter(getActivity(), retractableToolbar, new ImageListAdapterInterface() {
+        adapter = new ImageListRecyclerAdapter(getActivity(), true, new ImageListAdapterInterface() {
             @Override
             public void onImageClick() {
 
@@ -96,13 +91,13 @@ public class ImageListFragment extends Fragment {
         recyclerView.addOnScrollListener(new HidingScrollListener() {
             @Override
             public void onHide() {
-                AppBarLayout toolbar = (AppBarLayout) getActivity().findViewById(R.id.main_appbarlayout);
+                AppBarLayout toolbar = (AppBarLayout) getActivity().findViewById(R.id.appbarlayout);
                 toolbar.animate().setDuration(200).translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
             }
 
             @Override
             public void onShow() {
-                AppBarLayout toolbar = (AppBarLayout) getActivity().findViewById(R.id.main_appbarlayout);
+                AppBarLayout toolbar = (AppBarLayout) getActivity().findViewById(R.id.appbarlayout);
                 toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
             }
         });
@@ -122,16 +117,24 @@ public class ImageListFragment extends Fragment {
 
     public void refresh() {
         page = 1;
-        end = false;
+        maxPage = 0;
+        adapter.clear();
         ((ImageListInterface)getActivity()).onRequestImageList(page);
     }
 
+    public void setMaxPage(int value) {
+        this.maxPage = value;
+    }
+
     public void refreshList(@Nullable List<ImageElement> imageElementList) {
-        if (imageElementList != null) {
-            adapter.addList(imageElementList);
-            ++page;
+        if (page <= maxPage) {
+            if (imageElementList != null) {
+                adapter.addList(imageElementList);
+                ++page;
+            }
         }
         refreshSwipe(imageElementList == null);
+
     }
 
     private void refreshSwipe(final boolean loading) {

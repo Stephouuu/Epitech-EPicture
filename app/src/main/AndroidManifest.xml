@@ -21,9 +21,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".flickr.activities.FlickrMainActivity" />
         <activity android:name=".flickr.activities.UserPermissionActivity" />
+        <activity android:name=".flickr.activities.MyPicturesActivity" />
     </application>
 
 </manifest>

@@ -1,5 +1,6 @@
 package fr.epicture.epicture.flickr.activities;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
@@ -9,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -38,7 +40,7 @@ public class FlickrMainActivity extends AppCompatActivity implements ImageListIn
     private ActionBarDrawerToggle toggle;
     private CircleImageView profilePic;
     private ImageView profilePicBlurred;
-
+    private TextView myPictures;
 
     private InterestingnessRequest interestingnessRequest;
 
@@ -47,14 +49,15 @@ public class FlickrMainActivity extends AppCompatActivity implements ImageListIn
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_activity);
+        setContentView(R.layout.main_flickr_activity);
 
-        Toolbar toolbar = (Toolbar)findViewById(R.id.main_toolbar);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         drawer = (DrawerLayout)findViewById(R.id.main_drawer);
         profilePic = (CircleImageView)findViewById(R.id.main_profilepic);
         profilePicBlurred = (ImageView)findViewById(R.id.main_profilepic_blurred);
+        myPictures = (TextView)findViewById(R.id.drawer_mypictures);
 
         toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.open, R.string.close);
         toggle.setDrawerIndicatorEnabled(false);
@@ -72,6 +75,14 @@ public class FlickrMainActivity extends AppCompatActivity implements ImageListIn
                 }
 
                 refreshProfilePicBlurred();
+            }
+        });
+
+        myPictures.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(FlickrMainActivity.this, MyPicturesActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -119,6 +130,8 @@ public class FlickrMainActivity extends AppCompatActivity implements ImageListIn
                     interestingnessRequest = null;
                     if (jsonObject != null) {
                         try {
+                            int maxPage = jsonObject.getJSONObject("photos").getInt("pages");
+                            imageListFragment.setMaxPage(maxPage);
                             List<ImageElement> imageElementList = new ArrayList<>();
                             JSONArray jsonArray = jsonObject.getJSONObject("photos").getJSONArray("photo");
                             if (jsonArray.length() > 0) {

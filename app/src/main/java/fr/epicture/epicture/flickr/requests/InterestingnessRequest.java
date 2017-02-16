@@ -15,19 +15,6 @@ import fr.epicture.epicture.flickr.utils.FlickrClient;
  * Created by Stephane on 15/02/2017.
  */
 
-/**
- * https://api.flickr.com/services/rest
- ?nojsoncallback=1 &oauth_nonce=84354935
- &format=json
- &oauth_consumer_key=653e7a6ecc1d528c516cc8f92cf98611
- &oauth_timestamp=1305583871
- &oauth_signature_method=HMAC-SHA1
- &oauth_version=1.0
- &oauth_token=72157626318069415-087bfc7b5816092c
- &oauth_signature=dh3pEH0Xk1qILr82HyhOsxRv1XA%3D
- &method=flickr.test.login
- */
-
 public class InterestingnessRequest extends RequestAsyncTask {
 
     private static final String URL = "/rest";

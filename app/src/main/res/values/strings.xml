@@ -4,5 +4,6 @@
     <string name="open">Open</string>
     <string name="close">Close</string>
     <string name="home_page">Home Page</string>
+    <string name="my_pictures">My Pictures</string>
     <string name="title_activity_start_up">StartUpActivity</string>
 </resources>

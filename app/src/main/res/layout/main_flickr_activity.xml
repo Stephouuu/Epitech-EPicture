@@ -19,12 +19,12 @@
                 android:layout_height="match_parent"/>
 
             <android.support.design.widget.AppBarLayout
-                android:id="@+id/main_appbarlayout"
+                android:id="@+id/appbarlayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <android.support.v7.widget.Toolbar
-                    android:id="@+id/main_toolbar"
+                    android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize">
 
@@ -57,6 +57,7 @@
                 android:layout_height="265dp" />
 
             <FrameLayout
+                android:id="@+id/main_profilepic_container"
                 android:layout_width="match_parent"
                 android:layout_height="265dp">
 
@@ -67,6 +68,20 @@
                     android:layout_height="80dp" />
 
             </FrameLayout>
+
+            <LinearLayout
+                android:layout_below="@id/main_profilepic_container"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/drawer_mypictures"
+                    android:text="@string/my_pictures"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
 
         </RelativeLayout>
 

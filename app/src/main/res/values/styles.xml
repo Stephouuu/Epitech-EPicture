@@ -10,6 +10,10 @@
 
         <item name="android:windowContentOverlay">@null</item>
 
+        <item name="colorControlNormal">@color/white100</item>
+        <item name="colorControlActivated">@color/white100</item>
+        <item name="colorControlHighlight">@color/white75</item>
+
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

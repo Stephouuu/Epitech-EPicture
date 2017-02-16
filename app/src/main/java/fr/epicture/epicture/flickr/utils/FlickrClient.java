@@ -16,4 +16,6 @@ public class FlickrClient {
     public static TokenRequest tokenRequest;
     public static TokenAccess tokenAccess;
 
+    public static UserElement user;
+
 }

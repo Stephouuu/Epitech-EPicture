@@ -13,8 +13,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import fr.epicture.epicture.flickr.interfaces.BuddyIconRequestInterface;
 import fr.epicture.epicture.flickr.interfaces.ImageDiskCacheInterface;
 import fr.epicture.epicture.flickr.interfaces.ImageRequestInterface;
+import fr.epicture.epicture.flickr.requests.BuddyIconRequest;
 import fr.epicture.epicture.flickr.requests.ImageRequest;
 
 /**
@@ -25,11 +27,12 @@ public class ImageDiskCache {
 
     public final static String CACHE_TAG = "imagediskcache";
 
-    private static final Map<ImageElement, WebTask> WEBTASKS = new HashMap<>();
+    private static final Map<ImageElement, WebImageRequestTask> WEBTASKS = new HashMap<>();
+    private static final Map<ImageElement, WebBuddyIconRequestTask> WEBBUDDYTASKS = new HashMap<>();
     private static final Map<ImageElement, DiskTask> DISKTASKS = new HashMap<>();
     private static final Map<ImageElement, Set<ImageDiskCacheInterface>> LISTENERS = new HashMap<>();
 
-    public void load(@NonNull final Context context, @NonNull ImageElement element, @NonNull ImageDiskCacheInterface listener) {
+    public void load(@NonNull final Context context, @NonNull final ImageElement element, @NonNull ImageDiskCacheInterface listener) {
         Bitmap bitmap = BitmapCache.getInCache(CACHE_TAG + element.id + element.size);
         if (bitmap != null && !bitmap.isRecycled()) {
             listener.onFinish(element, bitmap);
@@ -42,8 +45,12 @@ public class ImageDiskCache {
         }
         listeners.add(listener);
         LISTENERS.put(element, listeners);
-        WebTask webtask = WEBTASKS.get(element);
+        WebImageRequestTask webtask = WEBTASKS.get(element);
         if (webtask != null) {
+            return;
+        }
+        WebBuddyIconRequestTask webbuddytask = WEBBUDDYTASKS.get(element);
+        if (webbuddytask != null) {
             return;
         }
         DiskTask disktask = DISKTASKS.get(element);
@@ -61,28 +68,28 @@ public class ImageDiskCache {
             DISKTASKS.put(element, disktask);
             disktask.execute();
         } else {
-            webtask = new WebTask(context, element, new ImageDiskCacheInterface() {
-                @Override
-                public void onFinish(@NonNull ImageElement element, @Nullable Bitmap bitmap) {
-                    notifyResult(element, bitmap);
-                }
+            if (element.type == ImageElement.TYPE_BUDDY) {
+                webbuddytask = new WebBuddyIconRequestTask(context, element, new ImageDiskCacheInterface() {
+                    @Override
+                    public void onFinish(ImageElement element, Bitmap bitmap) {
+                        notifyResult(element, bitmap);
+                    }
+                });
+                WEBBUDDYTASKS.put(element, webbuddytask);
+                webbuddytask.execute();
+            } else {
+                webtask = new WebImageRequestTask(context, element, new ImageDiskCacheInterface() {
+                    @Override
+                    public void onFinish(@NonNull ImageElement element, @Nullable Bitmap bitmap) {
+                        notifyResult(element, bitmap);
+                    }
 
-            });
-            WEBTASKS.put(element, webtask);
-            webtask.execute();
+                });
+                WEBTASKS.put(element, webtask);
+                webtask.execute();
+            }
         }
     }
-
-    public static void putInCache(
-            @NonNull ImageElement element,
-            @Nullable Bitmap bitmap,
-            boolean enableCache
-    ) {
-        if (bitmap != null && enableCache) {
-            BitmapCache.putInCache(CACHE_TAG + element.id + element.size, bitmap);
-        }
-    }
-
 
     private static void notifyResult(
             @NonNull ImageElement element,
@@ -90,9 +97,13 @@ public class ImageDiskCache {
         if (bitmap != null) {
             BitmapCache.putInCache(CACHE_TAG + element.id + element.size, bitmap);
         }
-        WebTask webtask = WEBTASKS.remove(element);
+        WebImageRequestTask webtask = WEBTASKS.remove(element);
         if (webtask != null) {
             webtask.cancel(true);
+        }
+        WebBuddyIconRequestTask webbuddytask = WEBBUDDYTASKS.remove(element);
+        if (webbuddytask != null) {
+            webbuddytask.cancel(true);
         }
         DiskTask disktask = DISKTASKS.remove(element);
         if (disktask != null) {
@@ -106,22 +117,33 @@ public class ImageDiskCache {
         }
     }
 
-    private static class WebTask extends ImageRequest {
+    private static class WebImageRequestTask extends ImageRequest {
+        WebImageRequestTask(@NonNull final Context context, @NonNull final ImageElement element, @NonNull final ImageDiskCacheInterface listener) {
+            super(context, element, new ImageRequestInterface() {
+                @Override
+                public void onFinish(ImageElement imageElement, Bitmap bitmap) {
+                    listener.onFinish(element, bitmap);
+                }
 
-        public WebTask(@NonNull final Context context, @NonNull final ImageElement element, @NonNull final ImageDiskCacheInterface listener) {
-            super(context,
-                    element,
-                    new ImageRequestInterface() {
-                        @Override
-                        public void onFinish(ImageElement imageElement, Bitmap bitmap) {
-                            listener.onFinish(element, bitmap);
-                        }
+                @Override
+                public void onError(int code) {
+                }
+            });
+        }
+    }
 
-                        @Override
-                        public void onError(int code) {
-                        }
-                    }
-            );
+    private static class WebBuddyIconRequestTask extends BuddyIconRequest {
+        WebBuddyIconRequestTask(@NonNull final Context context, @NonNull final ImageElement element, @NonNull final ImageDiskCacheInterface listener) {
+            super(context, element, new BuddyIconRequestInterface() {
+                @Override
+                public void onFinish(ImageElement imageElement, Bitmap bitmap) {
+                    listener.onFinish(element, bitmap);
+                }
+
+                @Override
+                public void onError(int code) {
+                }
+            });
         }
     }
 
@@ -132,11 +154,7 @@ public class ImageDiskCache {
         private final ImageDiskCacheInterface listener;
         private Bitmap bitmap;
 
-        public DiskTask(
-                @NonNull Context context,
-                @NonNull ImageElement element,
-                @NonNull ImageDiskCacheInterface listener
-        ) {
+        public DiskTask(@NonNull Context context, @NonNull ImageElement element, @NonNull ImageDiskCacheInterface listener) {
             this.context = context;
             this.element = element;
             this.listener = listener;

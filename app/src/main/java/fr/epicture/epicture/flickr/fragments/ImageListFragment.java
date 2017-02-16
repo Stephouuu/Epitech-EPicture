@@ -3,22 +3,28 @@ package fr.epicture.epicture.flickr.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 
 import java.util.List;
 
 import fr.epicture.epicture.R;
+import fr.epicture.epicture.flickr.activities.FlickrMainActivity;
 import fr.epicture.epicture.flickr.adapters.ImageListRecyclerAdapter;
 import fr.epicture.epicture.flickr.interfaces.ImageListAdapterInterface;
 import fr.epicture.epicture.flickr.interfaces.ImageListInterface;
+import fr.epicture.epicture.flickr.utils.HidingScrollListener;
 import fr.epicture.epicture.flickr.utils.ImageElement;
+import fr.epicture.epicture.flickr.utils.StaticTools;
 
 public class ImageListFragment extends Fragment {
 
@@ -28,6 +34,7 @@ public class ImageListFragment extends Fragment {
     private boolean init;
     private int page;
     private boolean end;
+    private boolean retractableToolbar;
 
     private ImageListRecyclerAdapter adapter;
 
@@ -44,6 +51,8 @@ public class ImageListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.image_list_fragment, container, false);
 
+        retractableToolbar = getActivity() instanceof FlickrMainActivity;
+
         swipe = (SwipeRefreshLayout)view.findViewById(R.id.imagelist_swipe);
         recyclerView = (RecyclerView)view.findViewById(R.id.imagelist_recyclerview);
 
@@ -54,6 +63,13 @@ public class ImageListFragment extends Fragment {
             }
         });
 
+        TypedValue tv = new TypedValue();
+        if (retractableToolbar && getActivity().getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+            int toolbarSize = TypedValue.complexToDimensionPixelSize(tv.data, getActivity().getResources().getDisplayMetrics());
+            int top = (int) StaticTools.convertDpToPixel(12.f, getContext());
+            swipe.setProgressViewOffset(false, 0, toolbarSize + top);
+        }
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -63,20 +79,33 @@ public class ImageListFragment extends Fragment {
                 int cLast = manager.findLastCompletelyVisibleItemPosition();
 
                 if (cLast == adapter.getItemCount() - 1 && page > 1) {
-                    Log.i("scroll", "scroll");
                     ((ImageListInterface)getActivity()).onRequestImageList(page);
                 }
             }
         });
 
 
-        adapter = new ImageListRecyclerAdapter(getActivity(), true, new ImageListAdapterInterface() {
+        adapter = new ImageListRecyclerAdapter(getActivity(), retractableToolbar, new ImageListAdapterInterface() {
             @Override
             public void onImageClick() {
 
             }
         });
         recyclerView.setAdapter(adapter);
+
+        recyclerView.addOnScrollListener(new HidingScrollListener() {
+            @Override
+            public void onHide() {
+                AppBarLayout toolbar = (AppBarLayout) getActivity().findViewById(R.id.main_appbarlayout);
+                toolbar.animate().setDuration(200).translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+            }
+
+            @Override
+            public void onShow() {
+                AppBarLayout toolbar = (AppBarLayout) getActivity().findViewById(R.id.main_appbarlayout);
+                toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+            }
+        });
 
         return view;
     }

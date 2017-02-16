@@ -2,8 +2,10 @@ package fr.epicture.epicture.flickr.requests;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.WindowManager;
 
 import java.io.File;
 
@@ -68,11 +70,28 @@ public class ImageRequest extends RequestAsyncTask {
     private void makeBitmap () {
         File file = element.getFile(getContext());
         if (file != null && image != null) {
+            WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+            Point outSize = new Point();
+            wm.getDefaultDisplay().getSize(outSize);
+            float screenWidth = outSize.x;
+            float w = 0.0f, h = 0.0f;
+
             try {
                 switch (element.size) {
                     case ImageElement.SIZE_THUMBNAIL:
                         int size = getContext().getResources().getDimensionPixelSize(R.dimen.image_size_thumbnail);
                         bitmap = Bitmap.createScaledBitmap(image, size, size, true);
+                        StaticTools.saveBitmapToJpegFile(bitmap, file);
+                        image.recycle();
+                        break;
+                    case ImageElement.SIZE_PREVIEW:
+                        w = screenWidth;
+                        h = image.getHeight() * ( screenWidth / image.getWidth() );
+                        if (h > screenWidth) {
+                            w = screenWidth * ( screenWidth / h );
+                            h = screenWidth;
+                        }
+                        bitmap = Bitmap.createScaledBitmap(image, (int)w, (int)h, true);
                         StaticTools.saveBitmapToJpegFile(bitmap, file);
                         image.recycle();
                         break;

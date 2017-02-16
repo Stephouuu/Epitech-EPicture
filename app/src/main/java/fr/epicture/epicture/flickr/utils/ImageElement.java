@@ -15,7 +15,13 @@ import java.io.File;
 public class ImageElement {
 
     private static final String DIR_THUMBNAIL = "thumbnail";
+    private static final String DIR_PREVIEW = "preview";
+
     public static final String SIZE_THUMBNAIL = "t";
+    public static final String SIZE_PREVIEW = "z";
+
+    public static final int TYPE_IMAGE = 1;
+    public static final int TYPE_BUDDY = 2;
 
     public String id;
     public String owner;
@@ -27,10 +33,10 @@ public class ImageElement {
     public boolean isFriend;
     public boolean isFamily;
 
+    public int type;
     public String size;
 
-
-    public ImageElement(JSONObject jsonObject, String size) {
+    public ImageElement(JSONObject jsonObject, int type, String size) {
         try {
             id = jsonObject.getString("id");
             owner = jsonObject.getString("owner");
@@ -44,8 +50,16 @@ public class ImageElement {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        this.type = type;
         this.size = size;
+    }
+
+    public ImageElement(String farm, String server, String nsid) {
+        this.id = nsid;
+        this.farm = farm;
+        this.server = server;
+        this.type = TYPE_BUDDY;
+        this.size = SIZE_THUMBNAIL;
     }
 
     public File getFile(@NonNull Context context) {
@@ -56,6 +70,9 @@ public class ImageElement {
             switch (size) {
                 case SIZE_THUMBNAIL:
                     ret = new File(path + File.separator + DIR_THUMBNAIL, id + ".jpg");
+                    break;
+                case SIZE_PREVIEW:
+                    ret = new File(path + File.separator + DIR_PREVIEW, id + ".jpg");
                     break;
             }
         }

@@ -1,7 +1,10 @@
 package fr.epicture.epicture.flickr.utils;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
+import android.util.DisplayMetrics;
 
 import org.apache.commons.codec.binary.Base64;
 import org.json.JSONArray;
@@ -79,6 +82,18 @@ public class StaticTools {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static float convertDpToPixel(float dp, Context context){
+        float px = 0.0f;
+        try {
+            Resources resources = context.getResources();
+            DisplayMetrics metrics = resources.getDisplayMetrics();
+            px = dp * (metrics.densityDpi / 160f);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return px;
     }
 
 }

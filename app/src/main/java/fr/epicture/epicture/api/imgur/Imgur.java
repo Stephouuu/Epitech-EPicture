@@ -1,15 +1,18 @@
 package fr.epicture.epicture.api.imgur;
 
-import android.util.SparseArray;
+import android.content.Context;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.epicture.epicture.R;
 import fr.epicture.epicture.api.API;
 import fr.epicture.epicture.api.APIAccount;
-import fr.epicture.epicture.api.APIType;
-import fr.epicture.epicture.api.flikr.FlikrAccount;
+import fr.epicture.epicture.interfaces.AuthentificationInterface;
+import fr.epicture.epicture.interfaces.LoadBitmapInterface;
+import fr.epicture.epicture.interfaces.LoadUserInfoInterface;
+import fr.epicture.epicture.utils.StaticTools;
 
 public class Imgur implements API {
 
@@ -26,7 +29,7 @@ public class Imgur implements API {
     // FIELDS
     // ========================================================================
 
-    private final Map<Integer, ImgurAccount> accountByID = new HashMap();
+    private final Map<String, APIAccount> accountByID = new HashMap();
 
     // ========================================================================
     // CONSTRUCTOR
@@ -41,35 +44,68 @@ public class Imgur implements API {
 
 
     @Override
-    public Collection<? extends APIAccount> getAccounts() {
+    public Collection<APIAccount> getAccounts() {
         return accountByID.values();
     }
 
     public void addAccount(ImgurAccount user) {
-        accountByID.put(user.getAccountId(), user);
+        accountByID.put(user.id, user);
     }
 
     public void removeAccount(ImgurAccount user) {
-        accountByID.remove(user.getAccountId());
+        accountByID.remove(user.id);
+    }
+
+    private AuthentificationInterface listener;
+
+    @Override
+    public void setAuthentificationListener(AuthentificationInterface listener) {
+        this.listener = listener;
     }
 
     @Override
-    public String getAuthorizeLink() {
-        return authorizeLink;
+    public void authentification(Context context) {
+        listener.onUserPermissionRequest(authorizeLink, "account_username");
+    }
+
+    @Override
+    public void afterUserPermissionRequest(Context context, String urlResponse) {
+        final Map<String, String> params = StaticTools.getQueryMap(urlResponse);
+        // todo save les infos du compte dans la database de l'api
+        listener.onUserPermissionGranted();
+    }
+
+    //@Override
+    public void loadAccounts() {
+    }
+
+    @Override
+    public void loadUserInformation(Context context, LoadUserInfoInterface callback) {
+        // get user information from the imgur server (if possible)
+    }
+
+    @Override
+    public void loadUserAvatar(Context context, String id, LoadBitmapInterface callback) {
+
+    }
+
+    @Override
+    public void setCurrentAccount(APIAccount account) {
+
+    }
+
+    @Override
+    public APIAccount getCurrentAccount() {
+        return null;
+    }
+
+    @Override
+    public int getLogo() {
+        return R.drawable.imgur_logo;
     }
 
     @Override
     public String getName() {
         return name;
-    }
-
-    @Override
-    public APIType getType() {
-        return APIType.IMGUR;
-    }
-
-    @Override
-    public void addAccount(APIAccount apiAccount) throws ClassCastException {
-        accountByID.put(apiAccount.getAccountId(), ((ImgurAccount) apiAccount));
     }
 }

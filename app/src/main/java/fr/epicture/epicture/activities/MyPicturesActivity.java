@@ -4,25 +4,19 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import fr.epicture.epicture.R;
+import fr.epicture.epicture.api.API;
+import fr.epicture.epicture.api.APIImageElement;
 import fr.epicture.epicture.api.APIManager;
-import fr.epicture.epicture.api.flickr.interfaces.UserPhotosRequestInterface;
-import fr.epicture.epicture.api.flickr.requests.UserPhotosRequest;
-import fr.epicture.epicture.api.flickr.utils.ImageElement;
 import fr.epicture.epicture.fragments.ImageListFragment;
 import fr.epicture.epicture.interfaces.ImageListInterface;
+import fr.epicture.epicture.interfaces.LoadImageElementInterface;
 
 public class MyPicturesActivity extends AppCompatActivity implements ImageListInterface {
 
     private ImageListFragment imageListFragment;
-
-    private UserPhotosRequest userPhotosRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,42 +50,16 @@ public class MyPicturesActivity extends AppCompatActivity implements ImageListIn
 
     @Override
     public void onRequestImageList(int page) {
-        if (!isRequestingImageList()) {
-            String id = APIManager.getSelectedAPI().getCurrentAccount().id;
-            userPhotosRequest = new UserPhotosRequest(this, 1, id, new UserPhotosRequestInterface() {
-                @Override
-                public void onFinish(JSONObject jsonObject) {
-                    userPhotosRequest = null;
-                    if (jsonObject != null) {
-                        try {
-                            int maxPage = jsonObject.getJSONObject("photos").getInt("pages");
-                            imageListFragment.setMaxPage(maxPage);
-                            List<ImageElement> imageElementList = new ArrayList<>();
-                            JSONArray jsonArray = jsonObject.getJSONObject("photos").getJSONArray("photo");
-                            if (jsonArray.length() > 0) {
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    ImageElement imageElement = new ImageElement(jsonArray.getJSONObject(i),
-                                            ImageElement.TYPE_IMAGE, ImageElement.SIZE_PREVIEW);
-                                    imageElementList.add(imageElement);
-                                }
-                                imageListFragment.refreshList(imageElementList);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
+        API api = APIManager.getSelectedAPI();
+        api.getMyPictures(this, page, new LoadImageElementInterface() {
+            @Override
+            public void onFinish(List<APIImageElement> result, boolean error) {
+                if (!error) {
+                    imageListFragment.refreshList(result);
                 }
-
-                @Override
-                public void onError(int code) {
-
-                }
-            });
-            userPhotosRequest.execute();
-        }
+            }
+        });
     }
 
-    public boolean isRequestingImageList() {
-        return (userPhotosRequest != null && !userPhotosRequest.isRunning());
-    }
+
 }

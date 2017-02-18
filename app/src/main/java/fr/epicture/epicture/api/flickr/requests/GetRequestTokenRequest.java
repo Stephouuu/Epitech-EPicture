@@ -3,16 +3,14 @@ package fr.epicture.epicture.api.flickr.requests;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import fr.epicture.epicture.api.flickr.FlickrClient;
-import fr.epicture.epicture.api.flickr.interfaces.GetRequestTokenInterface;
-import fr.epicture.epicture.api.flickr.modele.TokenRequest;
-import fr.epicture.epicture.asynctasks.RequestAsyncTask;
+import fr.epicture.epicture.interfaces.LoadTextInterface;
+import fr.epicture.epicture.requests.TextRequest;
 import fr.epicture.epicture.utils.RequestIdentifierGenerator;
 import fr.epicture.epicture.utils.StaticTools;
 
@@ -20,16 +18,26 @@ import fr.epicture.epicture.utils.StaticTools;
  * Created by Stephane on 14/02/2017.
  */
 
-public class GetRequestTokenRequest extends RequestAsyncTask {
+public class GetRequestTokenRequest extends TextRequest {
 
-    private static final String BASE_URL = "https://www.flickr.com/services";
-    private static final String URL = "/oauth/request_token";
+    private static final String URL = "https://www.flickr.com/services/oauth/request_token";
+
+    public GetRequestTokenRequest(@NonNull Context context, LoadTextInterface listener) {
+        super(context, listener);
+
+        try {
+            setUrl(getURL());
+            execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     //private String url;
-    private GetRequestTokenInterface listener;
+    //private GetRequestTokenInterface listener;
 
-    public GetRequestTokenRequest(@NonNull Context context, /*String url,*/ GetRequestTokenInterface listener) {
-        super(context);
+    /*public GetRequestTokenRequest(@NonNull Context context,  GetRequestTokenInterface listener) {
+        //super(context);
         //this.url = url;
         this.listener = listener;
     }
@@ -59,11 +67,11 @@ public class GetRequestTokenRequest extends RequestAsyncTask {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     private String getURL() throws Exception {
         String part1 = "GET";
-        String part2 = BASE_URL + URL;
+        String part2 = URL;
 
         String random = RequestIdentifierGenerator.Generate();
         long unixTime = StaticTools.GetCurrentUnixTime();
@@ -96,27 +104,12 @@ public class GetRequestTokenRequest extends RequestAsyncTask {
         String encoded = part1Encoded + "&" + part2Encoded + "&" + part3Encoded;
         String signature = StaticTools.OAuthEncode(StaticTools.getSignature(encoded, FlickrClient.CONSUMER_SECRET + "&"));
 
-        return BASE_URL + URL + "?oauth_nonce=" + random
+        return URL + "?oauth_nonce=" + random
                 + "&oauth_timestamp=" + unixTime
                 + "&oauth_consumer_key=" + FlickrClient.CONSUMER_KEY
                 + "&oauth_signature_method=HMAC-SHA1"
                 + "&oauth_signature=" + signature
                 + "&oauth_callback=" + callback;
-    }
-
-    private TokenRequest retrieveToken() throws Exception {
-        TokenRequest tokenRequest = new TokenRequest();
-        String[] datas = response.split("&");
-
-        if (datas.length == 3) {
-            tokenRequest.callbackConfirmed = datas[0].substring(datas[0].indexOf('=') + 1).equals("true");
-            tokenRequest.token = datas[1].substring(datas[1].indexOf('=') + 1);
-            tokenRequest.tokenSecret = datas[2].substring(datas[2].indexOf('=') + 1);
-        }
-
-        Log.i("token request", tokenRequest.callbackConfirmed + " " + tokenRequest.token + " " + tokenRequest.tokenSecret);
-
-        return tokenRequest;
     }
 
 }

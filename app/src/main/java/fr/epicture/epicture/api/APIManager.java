@@ -47,7 +47,6 @@ public class APIManager {
     public static void setSelectedAPI(API api) {
         selectedAPI = api;
     }
-
     public static API getSelectedAPI() {
         return selectedAPI;
     }

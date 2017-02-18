@@ -9,8 +9,10 @@ import java.util.Map;
 import fr.epicture.epicture.R;
 import fr.epicture.epicture.api.API;
 import fr.epicture.epicture.api.APIAccount;
+import fr.epicture.epicture.api.APIImageElement;
 import fr.epicture.epicture.interfaces.AuthentificationInterface;
 import fr.epicture.epicture.interfaces.LoadBitmapInterface;
+import fr.epicture.epicture.interfaces.LoadImageElementInterface;
 import fr.epicture.epicture.interfaces.LoadUserInfoInterface;
 import fr.epicture.epicture.utils.StaticTools;
 
@@ -86,6 +88,21 @@ public class Imgur implements API {
 
     @Override
     public void loadUserAvatar(Context context, String id, LoadBitmapInterface callback) {
+
+    }
+
+    @Override
+    public void loadImage(Context context, APIImageElement element, LoadBitmapInterface callback) {
+
+    }
+
+    @Override
+    public void getInterestingnessList(Context context, int page, LoadImageElementInterface callback) {
+
+    }
+
+    @Override
+    public void getMyPictures(Context context, int page, LoadImageElementInterface callback) {
 
     }
 

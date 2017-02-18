@@ -3,18 +3,15 @@ package fr.epicture.epicture.api.flickr.requests;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import fr.epicture.epicture.api.flickr.FlickrClient;
-import fr.epicture.epicture.api.flickr.interfaces.GetAccessTokenInterface;
-import fr.epicture.epicture.api.flickr.modele.TokenAccess;
 import fr.epicture.epicture.api.flickr.modele.TokenRequest;
-import fr.epicture.epicture.asynctasks.RequestAsyncTask;
+import fr.epicture.epicture.interfaces.LoadTextInterface;
+import fr.epicture.epicture.requests.TextRequest;
 import fr.epicture.epicture.utils.RequestIdentifierGenerator;
 import fr.epicture.epicture.utils.StaticTools;
 
@@ -22,13 +19,25 @@ import fr.epicture.epicture.utils.StaticTools;
  * Created by Stephane on 15/02/2017.
  */
 
-public class GetAccessTokenRequest extends RequestAsyncTask {
+public class GetAccessTokenRequest extends TextRequest {
 
     private static final String BASE_URL = "https://www.flickr.com/services";
     private static final String URL = "/oauth/access_token";
 
     private TokenRequest tokenRequest;
-    private GetAccessTokenInterface listener;
+
+    public GetAccessTokenRequest(@NonNull Context context, TokenRequest tokenRequest, LoadTextInterface listener) {
+        super(context, listener);
+        this.tokenRequest = tokenRequest;
+
+        try {
+            setUrl(getURL());
+            execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    /*private GetAccessTokenInterface listener;
 
     public GetAccessTokenRequest(@NonNull Context context, TokenRequest tokenRequest, GetAccessTokenInterface listener) {
         super(context);
@@ -59,7 +68,7 @@ public class GetAccessTokenRequest extends RequestAsyncTask {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     private String getURL() throws Exception {
         String part1 = "GET";
@@ -105,17 +114,6 @@ public class GetAccessTokenRequest extends RequestAsyncTask {
                 + "&oauth_signature=" + signature;
     }
 
-    private TokenAccess retrieveToken() throws Exception {
-        TokenAccess tokenAccess = new TokenAccess();
-        String[] datas = response.split("&");
-        if (datas.length == 5) {
-            tokenAccess.fullname = URLDecoder.decode(datas[0].substring(datas[0].indexOf('=') + 1), "UTF-8");
-            tokenAccess.token = datas[1].substring(datas[1].indexOf('=') + 1);
-            tokenAccess.tokenSecret = datas[2].substring(datas[2].indexOf('=') + 1);
-            tokenAccess.nsid = datas[3].substring(datas[3].indexOf('=') + 1);
-            tokenAccess.username = URLDecoder.decode(datas[4].substring(datas[4].indexOf('=') + 1), "UTF-8");
-        }
-        return tokenAccess;
-    }
+
 
 }

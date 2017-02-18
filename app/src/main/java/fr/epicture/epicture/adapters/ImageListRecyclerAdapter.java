@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.epicture.epicture.R;
-import fr.epicture.epicture.api.flickr.utils.ImageElement;
+import fr.epicture.epicture.api.APIImageElement;
 import fr.epicture.epicture.interfaces.ImageListAdapterInterface;
 import fr.epicture.epicture.recyclers.ImageListRecyclerHeaderViewHolder;
 import fr.epicture.epicture.recyclers.ImageListRecyclerItemViewHolder;
@@ -25,7 +25,7 @@ public class ImageListRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
     private static final int TYPE_HEADER = 2;
     private static final int TYPE_ITEM = 1;
 
-    private List<ImageElement> imageElementList;
+    private List<APIImageElement> imageElementList;
 
     private Activity activity;
     private boolean header;
@@ -44,7 +44,7 @@ public class ImageListRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         notifyDataSetChanged();
     }
 
-    public void addList(List<ImageElement> imageElementList) {
+    public void addList(List<APIImageElement> imageElementList) {
         this.imageElementList.addAll(imageElementList);
         notifyDataSetChanged();
     }
@@ -77,14 +77,14 @@ public class ImageListRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (!isHeader(position)) {
             position -= ((header) ? 1 : 0);
-            ImageElement item = getItem(position);
+            APIImageElement item = getItem(position);
 
             ((ImageListRecyclerItemViewHolder)holder).refreshView(item);
             ((ImageListRecyclerItemViewHolder)holder).refreshImage(item);
         }
     }
 
-    private ImageElement getItem(int index) {
+    private APIImageElement getItem(int index) {
         return imageElementList.get(index);
     }
 

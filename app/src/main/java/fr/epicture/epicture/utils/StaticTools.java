@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
+import android.util.Log;
 
 import org.apache.commons.codec.binary.Base64;
 import org.json.JSONArray;
@@ -12,6 +13,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -19,6 +21,9 @@ import java.util.Map;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+
+import fr.epicture.epicture.api.flickr.modele.TokenAccess;
+import fr.epicture.epicture.api.flickr.modele.TokenRequest;
 
 //import android.util.Base64;
 
@@ -110,6 +115,34 @@ public class StaticTools {
             }
         }
         return map;
+    }
+
+    public static TokenRequest retrieveTokenRequest(String response) throws Exception {
+        TokenRequest tokenRequest = new TokenRequest();
+        String[] datas = response.split("&");
+
+        if (datas.length == 3) {
+            tokenRequest.callbackConfirmed = datas[0].substring(datas[0].indexOf('=') + 1).equals("true");
+            tokenRequest.token = datas[1].substring(datas[1].indexOf('=') + 1);
+            tokenRequest.tokenSecret = datas[2].substring(datas[2].indexOf('=') + 1);
+        }
+
+        Log.i("token request", tokenRequest.callbackConfirmed + " " + tokenRequest.token + " " + tokenRequest.tokenSecret);
+
+        return tokenRequest;
+    }
+
+    public static TokenAccess retrieveTokenAccess(String response) throws Exception {
+        TokenAccess tokenAccess = new TokenAccess();
+        String[] datas = response.split("&");
+        if (datas.length == 5) {
+            tokenAccess.fullname = URLDecoder.decode(datas[0].substring(datas[0].indexOf('=') + 1), "UTF-8");
+            tokenAccess.token = datas[1].substring(datas[1].indexOf('=') + 1);
+            tokenAccess.tokenSecret = datas[2].substring(datas[2].indexOf('=') + 1);
+            tokenAccess.nsid = datas[3].substring(datas[3].indexOf('=') + 1);
+            tokenAccess.username = URLDecoder.decode(datas[4].substring(datas[4].indexOf('=') + 1), "UTF-8");
+        }
+        return tokenAccess;
     }
 
 }

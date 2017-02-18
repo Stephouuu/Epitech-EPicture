@@ -3,17 +3,15 @@ package fr.epicture.epicture.api.flickr.requests;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import fr.epicture.epicture.api.flickr.FlickrAccount;
 import fr.epicture.epicture.api.flickr.FlickrClient;
-import fr.epicture.epicture.api.flickr.interfaces.UserPhotosRequestInterface;
-import fr.epicture.epicture.asynctasks.RequestAsyncTask;
+import fr.epicture.epicture.interfaces.LoadTextInterface;
+import fr.epicture.epicture.requests.TextRequest;
 import fr.epicture.epicture.utils.RequestIdentifierGenerator;
 import fr.epicture.epicture.utils.StaticTools;
 
@@ -34,43 +32,22 @@ import fr.epicture.epicture.utils.StaticTools;
  &method=flickr.test.login
  */
 
-public class UserPhotosRequest extends RequestAsyncTask {
+public class UserPhotosRequest extends TextRequest {
 
-    private static final String BASE_URL = "https://www.flickr.com/services";
-    private static final String URL = "/rest/";
+    private static final String URL = "https://www.flickr.com/services/rest";
     private static final String METHOD = "flickr.people.getPhotos";
 
     private int page;
-    private String userID;
-    private UserPhotosRequestInterface listener;
+    private FlickrAccount user;
 
-    public UserPhotosRequest(@NonNull Context context, int page, String userID, UserPhotosRequestInterface listener) {
-        super(context);
+    public UserPhotosRequest(@NonNull Context context, int page, FlickrAccount user, LoadTextInterface listener) {
+        super(context, listener);
         this.page = page;
-        this.userID = userID;
-        this.listener = listener;
-    }
+        this.user = user;
 
-    @Override
-    protected Void doInBackground(Void... params) {
         try {
-            GET(getURL());
-            Log.i("UserPhotosRequest", response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    @Override
-    protected void onPostExecute(Void result) {
-        try {
-            if (httpResponseCode == 200) {
-                listener.onFinish(new JSONObject(response));
-            } else {
-                listener.onError(httpResponseCode);
-            }
+            setUrl(getURL());
+            execute();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -78,7 +55,7 @@ public class UserPhotosRequest extends RequestAsyncTask {
 
     private String getURL() throws Exception {
         String part1 = "GET";
-        String part2 = BASE_URL + URL;
+        String part2 = URL;
 
         String random = RequestIdentifierGenerator.Generate();
         long unixTime = StaticTools.GetCurrentUnixTime();
@@ -90,9 +67,11 @@ public class UserPhotosRequest extends RequestAsyncTask {
                 "oauth_consumer_key=" + FlickrClient.CONSUMER_KEY,
                 "oauth_timestamp=" + unixTime,
                 "oauth_signature_method=HMAC-SHA1",
-                //"oauth_token=" + FlickrClient.tokenAccess.token,
+                "oauth_token=" + user.token,
                 "method=" + METHOD,
-                "user_id=" + userID
+                "page=" + page,
+                "per_page=20",
+                "user_id=" + user.id
         };
         List<String> encodedParams = new ArrayList<>();
 
@@ -112,17 +91,19 @@ public class UserPhotosRequest extends RequestAsyncTask {
         String part2Encoded = StaticTools.OAuthEncode(part2);
         String part3Encoded = TextUtils.join("", encodedParams);
         String encoded = part1Encoded + "&" + part2Encoded + "&" + part3Encoded;
-        //String signature = StaticTools.OAuthEncode(StaticTools.getSignature(encoded, FlickrClient.CONSUMER_SECRET + "&" + FlickrClient.tokenAccess.tokenSecret));
+        String signature = StaticTools.OAuthEncode(StaticTools.getSignature(encoded, FlickrClient.CONSUMER_SECRET + "&" + user.tokenSecret));
 
-        return BASE_URL + URL + "?nojsoncallback=1"
+        return URL + "?nojsoncallback=1"
                 + "&oauth_nonce=" + random
                 + "&format=json"
                 + "&oauth_consumer_key=" + FlickrClient.CONSUMER_KEY
                 + "&oauth_timestamp=" + unixTime
                 + "&oauth_signature_method=HMAC-SHA1"
-                //+ "&oauth_token=" + FlickrClient.tokenAccess.token
-                //+ "&oauth_signature=" + signature
+                + "&oauth_token=" + user.token
+                + "&oauth_signature=" + signature
                 + "&method=" + METHOD
-                + "&user_id=" + userID;
+                + "&page=" + page
+                + "&per_page=20"
+                + "&user_id=" + user.id;
     }
 }

@@ -12,19 +12,20 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fr.epicture.epicture.R;
+import fr.epicture.epicture.api.API;
+import fr.epicture.epicture.api.APIAccount;
+import fr.epicture.epicture.api.APIImageElement;
 import fr.epicture.epicture.api.APIManager;
-import fr.epicture.epicture.api.flickr.FlickrAccount;
-import fr.epicture.epicture.api.flickr.interfaces.ImageDiskCacheInterface;
-import fr.epicture.epicture.api.flickr.requests.InterestingnessRequest;
-import fr.epicture.epicture.api.flickr.utils.ImageDiskCache;
-import fr.epicture.epicture.api.flickr.utils.ImageElement;
 import fr.epicture.epicture.fragments.ImageListFragment;
 import fr.epicture.epicture.interfaces.ImageListInterface;
+import fr.epicture.epicture.interfaces.LoadBitmapInterface;
+import fr.epicture.epicture.interfaces.LoadImageElementInterface;
 import jp.wasabeef.blurry.Blurry;
 
 
@@ -35,8 +36,6 @@ public class MainActivity extends AppCompatActivity implements ImageListInterfac
     private CircleImageView profilePic;
     private ImageView profilePicBlurred;
     private TextView myPictures;
-
-    private InterestingnessRequest interestingnessRequest;
 
     private ImageListFragment imageListFragment;
 
@@ -88,12 +87,12 @@ public class MainActivity extends AppCompatActivity implements ImageListInterfac
     }
 
     private void refreshProfilePicBlurred() {
-        //FlickrAccount user = FlickrClient.user;
-        FlickrAccount user = (FlickrAccount)APIManager.getSelectedAPI().getCurrentAccount();
-        ImageElement imageElement = new ImageElement(user.iconfarm, user.iconserver, user.nsid);
-        new ImageDiskCache().load(this, imageElement, new ImageDiskCacheInterface() {
+        API api = APIManager.getSelectedAPI();
+        APIAccount user = api.getCurrentAccount();
+
+        api.loadUserAvatar(this, user.username, new LoadBitmapInterface() {
             @Override
-            public void onFinish(ImageElement imageElement, Bitmap bitmap) {
+            public void onFinish(Bitmap bitmap) {
                 profilePic.setImageBitmap(bitmap);
                 new Timer().schedule(new TimerTask() {
                     @Override
@@ -121,43 +120,16 @@ public class MainActivity extends AppCompatActivity implements ImageListInterfac
 
     @Override
     public void onRequestImageList(int page) {
-        if (!isRequestingImageList()) {
-            /*interestingnessRequest = new InterestingnessRequest(this, FlickrClient.tokenAccess, page,
-                    new InterestingnessRequestInterface() {
-                @Override
-                public void onFinish(JSONObject jsonObject) {
-                    interestingnessRequest = null;
-                    if (jsonObject != null) {
-                        try {
-                            int maxPage = jsonObject.getJSONObject("photos").getInt("pages");
-                            imageListFragment.setMaxPage(maxPage);
-                            List<ImageElement> imageElementList = new ArrayList<>();
-                            JSONArray jsonArray = jsonObject.getJSONObject("photos").getJSONArray("photo");
-                            if (jsonArray.length() > 0) {
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    ImageElement imageElement = new ImageElement(jsonArray.getJSONObject(i),
-                                            ImageElement.TYPE_IMAGE, ImageElement.SIZE_PREVIEW);
-                                    imageElementList.add(imageElement);
-                                }
-                                imageListFragment.refreshList(imageElementList);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
+        API api = APIManager.getSelectedAPI();
+        api.getInterestingnessList(this, page, new LoadImageElementInterface() {
+            @Override
+            public void onFinish(List<APIImageElement> result, boolean error) {
+                if (!error) {
+                    imageListFragment.refreshList(result);
                 }
-
-                @Override
-                public void onError(int responseCode) {
-                }
-            });
-            interestingnessRequest.execute();
-            imageListFragment.refreshList(null);*/
-        }
-    }
-
-    public boolean isRequestingImageList() {
-        return (interestingnessRequest != null && !interestingnessRequest.isRunning());
+            }
+        });
+        imageListFragment.refreshList(null);
     }
 
 }

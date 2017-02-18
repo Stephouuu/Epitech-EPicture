@@ -19,7 +19,7 @@ import java.util.List;
 
 import fr.epicture.epicture.R;
 import fr.epicture.epicture.adapters.ImageListRecyclerAdapter;
-import fr.epicture.epicture.api.flickr.utils.ImageElement;
+import fr.epicture.epicture.api.APIImageElement;
 import fr.epicture.epicture.interfaces.ImageListAdapterInterface;
 import fr.epicture.epicture.interfaces.ImageListInterface;
 import fr.epicture.epicture.utils.HidingScrollListener;
@@ -32,7 +32,6 @@ public class ImageListFragment extends Fragment {
 
     private boolean init;
     private int page;
-    private int maxPage;
 
     private ImageListRecyclerAdapter adapter;
 
@@ -42,7 +41,6 @@ public class ImageListFragment extends Fragment {
 
         init = false;
         page = 1;
-        maxPage = 0;
     }
 
     @Override
@@ -117,21 +115,14 @@ public class ImageListFragment extends Fragment {
 
     public void refresh() {
         page = 1;
-        maxPage = 0;
         adapter.clear();
         ((ImageListInterface)getActivity()).onRequestImageList(page);
     }
 
-    public void setMaxPage(int value) {
-        this.maxPage = value;
-    }
-
-    public void refreshList(@Nullable List<ImageElement> imageElementList) {
-        if (page <= maxPage) {
-            if (imageElementList != null) {
-                adapter.addList(imageElementList);
-                ++page;
-            }
+    public void refreshList(@Nullable List<APIImageElement> imageElementList) {
+        if (imageElementList != null) {
+            adapter.addList(imageElementList);
+            ++page;
         }
         refreshSwipe(imageElementList == null);
 

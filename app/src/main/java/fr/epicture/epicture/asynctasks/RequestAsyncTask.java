@@ -61,7 +61,6 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
     @Override
     @Nullable
     protected Void doInBackground(@Nullable Void... params) {
-
         return (null);
     }
 

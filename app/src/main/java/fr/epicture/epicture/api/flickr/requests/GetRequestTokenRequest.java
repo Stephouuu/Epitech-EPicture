@@ -33,42 +33,6 @@ public class GetRequestTokenRequest extends TextRequest {
         }
     }
 
-    //private String url;
-    //private GetRequestTokenInterface listener;
-
-    /*public GetRequestTokenRequest(@NonNull Context context,  GetRequestTokenInterface listener) {
-        //super(context);
-        //this.url = url;
-        this.listener = listener;
-    }
-
-    @Override
-    protected Void doInBackground(Void... params) {
-        try {
-            String url = getURL();
-            Log.i("url", url);
-            GET(url);
-            Log.i("GetRequestToken", response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    @Override
-    protected void onPostExecute(Void result) {
-        try {
-            if (httpResponseCode == null || httpResponseCode == 200) {
-                listener.onFinish(retrieveToken());
-            } else {
-                listener.onError(httpResponseCode);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
-
     private String getURL() throws Exception {
         String part1 = "GET";
         String part2 = URL;

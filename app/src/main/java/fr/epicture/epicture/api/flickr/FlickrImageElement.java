@@ -10,7 +10,7 @@ import fr.epicture.epicture.api.APIImageElement;
 
 public class FlickrImageElement extends APIImageElement {
 
-    private static final String URL = "https://farm%1$s.staticflickr.com/%2$s/%3$s_%4$s.jpg";
+    private static final String URL = "https://farm%1$s.staticflickr.com/%2$s/%3$s_%4$s%5$s.jpg";
 
     public String owner;
     public String secret;
@@ -40,7 +40,14 @@ public class FlickrImageElement extends APIImageElement {
 
     @Override
     public String getURL() {
-        return String.format(URL, farm, server, getID(), secret);
+        String strSize = "";
+        if (getSize() == SIZE_THUMBNAIL) {
+            strSize = "_t";
+        }
+        else if (getSize() == SIZE_PREVIEW) {
+            strSize = "_z";
+        }
+        return String.format(URL, farm, server, getID(), secret, strSize);
     }
 
 }

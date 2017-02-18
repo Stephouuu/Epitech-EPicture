@@ -21,14 +21,12 @@ import fr.epicture.epicture.utils.StaticTools;
 
 public class ImageRequest extends RequestAsyncTask {
 
-    private String url;
     private APIImageElement element;
     private LoadBitmapInterface listener;
     private Bitmap bitmap;
 
-    public ImageRequest(@NonNull Context context, String url, APIImageElement element, LoadBitmapInterface listener) {
+    public ImageRequest(@NonNull Context context, APIImageElement element, LoadBitmapInterface listener) {
         super(context);
-        this.url = url;
         this.element = element;
         this.listener = listener;
     }
@@ -36,9 +34,9 @@ public class ImageRequest extends RequestAsyncTask {
     @Override
     protected Void doInBackground(Void... params) {
         try {
-            Log.i("imageRequest", "url: " + url);
+            Log.i("imageRequest", "url: " + element.getURL());
 
-            GETImage(url);
+            GETImage(element.getURL());
 
             makeBitmap();
         } catch (Exception e) {

@@ -37,38 +37,6 @@ public class GetAccessTokenRequest extends TextRequest {
             e.printStackTrace();
         }
     }
-    /*private GetAccessTokenInterface listener;
-
-    public GetAccessTokenRequest(@NonNull Context context, TokenRequest tokenRequest, GetAccessTokenInterface listener) {
-        super(context);
-        this.tokenRequest = tokenRequest;
-        this.listener = listener;
-    }
-
-    @Override
-    protected Void doInBackground(Void... params) {
-        try {
-            GET(getURL());
-            Log.i("GetAccessToken", response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    @Override
-    protected void onPostExecute(Void result) {
-        try {
-            if (httpResponseCode == 200) {
-                listener.onFinish(retrieveToken());
-            } else {
-                listener.onError(httpResponseCode);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
 
     private String getURL() throws Exception {
         String part1 = "GET";

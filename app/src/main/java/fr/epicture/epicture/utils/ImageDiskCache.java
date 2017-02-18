@@ -31,7 +31,6 @@ public class ImageDiskCache {
     private static final Map<APIImageElement, Set<ImageDiskCacheInterface>> LISTENERS = new HashMap<>();
 
     public static void load(@NonNull final Context context,
-                            @NonNull final String url,
                             @NonNull final APIImageElement element,
                             @NonNull ImageDiskCacheInterface listener) {
 
@@ -66,7 +65,7 @@ public class ImageDiskCache {
             DISKTASKS.put(element, disktask);
             disktask.execute();
         } else {
-            webtask = new WebImageRequestTask(context, url, element, new ImageDiskCacheInterface() {
+            webtask = new WebImageRequestTask(context, element, new ImageDiskCacheInterface() {
                 @Override
                 public void onFinish(@NonNull APIImageElement element, @Nullable Bitmap bitmap) {
                     notifyResult(element, bitmap);
@@ -102,10 +101,9 @@ public class ImageDiskCache {
 
     private static class WebImageRequestTask extends ImageRequest {
         WebImageRequestTask(@NonNull final Context context,
-                            @NonNull final String url,
                             @NonNull final APIImageElement element,
                             @NonNull final ImageDiskCacheInterface listener) {
-            super(context, url, element, new LoadBitmapInterface() {
+            super(context, element, new LoadBitmapInterface() {
                 @Override
                 public void onFinish(Bitmap bitmap) {
                     listener.onFinish(element, bitmap);

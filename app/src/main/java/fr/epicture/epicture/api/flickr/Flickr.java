@@ -133,8 +133,7 @@ public class Flickr implements API {
 
     @Override
     public void loadImage(Context context, APIImageElement element, LoadBitmapInterface callback) {
-        String url = element.getURL();
-        ImageDiskCache.load(context, url, element, new ImageDiskCacheInterface() {
+        ImageDiskCache.load(context, element, new ImageDiskCacheInterface() {
             @Override
             public void onFinish(APIImageElement element, Bitmap bitmap) {
                 callback.onFinish(bitmap);

@@ -18,9 +18,6 @@ public abstract class APIImageElement {
     public static final int SIZE_THUMBNAIL = 1;
     public static final int SIZE_PREVIEW = 2;
 
-    //public static final String SIZE_THUMBNAIL = "t";
-    //public static final String SIZE_PREVIEW = "z";
-
     private String id;
     private int size;
 

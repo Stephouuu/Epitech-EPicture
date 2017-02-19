@@ -23,8 +23,10 @@ import fr.epicture.epicture.api.flickr.modele.TokenRequest;
 import fr.epicture.epicture.api.flickr.requests.GetAccessTokenRequest;
 import fr.epicture.epicture.api.flickr.requests.GetRequestTokenRequest;
 import fr.epicture.epicture.api.flickr.requests.InterestingnessRequest;
+import fr.epicture.epicture.api.flickr.requests.UploadPictureRequest;
 import fr.epicture.epicture.api.flickr.requests.UserInformationRequest;
 import fr.epicture.epicture.api.flickr.requests.UserPhotosRequest;
+import fr.epicture.epicture.api.flickr.utils.FlickrUtils;
 import fr.epicture.epicture.interfaces.AuthentificationInterface;
 import fr.epicture.epicture.interfaces.ImageDiskCacheInterface;
 import fr.epicture.epicture.interfaces.LoadBitmapInterface;
@@ -32,7 +34,6 @@ import fr.epicture.epicture.interfaces.LoadImageElementInterface;
 import fr.epicture.epicture.interfaces.LoadTextInterface;
 import fr.epicture.epicture.interfaces.LoadUserInfoInterface;
 import fr.epicture.epicture.utils.ImageDiskCache;
-import fr.epicture.epicture.utils.StaticTools;
 
 public class Flickr implements API {
 
@@ -47,6 +48,7 @@ public class Flickr implements API {
     private GetAccessTokenRequest getAccessTokenRequest;
     private InterestingnessRequest interestingnessRequest;
     private UserPhotosRequest userPhotosRequest;
+    private UploadPictureRequest uploadPictureRequest;
 
     private AuthentificationInterface authListener;
     private TokenRequest tokenRequest;
@@ -72,7 +74,7 @@ public class Flickr implements API {
                 public void onFinish(String text) {
                     getRequestTokenRequest = null;
                     try {
-                        tokenRequest = StaticTools.retrieveTokenRequest(text);
+                        tokenRequest = FlickrUtils.retrieveTokenRequest(text);
                         authListener.onUserPermissionRequest(String.format(authorizeLink, tokenRequest.token), "oauth_verifier");
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -91,7 +93,7 @@ public class Flickr implements API {
                 public void onFinish(String text) {
                     getAccessTokenRequest = null;
                     try {
-                        TokenAccess tokenAccess = StaticTools.retrieveTokenAccess(text);
+                        TokenAccess tokenAccess = FlickrUtils.retrieveTokenAccess(text);
                         FlickrAccount user = new FlickrAccount(tokenAccess);
                         database.insertAccount(user);
                         Accounts.put(user.username, user);
@@ -142,6 +144,21 @@ public class Flickr implements API {
     }
 
     @Override
+    public void uploadImage(Context context, APIAccount user, String path, String title, String description, LoadTextInterface callback) {
+        if (!isRequestingUploadPicture()) {
+            FlickrAccount flickrAccount = Accounts.get(user.username);
+            FlickrImageElement element = new FlickrImageElement(path, title, description);
+            uploadPictureRequest = new UploadPictureRequest(context, flickrAccount, element, new LoadTextInterface() {
+                @Override
+                public void onFinish(String text) {
+                    uploadPictureRequest = null;
+                    callback.onFinish(text);
+                }
+            });
+        }
+    }
+
+    @Override
     public void getInterestingnessList(Context context, int page, LoadImageElementInterface callback) {
         if (!isInterestingnessRequestRunning()) {
             interestingnessRequest = new InterestingnessRequest(context, page, new LoadTextInterface() {
@@ -158,8 +175,7 @@ public class Flickr implements API {
                         JSONArray jsonArray = jsonObject.getJSONObject("photos").getJSONArray("photo");
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject current = jsonArray.getJSONObject(i);
-                            FlickrImageElement element = new FlickrImageElement(current, APIImageElement.SIZE_PREVIEW);
-                            datas.add(element);
+                            datas.add(new FlickrImageElement(current, APIImageElement.SIZE_PREVIEW));
                         }
                         callback.onFinish(datas, false);
                     } catch (Exception e) {
@@ -187,8 +203,7 @@ public class Flickr implements API {
                         JSONArray jsonArray = jsonObject.getJSONObject("photos").getJSONArray("photo");
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject current = jsonArray.getJSONObject(i);
-                            FlickrImageElement element = new FlickrImageElement(current, APIImageElement.SIZE_PREVIEW);
-                            datas.add(element);
+                            datas.add(new FlickrImageElement(current, APIImageElement.SIZE_PREVIEW));
                         }
                         callback.onFinish(datas, false);
                     } catch (Exception e) {
@@ -248,8 +263,12 @@ public class Flickr implements API {
         return (interestingnessRequest != null);
     }
 
-    public boolean isRequestingImageList() {
-        return (userPhotosRequest != null && !userPhotosRequest.isRunning());
+    private boolean isRequestingImageList() {
+        return (userPhotosRequest != null);
+    }
+
+    private boolean isRequestingUploadPicture() {
+        return (uploadPictureRequest != null);
     }
 
 }

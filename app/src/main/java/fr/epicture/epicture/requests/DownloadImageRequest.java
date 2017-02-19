@@ -19,13 +19,13 @@ import fr.epicture.epicture.utils.StaticTools;
  * Created by Stephane on 18/02/2017.
  */
 
-public class ImageRequest extends RequestAsyncTask {
+public class DownloadImageRequest extends RequestAsyncTask {
 
     private APIImageElement element;
     private LoadBitmapInterface listener;
     private Bitmap bitmap;
 
-    public ImageRequest(@NonNull Context context, APIImageElement element, LoadBitmapInterface listener) {
+    public DownloadImageRequest(@NonNull Context context, APIImageElement element, LoadBitmapInterface listener) {
         super(context);
         this.element = element;
         this.listener = listener;
@@ -48,6 +48,7 @@ public class ImageRequest extends RequestAsyncTask {
 
     @Override
     protected void onPostExecute(Void result) {
+        super.onPostExecute(result);
         try {
             listener.onFinish(bitmap);
         } catch (Exception e) {

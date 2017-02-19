@@ -21,14 +21,24 @@ public abstract class APIImageElement {
     private String id;
     private int size;
 
-    public APIImageElement() {
+    public String path;
+    public String title;
+    public String description;
+
+    protected APIImageElement() {
         this.id = "undefined";
         this.size = 0;
     }
 
-    public APIImageElement(String id, int size) {
+    protected APIImageElement(String id, int size) {
         this.id = id;
         this.size = size;
+    }
+
+    protected APIImageElement(String path, String title, String description) {
+        this.path = path;
+        this.title = title;
+        this.description = description;
     }
 
     public String getID() {

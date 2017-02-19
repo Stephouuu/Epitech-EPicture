@@ -4,4 +4,6 @@
 
     <dimen name="image_size_thumbnail">100dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="gridview_photo_size">100dp</dimen>
 </resources>

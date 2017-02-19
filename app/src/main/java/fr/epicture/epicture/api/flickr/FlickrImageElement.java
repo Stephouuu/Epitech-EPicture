@@ -16,7 +16,6 @@ public class FlickrImageElement extends APIImageElement {
     public String secret;
     public String server;
     public String farm;
-    public String title;
     public boolean isPublic;
     public boolean isFriend;
     public boolean isFamily;
@@ -36,6 +35,10 @@ public class FlickrImageElement extends APIImageElement {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public FlickrImageElement(String path, String title, String description) {
+        super(path, title, description);
     }
 
     @Override

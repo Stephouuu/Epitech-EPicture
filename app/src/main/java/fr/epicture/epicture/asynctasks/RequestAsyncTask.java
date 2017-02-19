@@ -8,10 +8,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -27,6 +31,9 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
 
     private static final Integer GET_CONNECTION_TIMEOUT = 3 * SECONDE;
     private static final Integer GET_READ_TIMEOUT = 15 * SECONDE;
+
+    private static final Integer POST_CONNECTION_TIMEOUT = 15 * SECONDE;
+    private static final Integer POST_READ_TIMEOUT = 15 * SECONDE;
 
     private HttpsURLConnection httpsURLConnection;
     protected Integer httpResponseCode = null;
@@ -138,6 +145,83 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
         }
     }
 
+    protected void POSTMultipart(String url, List<Object> params, Map<String, String> header) {
+        String lineEnd = "\r\n";
+        String twoHyphens = "--";
+        String boundary = "---------------------------7d44e178b0434";
+
+        try {
+            this.initHttp(url);
+
+            httpsURLConnection.setConnectTimeout(POST_CONNECTION_TIMEOUT);
+            httpsURLConnection.setReadTimeout(POST_READ_TIMEOUT);
+            httpsURLConnection.setDoInput(true);
+            httpsURLConnection.setDoOutput(true);
+            httpsURLConnection.setUseCaches(false);
+            httpsURLConnection.setRequestMethod("POST");
+            httpsURLConnection.setRequestProperty("Accept-Encoding", "");
+            httpsURLConnection.setRequestProperty("Connection", "Keep-Alive");
+            httpsURLConnection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+
+            for (Map.Entry<String, String> entry : header.entrySet()) {
+                httpsURLConnection.setRequestProperty(entry.getKey(), entry.getValue());
+            }
+
+            DataOutputStream dos = new DataOutputStream(httpsURLConnection.getOutputStream());
+            for(int i = 0; i < params.size(); i++)
+            {
+                Object param = params.get(i);
+                if (param instanceof ParamFile) {
+
+                    ParamFile paramFile = (ParamFile)param;
+                    dos.writeBytes(twoHyphens + boundary + lineEnd);
+                    dos.writeBytes("Content-Type: " + paramFile.getContentType() + lineEnd);
+                    dos.writeBytes("Content-Disposition: form-data; name=" + paramFile.getParamName() + "; filename=" + paramFile.getFileName() + lineEnd);
+                    dos.writeBytes(lineEnd);
+
+                    ByteArrayInputStream fileInputStream = new ByteArrayInputStream(paramFile.getData());
+
+                    byte data[] = new byte[1024];
+                    int count;
+                    while ((count = fileInputStream.read(data)) != -1) {
+                        dos.write(data, 0, count);
+                    }
+                    dos.writeBytes(lineEnd);
+
+                    fileInputStream.close();
+
+                } else if (param instanceof ParamBody) {
+                    ParamBody paramBody = (ParamBody)param;
+                    dos.writeBytes(twoHyphens + boundary + lineEnd);
+                    dos.writeBytes("Content-Disposition: form-data; name=" + paramBody.getName());
+                    dos.writeBytes(lineEnd + lineEnd);
+                    dos.write(paramBody.getContent().getBytes("UTF-8"));
+                    dos.writeBytes(lineEnd);
+                }
+            }
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+
+            dos.flush();
+            dos.close();
+
+            try {
+                this.getResponse();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                this.closeHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void initHttp(String path) throws IOException {
         URL url = new URL(path);
         httpsURLConnection = (HttpsURLConnection)url.openConnection();
@@ -219,7 +303,64 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    public class ParamBody {
+        private String name;
+        private String content;
+
+        public ParamBody(String name, String content) {
+            this.name = name;
+            this.content = content;
+        }
+
+        public String getName() {
+            return this.name;
+        }
+        public String getContent() {
+            return this.content;
+        }
+    }
+
+    /**
+     * object param for multipart
+     */
+    public class ParamFile {
+        //private String name;
+        private String fileName;
+        private String paramName;
+        private byte[] data;
+        private long length;
+        private String contentType;
+
+        public ParamFile(/*String name,*/ String fileName, String paramName, byte[] data, long length, String contentType) {
+            //this.name = name;
+            this.fileName = fileName;
+            this.paramName = paramName;
+            this.data = data;
+            this.length = length;
+            this.contentType = contentType;
+        }
+
+        /*public String getName() {
+            return this.name;
+        }*/
+
+        public String getFileName() {
+            return this.fileName;
+        }
+        public String getParamName() {
+            return this.paramName;
+        }
+        public byte[] getData() {
+            return this.data;
+        }
+        public long getLength() {
+            return this.length;
+        }
+        public String getContentType() {
+            return this.contentType;
+        }
     }
 
 }

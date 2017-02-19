@@ -3,6 +3,8 @@
     package="fr.epicture.epicture">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".utils.BaseApplication"
@@ -14,12 +16,15 @@
         <activity android:name=".activities.StartUpActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".activities.UserPermissionActivity" />
-        <activity android:name=".activities.MainActivity"/>
+        <activity android:name=".activities.MainActivity" />
         <activity android:name=".activities.MyPicturesActivity" />
+        <activity android:name=".activities.AddPictureActivity" />
+        <activity android:name=".activities.UploadImageActivity"></activity>
     </application>
 
 </manifest>

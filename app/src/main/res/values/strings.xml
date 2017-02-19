@@ -6,5 +6,20 @@
 
     <string name="home_page">Home Page</string>
     <string name="my_pictures">My Pictures</string>
+    <string name="add_picture">Add Picture</string>
     <string name="authentification">Authentification</string>
+    <string name="upload">Upload</string>
+
+    <string name="ok">OK</string>
+    <string name="add_image">Add Image</string>
+    <string name="get_photo">Capture photo</string>
+    <string name="get_galerie">Galerie</string>
+
+    <string name="error">Error</string>
+    <string name="error_empty">Empty</string>
+    <string name="error_empty_field">You must fill all fields</string>
+
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="send">Send</string>
 </resources>

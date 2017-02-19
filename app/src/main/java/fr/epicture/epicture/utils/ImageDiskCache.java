@@ -16,7 +16,7 @@ import java.util.Set;
 import fr.epicture.epicture.api.APIImageElement;
 import fr.epicture.epicture.interfaces.ImageDiskCacheInterface;
 import fr.epicture.epicture.interfaces.LoadBitmapInterface;
-import fr.epicture.epicture.requests.ImageRequest;
+import fr.epicture.epicture.requests.DownloadImageRequest;
 
 /**
  * Created by Stephane on 15/02/2017.
@@ -32,7 +32,7 @@ public class ImageDiskCache {
 
     public static void load(@NonNull final Context context,
                             @NonNull final APIImageElement element,
-                            @NonNull ImageDiskCacheInterface listener) {
+                            @NonNull final ImageDiskCacheInterface listener) {
 
         Bitmap bitmap = BitmapCache.getInCache(CACHE_TAG + element.getID() + element.getSize());
         if (bitmap != null && !bitmap.isRecycled()) {
@@ -99,7 +99,7 @@ public class ImageDiskCache {
         }
     }
 
-    private static class WebImageRequestTask extends ImageRequest {
+    private static class WebImageRequestTask extends DownloadImageRequest {
         WebImageRequestTask(@NonNull final Context context,
                             @NonNull final APIImageElement element,
                             @NonNull final ImageDiskCacheInterface listener) {

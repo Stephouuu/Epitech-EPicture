@@ -3,15 +3,13 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/colorPrimary</item>
 
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
 
         <item name="android:windowContentOverlay">@null</item>
-
-        <item name="android:spinnerItemStyle">@style/SpinnerItem</item>
-        <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItem</item>
+        <item name="android:windowBackground">@color/background_100</item>
 
         <!--<item name="colorControlNormal">@color/white100</item>
         <item name="colorControlActivated">@color/white100</item>
@@ -23,17 +21,8 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="customtheme" parent="@android:style/Theme.Light">
-
-    </style>
-
-    <style name="SpinnerItem">
-        <item name="android:textColor">#993399</item>
-        <item name="android:background">@drawable/white_rectangle</item>
-    </style>
-    <style name="SpinnerDropDownItem">
-        <item name="android:textColor">#993399</item>
-        <item name="android:background">@drawable/white_rectangle</item>
-    </style>
+    <color name="background_100">#FFFAFAFA</color>
+    <color name="background_60">#99FAFAFA</color>
+    <color name="background">#F0F0F0</color>
 
 </resources>

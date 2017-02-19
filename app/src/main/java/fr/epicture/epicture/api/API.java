@@ -7,6 +7,7 @@ import java.util.Collection;
 import fr.epicture.epicture.interfaces.AuthentificationInterface;
 import fr.epicture.epicture.interfaces.LoadBitmapInterface;
 import fr.epicture.epicture.interfaces.LoadImageElementInterface;
+import fr.epicture.epicture.interfaces.LoadTextInterface;
 import fr.epicture.epicture.interfaces.LoadUserInfoInterface;
 
 public interface API {
@@ -22,6 +23,7 @@ public interface API {
     void loadUserAvatar(Context context, String id, LoadBitmapInterface callback);
 
     void loadImage(Context context, APIImageElement element, LoadBitmapInterface callback);
+    void uploadImage(Context context, APIAccount user, String path, String title, String description, LoadTextInterface callback);
 
     void getInterestingnessList(Context context, int page, LoadImageElementInterface callback);
     void getMyPictures(Context context, int page, LoadImageElementInterface callback);

@@ -2,14 +2,10 @@ package fr.epicture.epicture.api.flickr.requests;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import fr.epicture.epicture.api.flickr.FlickrAccount;
 import fr.epicture.epicture.api.flickr.FlickrClient;
+import fr.epicture.epicture.api.flickr.utils.FlickrUtils;
 import fr.epicture.epicture.interfaces.LoadTextInterface;
 import fr.epicture.epicture.requests.TextRequest;
 import fr.epicture.epicture.utils.RequestIdentifierGenerator;
@@ -73,25 +69,6 @@ public class UserPhotosRequest extends TextRequest {
                 "per_page=20",
                 "user_id=" + user.id
         };
-        List<String> encodedParams = new ArrayList<>();
-
-        Arrays.sort(params);
-
-        for (int i = 0 ; i < params.length ; i++) {
-            String name = params[i].substring(0, params[i].indexOf('='));
-            String data = params[i].substring(params[i].indexOf('=') + 1);
-            String encoded = StaticTools.OAuthEncode(name + "=") + StaticTools.OAuthEncode(StaticTools.OAuthEncode(data));
-            if (i < params.length - 1) {
-                encoded += StaticTools.OAuthEncode("&");
-            }
-            encodedParams.add(encoded);
-        }
-
-        String part1Encoded = StaticTools.OAuthEncode(part1);
-        String part2Encoded = StaticTools.OAuthEncode(part2);
-        String part3Encoded = TextUtils.join("", encodedParams);
-        String encoded = part1Encoded + "&" + part2Encoded + "&" + part3Encoded;
-        String signature = StaticTools.OAuthEncode(StaticTools.getSignature(encoded, FlickrClient.CONSUMER_SECRET + "&" + user.tokenSecret));
 
         return URL + "?nojsoncallback=1"
                 + "&oauth_nonce=" + random
@@ -100,7 +77,7 @@ public class UserPhotosRequest extends TextRequest {
                 + "&oauth_timestamp=" + unixTime
                 + "&oauth_signature_method=HMAC-SHA1"
                 + "&oauth_token=" + user.token
-                + "&oauth_signature=" + signature
+                + "&oauth_signature=" + FlickrUtils.getURLSignature(part1, part2, params, user.tokenSecret)
                 + "&method=" + METHOD
                 + "&page=" + page
                 + "&per_page=20"

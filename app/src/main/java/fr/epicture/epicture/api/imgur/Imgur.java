@@ -10,11 +10,12 @@ import fr.epicture.epicture.R;
 import fr.epicture.epicture.api.API;
 import fr.epicture.epicture.api.APIAccount;
 import fr.epicture.epicture.api.APIImageElement;
+import fr.epicture.epicture.api.imgur.utils.ImgurUtils;
 import fr.epicture.epicture.interfaces.AuthentificationInterface;
 import fr.epicture.epicture.interfaces.LoadBitmapInterface;
 import fr.epicture.epicture.interfaces.LoadImageElementInterface;
+import fr.epicture.epicture.interfaces.LoadTextInterface;
 import fr.epicture.epicture.interfaces.LoadUserInfoInterface;
-import fr.epicture.epicture.utils.StaticTools;
 
 public class Imgur implements API {
 
@@ -72,8 +73,7 @@ public class Imgur implements API {
 
     @Override
     public void afterUserPermissionRequest(Context context, String urlResponse) {
-        final Map<String, String> params = StaticTools.getQueryMap(urlResponse);
-        // todo save les infos du compte dans la database de l'api
+        final Map<String, String> params = ImgurUtils.getQueryMap(urlResponse);
         listener.onUserPermissionGranted();
     }
 
@@ -93,6 +93,11 @@ public class Imgur implements API {
 
     @Override
     public void loadImage(Context context, APIImageElement element, LoadBitmapInterface callback) {
+
+    }
+
+    @Override
+    public void uploadImage(Context context, APIAccount user, String path, String title, String description, LoadTextInterface callback) {
 
     }
 

@@ -25,8 +25,6 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
 
-    //protected static final String BASE_URL = "https://www.flickr.com/services";
-
     private static final Integer SECONDE = 1000;
 
     private static final Integer GET_CONNECTION_TIMEOUT = 3 * SECONDE;

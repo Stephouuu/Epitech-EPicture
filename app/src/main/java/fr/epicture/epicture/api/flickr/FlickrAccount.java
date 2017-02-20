@@ -21,10 +21,6 @@ public class FlickrAccount extends APIAccount {
     public String location;
     public String description;
 
-
-    //public String fullname;
-    //public String username;
-
     public FlickrAccount(TokenAccess tokenAccess) {
         this.fullname = tokenAccess.fullname;
         this.token = tokenAccess.token;

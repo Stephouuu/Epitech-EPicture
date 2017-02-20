@@ -15,6 +15,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.List;
 import java.util.Timer;
@@ -42,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements ImageListInterfac
     private ActionBarDrawerToggle toggle;
     private CircleImageView profilePic;
     private ImageView profilePicBlurred;
+    private TextView realnameTextView;
+    private TextView usernameTextView;
 
     private ListView drawerList;
     private MainDrawerListAdapter drawerListAdapter;
@@ -59,7 +62,9 @@ public class MainActivity extends AppCompatActivity implements ImageListInterfac
         drawer = (DrawerLayout)findViewById(R.id.main_drawer);
         profilePic = (CircleImageView)findViewById(R.id.main_profilepic);
         profilePicBlurred = (ImageView)findViewById(R.id.main_profilepic_blurred);
-        drawerList = (ListView) findViewById(R.id.drawer_list);
+        drawerList = (ListView)findViewById(R.id.drawer_list);
+        realnameTextView = (TextView)findViewById(R.id.main_realname);
+        usernameTextView = (TextView)findViewById(R.id.main_username);
 
         toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.open, R.string.close);
         toggle.setDrawerIndicatorEnabled(false);
@@ -96,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements ImageListInterfac
         });
         drawerList.setAdapter(drawerListAdapter);
 
-        refreshProfilePicBlurred();
+        refreshProfile();
         refreshFragment();
     }
 
@@ -108,6 +113,17 @@ public class MainActivity extends AppCompatActivity implements ImageListInterfac
 
     @Override
     public void onBackPressed() {
+    }
+
+    private void refreshProfile() {
+        refreshProfilePicBlurred();
+        refreshProfileName();
+    }
+
+    private void refreshProfileName() {
+        APIAccount account = APIManager.getSelectedAPI().getCurrentAccount();
+        realnameTextView.setText(account.realname);
+        usernameTextView.setText(getString(R.string.username, account.username));
     }
 
     private void refreshProfilePicBlurred() {

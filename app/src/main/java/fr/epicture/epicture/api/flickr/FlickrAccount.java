@@ -11,8 +11,6 @@ import fr.epicture.epicture.api.flickr.modele.TokenAccess;
 
 public class FlickrAccount extends APIAccount {
 
-    //public String id;
-    //public String nsid;
     public int dbid;
     public String nsid;
     public String token;
@@ -20,8 +18,6 @@ public class FlickrAccount extends APIAccount {
     public String fullname;
     public String iconserver;
     public String iconfarm;
-    //public String username;
-    public String realname;
     public String location;
     public String description;
 

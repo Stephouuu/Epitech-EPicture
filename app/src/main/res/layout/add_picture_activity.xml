@@ -3,6 +3,7 @@
     android:id="@+id/add_picture_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     android:orientation="vertical">
 
     <android.support.design.widget.AppBarLayout
@@ -28,36 +29,67 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <LinearLayout
-        android:orientation="vertical"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <EditText
-            android:hint="@string/title"
-            android:theme="@style/App_EditTextStyle"
-            android:id="@+id/title"
-            android:gravity="center"
-            android:inputType="text"
+        <LinearLayout
+            android:background="@drawable/rounded_border_top_bottom"
+            android:orientation="vertical"
+            android:layout_margin="12dp"
+            android:padding="12dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
 
-        <ImageView
-            android:contentDescription="@null"
-            android:id="@+id/picture_preview"
-            android:adjustViewBounds="true"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content" />
+            <ImageView
+                android:layout_marginTop="6dp"
+                android:id="@+id/picture_preview"
+                android:contentDescription="@null"
+                android:adjustViewBounds="true"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="300dp" />
 
-        <EditText
-            android:hint="@string/description"
-            android:theme="@style/App_EditTextStyle"
-            android:id="@+id/description"
-            android:gravity="center"
-            android:inputType="text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/background"
+                android:layout_marginTop="18dp" />
 
-    </LinearLayout>
+            <EditText
+                android:hint="@string/title"
+                android:theme="@style/AppTheme.ColorControlPrimary"
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColorHint="@color/hint"
+                android:layout_marginTop="12dp"
+                android:background="@android:color/white"
+                android:inputType="textMultiLine"
+                android:textColor="@color/edittext"
+                android:textSize="@dimen/text_large_size" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/background"
+                android:layout_marginTop="12dp" />
+
+            <EditText
+                android:hint="@string/description"
+                android:theme="@style/AppTheme.ColorControlPrimary"
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColorHint="@color/hint"
+                android:layout_marginTop="12dp"
+                android:background="@android:color/white"
+                android:inputType="textMultiLine"
+                android:textColor="@color/edittext"
+                android:textSize="@dimen/text_large_size"/>
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>

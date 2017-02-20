@@ -7,6 +7,7 @@ public abstract class APIAccount {
     // ========================================================================
 
     public String id;
+    public String realname;
     public String username;
     public String profilePic;
 

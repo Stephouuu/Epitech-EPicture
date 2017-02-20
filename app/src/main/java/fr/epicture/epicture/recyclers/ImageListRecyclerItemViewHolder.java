@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import fr.epicture.epicture.R;
 import fr.epicture.epicture.api.API;
@@ -46,13 +47,17 @@ public class ImageListRecyclerItemViewHolder extends RecyclerView.ViewHolder {
 
     public void refreshImage(APIImageElement element) {
         final ImageView imageView = (ImageView)parent.findViewById(R.id.image);
+        final ProgressBar progressBar = (ProgressBar)parent.findViewById(R.id.download_progress);
+
         imageView.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
 
         API api = APIManager.getSelectedAPI();
         api.loadImage(activity, element, new LoadBitmapInterface() {
             @Override
             public void onFinish(Bitmap bitmap){
                 imageView.setImageBitmap(bitmap);
+                progressBar.setVisibility(View.GONE);
                 imageView.setVisibility(View.VISIBLE);
             }
         });

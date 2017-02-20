@@ -59,12 +59,15 @@ public class AccountOverviewAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return apis.size();
+        return apis.size() + 1;
     }
 
     @Override
     public APIAccount getItem(int i) {
-        return apis.get(i);
+        if (i < apis.size()) {
+            return apis.get(i);
+        }
+        return null;
     }
 
     @Override
@@ -78,40 +81,60 @@ public class AccountOverviewAdapter extends BaseAdapter {
         final APIAccount account = getItem(i);
 
         refreshView(view, account);
-        refreshUsername(view, account.username);
+        refreshUsername(view, account);
         refreshAvatar(view, account);
 
         return view;
     }
 
     private void refreshView(View view, APIAccount account) {
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onAccountClick(account);
-            }
-        });
+        if (account != null) {
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onAccountClick(account);
+                }
+            });
+        } else {
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onAddAccountClick();
+                }
+            });
+        }
     }
 
-    private void refreshUsername(View view, String username) {
-        ((TextView)view.findViewById(R.id.account_name)).setText(username);
+    private void refreshUsername(View view, APIAccount account) {
+        TextView textView = (TextView)view.findViewById(R.id.account_name);
+
+        if (account != null) {
+            textView.setText(account.username);
+        } else {
+            textView.setText(context.getString(R.string.add_account));
+        }
     }
 
     private void refreshAvatar(View view, APIAccount account) {
         final CircleImageView image = (CircleImageView)view.findViewById(R.id.account_avatar);
 
-        image.setImageResource(R.drawable.placeholder);
-        API api = APIManager.getSelectedAPI();
-        api.loadUserAvatar(context, account.username, new LoadBitmapInterface() {
-            @Override
-            public void onFinish(Bitmap bitmap) {
-                image.setImageBitmap(bitmap);
-            }
-        });
+        if (account != null) {
+            image.setImageResource(R.drawable.placeholder);
+            API api = APIManager.getSelectedAPI();
+            api.loadUserAvatar(context, account.username, new LoadBitmapInterface() {
+                @Override
+                public void onFinish(Bitmap bitmap) {
+                    image.setImageBitmap(bitmap);
+                }
+            });
+        } else {
+            image.setImageResource(R.drawable.add_grey);
+        }
     }
 
     public interface Listener {
         void onAccountClick(APIAccount account);
+        void onAddAccountClick();
     }
 
 }

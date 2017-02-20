@@ -30,4 +30,6 @@
 
     <color name="list_selection">#4285f4</color>
     <color name="list_indice">#8e8e8e</color>
+    <color name="hint">#ababab</color>
+
 </resources>

@@ -31,4 +31,9 @@
     <string name="publish_cancel">You are about to cancel your new publication</string>
     <string name="confirm">confirm</string>
     <string name="cancel">cancel</string>
+
+    <string name="add_account">Add Account</string>
+    <string name="accounts">Account(s)</string>
+    <string name="platforms">Platform(s)</string>
+    <string name="username">\@%s</string>
 </resources>

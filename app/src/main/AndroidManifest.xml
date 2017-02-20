@@ -25,7 +25,8 @@
         <activity android:name=".activities.MyPicturesActivity" />
         <activity android:name=".activities.AddPictureActivity" />
         <activity android:name=".activities.UploadImageActivity" />
-        <activity android:name=".activities.LogoutActivity"></activity>
+        <activity android:name=".activities.LogoutActivity" />
+        <activity android:name=".activities.ImageActivity"></activity>
     </application>
 
 </manifest>

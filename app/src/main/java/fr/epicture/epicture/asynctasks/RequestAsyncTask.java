@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,11 +39,18 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
     protected String response;
     protected Bitmap image;
 
+    private Map<String, String> header;
+
     private Context context;
     private boolean running;
 
     public RequestAsyncTask(@NonNull Context context) {
         this.context = context;
+        header = new HashMap<>();
+    }
+
+    protected void addHeader(String key, String value) {
+        header.put(key, value);
     }
 
     public void execute() {
@@ -143,7 +151,7 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
         }
     }
 
-    protected void POSTMultipart(String url, List<Object> params, Map<String, String> header) {
+    protected void POSTMultipart(String url, List<Object> params) {
         String lineEnd = "\r\n";
         String twoHyphens = "--";
         String boundary = "---------------------------7d44e178b0434";

@@ -3,6 +3,7 @@ package fr.epicture.epicture.recyclers;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -34,8 +35,13 @@ public class ImageListRecyclerItemViewHolder extends RecyclerView.ViewHolder {
         return (new ImageListRecyclerItemViewHolder(activity, parent, listener));
     }
 
-    public void refreshView(APIImageElement imageElement) {
-
+    public void refreshView(APIImageElement imageElement, boolean isFooter) {
+        Log.i("footer", isFooter + "");
+        if (isFooter) {
+            parent.findViewById(R.id.footer).setVisibility(View.VISIBLE);
+        } else {
+            parent.findViewById(R.id.footer).setVisibility(View.GONE);
+        }
     }
 
     public void refreshImage(APIImageElement element) {

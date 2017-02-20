@@ -79,7 +79,7 @@ public class ImageListRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             position -= ((header) ? 1 : 0);
             APIImageElement item = getItem(position);
 
-            ((ImageListRecyclerItemViewHolder)holder).refreshView(item);
+            ((ImageListRecyclerItemViewHolder)holder).refreshView(item, position == getBasicItemCount() - 1);
             ((ImageListRecyclerItemViewHolder)holder).refreshImage(item);
         }
     }

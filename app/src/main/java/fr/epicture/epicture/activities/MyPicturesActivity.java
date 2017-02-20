@@ -10,14 +10,17 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -36,16 +39,15 @@ import fr.epicture.epicture.api.APIManager;
 import fr.epicture.epicture.fragments.ImageListFragment;
 import fr.epicture.epicture.interfaces.ImageListInterface;
 import fr.epicture.epicture.interfaces.LoadImageElementInterface;
+import fr.epicture.epicture.interfaces.RetractableToolbarInterface;
 import fr.epicture.epicture.utils.StaticTools;
 
-public class MyPicturesActivity extends AppCompatActivity implements ImageListInterface {
+public class MyPicturesActivity extends AppCompatActivity implements ImageListInterface, RetractableToolbarInterface {
 
     private static final String TEMP_FOLDER = "temp";
 
     private final static String PHOTO_PREFIX = "photo";
     private final static String PHOTO_SUFFIX = ".jpg";
-
-    //private static final String EXTRA_PHOTOS = "photos";
 
     private static final int REQUEST_ADD_PICTURE = 1;
     private static final int REQUEST_CODE_PHOTO_CAPTURE = 2;
@@ -56,15 +58,6 @@ public class MyPicturesActivity extends AppCompatActivity implements ImageListIn
     private PhotoAppsAdapter publishAdapter;
 
     private ImageListFragment imageListFragment;
-
-    /*public static ArrayList<String> getPhotos(Intent intent) {
-        ArrayList<String> strings = intent.getStringArrayListExtra(EXTRA_PHOTOS);
-        return strings;
-    }
-
-    public static void setPhotos(Intent intent, ArrayList<String> value) {
-        intent.putStringArrayListExtra(EXTRA_PHOTOS, value);
-    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -260,17 +253,12 @@ public class MyPicturesActivity extends AppCompatActivity implements ImageListIn
             Toast.makeText(this, R.string.error, Toast.LENGTH_LONG).show();
             return;
         }
-        /*ArrayList<String> photos = getPhotos(getIntent());
-        if (photos == null) {
-            photos = new ArrayList<>();
-        }*/
         String photoToUpload = file.getAbsolutePath();
         rotateImage(photoToUpload);
 
         final String ext = photoToUpload.substring(photoToUpload.lastIndexOf('.'));
         if ((ext.equalsIgnoreCase(".jpeg") || ext.equalsIgnoreCase(".png")
                 || ext.equalsIgnoreCase(".jpg")) && !uri.toString().contains("video")) {
-            //photos.add(photoToUpload);
             Intent intent = new Intent(this, AddPictureActivity.class);
             AddPictureActivity.setPhotos(intent, photoToUpload);
             startActivityForResult(intent, REQUEST_ADD_PICTURE);
@@ -285,17 +273,13 @@ public class MyPicturesActivity extends AppCompatActivity implements ImageListIn
             exif = new ExifInterface(photo);
 
             int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0);
-            Log.d("EXIF", "Exif: " + orientation);
             Matrix matrix = new Matrix();
             if (orientation == 6) {
                 matrix.postRotate(90);
-                Log.d("EXIF", "Exif: " + orientation);
             } else if (orientation == 3) {
                 matrix.postRotate(180);
-                Log.d("EXIF", "Exif: " + orientation);
             } else if (orientation == 8) {
                 matrix.postRotate(270);
-                Log.d("EXIF", "Exif: " + orientation);
             }
             if (orientation != 0) {
                 File file = new File(photo);
@@ -311,4 +295,23 @@ public class MyPicturesActivity extends AppCompatActivity implements ImageListIn
         }
     }
 
+    @Override
+    public void onHideToolbar() {
+        AppBarLayout toolbar = (AppBarLayout)findViewById(R.id.appbarlayout);
+        toolbar.animate().setDuration(200).translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_item);
+        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) fab.getLayoutParams();
+        int fabBottomMargin = lp.bottomMargin;
+        fab.animate().translationY(fab.getHeight() + fabBottomMargin).setInterpolator(new AccelerateInterpolator(2)).start();
+    }
+
+    @Override
+    public void onShowToolbar() {
+        AppBarLayout toolbar = (AppBarLayout)findViewById(R.id.appbarlayout);
+        toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_item);
+        fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+    }
 }

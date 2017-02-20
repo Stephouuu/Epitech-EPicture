@@ -37,7 +37,7 @@ public class StartUpActivity extends AppCompatActivity implements Authentificati
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.oauth_linker_activity);
+        setContentView(R.layout.startup_activity);
 
         APIManager.addAPI(new Flickr(getApplicationContext()));
         APIManager.addAPI(new Imgur());
@@ -89,6 +89,10 @@ public class StartUpActivity extends AppCompatActivity implements Authentificati
         });
 
         APIManager.setSelectedAPI(APIManager.getAPIByIndex(0));
+    }
+
+    @Override
+    public void onBackPressed() {
     }
 
     private void refreshAccountList() {

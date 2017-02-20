@@ -59,6 +59,7 @@
             <FrameLayout
                 android:id="@+id/main_profilepic_container"
                 android:layout_width="match_parent"
+                android:layout_marginBottom="18dp"
                 android:layout_height="265dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView
@@ -75,11 +76,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <TextView
-                    android:id="@+id/drawer_mypictures"
-                    android:text="@string/my_pictures"
+                <ListView
+                    android:background="@android:color/white"
+                    android:id="@+id/drawer_list"
+                    android:dividerHeight="0dp"
+                    android:divider="@null"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="match_parent" />
 
             </LinearLayout>
 

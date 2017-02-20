@@ -49,7 +49,7 @@ public class UserPermissionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.flickr_user_permission_activity);
+        setContentView(R.layout.user_permission_activity);
 
         url = getExtraUrl(getIntent());
         searchFor = getExtraSearchfor(getIntent());
@@ -59,7 +59,7 @@ public class UserPermissionActivity extends AppCompatActivity {
 
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        webSettings.setDomStorageEnabled(true);
+        //webSettings.setDomStorageEnabled(true);
         //webSettings.setSaveFormData(false);
 
         start();

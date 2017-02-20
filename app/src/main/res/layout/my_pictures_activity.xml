@@ -1,78 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/background_100"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <FrameLayout
+        android:id="@+id/fragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"/>
 
-        <FrameLayout
-            android:id="@+id/fragment"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbarlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:elevation="10dp">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="?attr/actionBarSize"
+            app:elevation="10dp">
 
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/appbarlayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
+            <TextView
+                android:id="@+id/title"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize">
+                android:layout_height="wrap_content"
+                android:text="@string/my_pictures"
+                android:textColor="@android:color/white"
+                android:textSize="20sp" />
 
-                <TextView
-                    android:id="@+id/title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/my_pictures"
-                    android:textColor="@android:color/white"
-                    android:textSize="20sp" />
+        </android.support.v7.widget.Toolbar>
 
-            </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
 
-        </android.support.design.widget.AppBarLayout>
+    <LinearLayout
+        android:id="@+id/add_image_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black60"
+        android:visibility="gone"
+        android:gravity="center">
 
         <LinearLayout
-            android:id="@+id/add_image_parent"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/black60"
-            android:visibility="gone"
-            android:gravity="center">
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/dialog_holo_light_frame"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="300dp"
+            <TextView
+                android:id="@+id/publish_popup_title"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:drawable/dialog_holo_light_frame"
-                android:orientation="vertical">
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="14dp"
+                android:text="@string/add_image"
+                android:textColor="@color/black100"
+                android:textSize="20sp"/>
 
-                <TextView
-                    android:id="@+id/publish_popup_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="14dp"
-                    android:text="@string/add_image"
-                    android:textColor="@color/black100"
-                    android:textSize="20sp"/>
-
-                <ListView
-                    android:id="@+id/publish_popup_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:choiceMode="singleChoice"
-                    android:divider="@null"
-                    android:dividerHeight="0dp"/>
-
-            </LinearLayout>
+            <ListView
+                android:id="@+id/publish_popup_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:choiceMode="singleChoice"
+                android:divider="@null"
+                android:dividerHeight="0dp"/>
 
         </LinearLayout>
 
-    </FrameLayout>
+    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/add_item"
@@ -81,7 +80,6 @@
         android:layout_width="wrap_content"
         android:scaleType="center"
         android:src="@mipmap/add"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"/>
+        android:layout_gravity="bottom|end"/>
 
-</RelativeLayout>
+</FrameLayout>

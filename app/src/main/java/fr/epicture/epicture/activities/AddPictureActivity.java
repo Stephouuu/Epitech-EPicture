@@ -1,6 +1,7 @@
 package fr.epicture.epicture.activities;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,8 +28,7 @@ public class AddPictureActivity extends AppCompatActivity {
 
     @NonNull
     public static String getPhotos(@NonNull Intent intent) {
-        String photo = intent.getStringExtra(EXTRA_PHOTOS);
-        return photo;
+        return intent.getStringExtra(EXTRA_PHOTOS);
     }
 
     public static void setPhotos(@NonNull Intent intent, @Nullable String value) {
@@ -61,6 +61,12 @@ public class AddPictureActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onSupportNavigateUp() {
+        confirmFinish(true);
+        return false;
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_UPLOAD) {
             if (resultCode == RESULT_OK) {
@@ -82,16 +88,34 @@ public class AddPictureActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.send) {
             if (validPhotos() && validTitle() && validDescription()) {
                 submitContentRequest();
-            } else {
+            } /*else {
                 new AlertDialog.Builder(this)
                         .setTitle(R.string.app_name)
                         .setMessage(R.string.error_empty_field)
                         .setPositiveButton(R.string.ok, null)
                         .show();
-            }
+            }*/
             return true;
         }
         return false;
+    }
+
+    private void confirmFinish(boolean finish) {
+        if (finish) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.app_name)
+                    .setMessage(R.string.publish_cancel)
+                    .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            confirmFinish(false);
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
+        } else {
+            finish();
+        }
     }
 
     private boolean validPhotos() {

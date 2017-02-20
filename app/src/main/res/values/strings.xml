@@ -22,4 +22,13 @@
     <string name="title">Title</string>
     <string name="description">Description</string>
     <string name="send">Send</string>
+
+    <string name="logout">Logout</string>
+
+    <string name="upload_in_progress">Upload in progress, please wait</string>
+    <string name="logout_in_progress">Logout in progress, please wait</string>
+
+    <string name="publish_cancel">You are about to cancel your new publication</string>
+    <string name="confirm">confirm</string>
+    <string name="cancel">cancel</string>
 </resources>

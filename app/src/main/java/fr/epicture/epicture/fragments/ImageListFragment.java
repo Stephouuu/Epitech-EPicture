@@ -3,7 +3,6 @@ package fr.epicture.epicture.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,8 +11,6 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 
 import java.util.List;
 
@@ -22,6 +19,7 @@ import fr.epicture.epicture.adapters.ImageListRecyclerAdapter;
 import fr.epicture.epicture.api.APIImageElement;
 import fr.epicture.epicture.interfaces.ImageListAdapterInterface;
 import fr.epicture.epicture.interfaces.ImageListInterface;
+import fr.epicture.epicture.interfaces.RetractableToolbarInterface;
 import fr.epicture.epicture.utils.HidingScrollListener;
 import fr.epicture.epicture.utils.StaticTools;
 
@@ -32,6 +30,7 @@ public class ImageListFragment extends Fragment {
 
     private boolean init;
     private int page;
+    private boolean retractableToolbar;
 
     private ImageListRecyclerAdapter adapter;
 
@@ -41,6 +40,7 @@ public class ImageListFragment extends Fragment {
 
         init = false;
         page = 1;
+        retractableToolbar = getActivity() instanceof RetractableToolbarInterface;
     }
 
     @Override
@@ -78,7 +78,7 @@ public class ImageListFragment extends Fragment {
             }
         });
 
-        adapter = new ImageListRecyclerAdapter(getActivity(), true, new ImageListAdapterInterface() {
+        adapter = new ImageListRecyclerAdapter(getActivity(), retractableToolbar, new ImageListAdapterInterface() {
             @Override
             public void onImageClick() {
 
@@ -89,14 +89,16 @@ public class ImageListFragment extends Fragment {
         recyclerView.addOnScrollListener(new HidingScrollListener() {
             @Override
             public void onHide() {
-                AppBarLayout toolbar = (AppBarLayout) getActivity().findViewById(R.id.appbarlayout);
-                toolbar.animate().setDuration(200).translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+                if (retractableToolbar) {
+                    ((RetractableToolbarInterface) getActivity()).onHideToolbar();
+                }
             }
 
             @Override
             public void onShow() {
-                AppBarLayout toolbar = (AppBarLayout) getActivity().findViewById(R.id.appbarlayout);
-                toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+                if (retractableToolbar) {
+                    ((RetractableToolbarInterface) getActivity()).onShowToolbar();
+                }
             }
         });
 

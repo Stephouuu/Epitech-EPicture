@@ -26,17 +26,26 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <FrameLayout
+    <LinearLayout
+        android:orientation="vertical"
+        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <ProgressBar
+            android:theme="@style/AppTheme.ColorControlPrimary"
             android:id="@+id/upload_progress"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center"
+            android:layout_marginBottom="12dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:indeterminate="true" />
 
-    </FrameLayout>
+        <TextView
+            android:text="@string/upload_in_progress"
+            android:textColor="@color/grey_light_100"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -88,13 +88,7 @@ public class AddPictureActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.send) {
             if (validPhotos() && validTitle() && validDescription()) {
                 submitContentRequest();
-            } /*else {
-                new AlertDialog.Builder(this)
-                        .setTitle(R.string.app_name)
-                        .setMessage(R.string.error_empty_field)
-                        .setPositiveButton(R.string.ok, null)
-                        .show();
-            }*/
+            }
             return true;
         }
         return false;

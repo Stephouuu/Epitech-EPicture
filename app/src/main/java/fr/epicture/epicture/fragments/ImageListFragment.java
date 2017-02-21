@@ -34,6 +34,9 @@ public class ImageListFragment extends Fragment {
 
     private ImageListRecyclerAdapter adapter;
 
+    private String textToSearch;
+    private String userID;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,15 +76,15 @@ public class ImageListFragment extends Fragment {
                 int cLast = manager.findLastCompletelyVisibleItemPosition();
 
                 if (cLast == adapter.getItemCount() - 1 && page > 1) {
-                    ((ImageListInterface)getActivity()).onRequestImageList(page);
+                    ((ImageListInterface)getActivity()).onRequestImageList(page, textToSearch, userID);
                 }
             }
         });
 
         adapter = new ImageListRecyclerAdapter(getActivity(), retractableToolbar, new ImageListAdapterInterface() {
             @Override
-            public void onImageClick() {
-
+            public void onImageClick(APIImageElement element) {
+                ((ImageListInterface)getActivity()).onImageClick(element);
             }
         });
         recyclerView.setAdapter(adapter);
@@ -105,6 +108,15 @@ public class ImageListFragment extends Fragment {
         return view;
     }
 
+    public void setSearch(String userid, String text) {
+        this.userID = userid;
+        this.textToSearch = text;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -118,7 +130,7 @@ public class ImageListFragment extends Fragment {
     public void refresh() {
         page = 1;
         adapter.clear();
-        ((ImageListInterface)getActivity()).onRequestImageList(page);
+        ((ImageListInterface)getActivity()).onRequestImageList(page, textToSearch, userID);
     }
 
     public void refreshList(@Nullable List<APIImageElement> imageElementList) {

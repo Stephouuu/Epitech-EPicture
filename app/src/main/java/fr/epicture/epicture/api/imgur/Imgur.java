@@ -52,11 +52,11 @@ public class Imgur implements API {
     }
 
     public void addAccount(ImgurAccount user) {
-        accountByID.put(user.id, user);
+        accountByID.put(user.getID(), user);
     }
 
     public void removeAccount(ImgurAccount user) {
-        accountByID.remove(user.id);
+        accountByID.remove(user.getID());
     }
 
     private AuthentificationInterface listener;
@@ -108,6 +108,11 @@ public class Imgur implements API {
 
     @Override
     public void getMyPictures(Context context, int page, LoadImageElementInterface callback) {
+
+    }
+
+    @Override
+    public void search(Context context, String search, String userid, int page, LoadImageElementInterface callback) {
 
     }
 

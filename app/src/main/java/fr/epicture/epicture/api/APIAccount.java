@@ -7,9 +7,8 @@ public abstract class APIAccount {
     // ========================================================================
 
     public String id;
-    public String realname;
-    public String username;
-    public String profilePic;
+    protected String realname;
+    protected String username;
 
     // ========================================================================
     // CONSTRUCTOR
@@ -18,7 +17,6 @@ public abstract class APIAccount {
     protected APIAccount() {
         id = "undefined";
         username = "undefined";
-        this.profilePic = "";
     }
 
     public APIAccount(String accountId, String username) throws InstantiationException {
@@ -26,36 +24,25 @@ public abstract class APIAccount {
             throw new InstantiationException();
         this.id = accountId;
         this.username = username;
-        this.profilePic = "";
     }
 
     // ========================================================================
     // METHODS
     // ========================================================================
 
-    /*public String getAccountId() {
-        return accountId;
+
+    public abstract String getID();
+
+    public String getRealname() {
+        return realname;
     }
 
     public String getUsername() {
         return username;
     }
 
-    protected void setAccountId(String id) {
-        accountId = id;
-    }
-
-    protected void setUsername(String username) {
-        this.username = username;
-    }*/
-
     @Override
     public boolean equals(Object o) {
-        /*if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        APIAccount that = (APIAccount) o;
-        return accountId == that.accountId;*/
-
         return o instanceof APIAccount
                 && ((APIAccount)o).id.equals(id)
                 && ((APIAccount)o).username.equals(username);

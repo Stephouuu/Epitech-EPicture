@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/image_activity"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/image_element_activity"
+    android:orientation="vertical"
+    android:background="@color/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -27,18 +29,8 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-        android:id="@+id/imageview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <include layout="@layout/imagelist_item" />
 
-    <ProgressBar
-        android:theme="@style/AppTheme.ColorControlPrimary"
-        android:id="@+id/progress"
-        android:layout_gravity="center"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginBottom="12dp"
-        android:indeterminate="true" />
 
-</FrameLayout>
+
+</LinearLayout>

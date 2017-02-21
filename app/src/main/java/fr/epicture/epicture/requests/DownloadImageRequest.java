@@ -84,6 +84,9 @@ public class DownloadImageRequest extends RequestAsyncTask {
                         StaticTools.saveBitmapToJpegFile(bitmap, file);
                         image.recycle();
                         break;
+                    default:
+                        StaticTools.saveBitmapToJpegFile(image, file);
+                        break;
                 }
             } catch (Exception e) {
                 e.printStackTrace();

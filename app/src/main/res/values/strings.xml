@@ -36,4 +36,6 @@
     <string name="accounts">Account(s)</string>
     <string name="platforms">Platform(s)</string>
     <string name="username">\@%s</string>
+
+    <string name="search">Search</string>
 </resources>

@@ -21,7 +21,6 @@ public class FlickrDatabase {
     private static final int VERSION_BDD = 1;
     public static final String BDD_NAME = "flickr_account.db";
 
-
     private Context context;
     private SQLiteDatabase database;
     private FlickrSQLite mySQLite;
@@ -49,8 +48,7 @@ public class FlickrDatabase {
             values.put(FlickrSQLite.ACCOUNT_COL_TOKEN, item.token);
             values.put(FlickrSQLite.ACCOUNT_COL_TOKEN_SECRET, item.tokenSecret);
             values.put(FlickrSQLite.ACCOUNT_COL_NSID, item.nsid);
-            values.put(FlickrSQLite.ACCOUNT_COL_USERNAME, item.username);
-            values.put(FlickrSQLite.ACCOUNT_COL_PROFILEPIC, item.profilePic);
+            values.put(FlickrSQLite.ACCOUNT_COL_USERNAME, item.getUsername());
             item.dbid = (int) database.insert(FlickrSQLite.TABLE_NAME, null, values);
         }
         return (item);
@@ -62,8 +60,7 @@ public class FlickrDatabase {
         values.put(FlickrSQLite.ACCOUNT_COL_TOKEN, item.token);
         values.put(FlickrSQLite.ACCOUNT_COL_TOKEN_SECRET, item.tokenSecret);
         values.put(FlickrSQLite.ACCOUNT_COL_NSID, item.nsid);
-        values.put(FlickrSQLite.ACCOUNT_COL_USERNAME, item.username);
-        values.put(FlickrSQLite.ACCOUNT_COL_PROFILEPIC, item.profilePic);
+        values.put(FlickrSQLite.ACCOUNT_COL_USERNAME, item.getUsername());
 
         return (database.update(FlickrSQLite.TABLE_NAME, values, FlickrSQLite.ACCOUNT_COL_DB_ID + " = " + item.dbid, null));
     }
@@ -99,8 +96,6 @@ public class FlickrDatabase {
         item.tokenSecret = cursor.getString(FlickrSQLite.ACCOUNT_NUM_COL_TOKEN_SECRET);
         item.nsid = cursor.getString(FlickrSQLite.ACCOUNT_NUM_COL_NSID);
         item.username = cursor.getString(FlickrSQLite.ACCOUNT_NUM_COL_USERNAME);
-        FlickrAccount ret = new FlickrAccount(item);
-        ret.profilePic = cursor.getString(FlickrSQLite.ACCOUNT_NUM_COL_PROFILEPIC);
-        return (ret);
+        return (new FlickrAccount(item));
     }
 }

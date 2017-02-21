@@ -62,4 +62,9 @@ public class ImgurAccount extends APIAccount {
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
+
+    @Override
+    public String getID() {
+        return id;
+    }
 }

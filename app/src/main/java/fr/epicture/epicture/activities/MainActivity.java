@@ -9,6 +9,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
@@ -112,6 +115,25 @@ public class MainActivity extends AppCompatActivity implements ImageListInterfac
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.search) {
+            Intent intent = new Intent(this, SearchActivity.class);
+            //API api = APIManager.getSelectedAPI();
+            //SearchActivity.setUserID(intent, api.getCurrentAccount().getID());
+            startActivity(intent);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public void onBackPressed() {
     }
 
@@ -122,15 +144,15 @@ public class MainActivity extends AppCompatActivity implements ImageListInterfac
 
     private void refreshProfileName() {
         APIAccount account = APIManager.getSelectedAPI().getCurrentAccount();
-        realnameTextView.setText(account.realname);
-        usernameTextView.setText(getString(R.string.username, account.username));
+        realnameTextView.setText(account.getUsername());
+        usernameTextView.setText(getString(R.string.username, account.getUsername()));
     }
 
     private void refreshProfilePicBlurred() {
         API api = APIManager.getSelectedAPI();
         APIAccount user = api.getCurrentAccount();
 
-        api.loadUserAvatar(this, user.username, new LoadBitmapInterface() {
+        api.loadUserAvatar(this, user.getID(), new LoadBitmapInterface() {
             @Override
             public void onFinish(Bitmap bitmap) {
                 profilePic.setImageBitmap(bitmap);
@@ -159,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements ImageListInterfac
     }
 
     @Override
-    public void onRequestImageList(int page) {
+    public void onRequestImageList(int page, String search, String userID) {
         API api = APIManager.getSelectedAPI();
         api.getInterestingnessList(this, page, new LoadImageElementInterface() {
             @Override
@@ -170,6 +192,13 @@ public class MainActivity extends AppCompatActivity implements ImageListInterfac
             }
         });
         imageListFragment.refreshList(null);
+    }
+
+    @Override
+    public void onImageClick(APIImageElement element) {
+        Intent intent = new Intent(this, ImageElementActivity.class);
+        ImageElementActivity.setImageElement(intent, element);
+        startActivity(intent);
     }
 
     @Override

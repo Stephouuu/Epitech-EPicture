@@ -2,17 +2,22 @@ package fr.epicture.epicture.api.imgur;
 
 import android.content.Context;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import fr.epicture.epicture.api.APIAccount;
+import fr.epicture.epicture.api.APIImageElement;
 import fr.epicture.epicture.api.imgur.requests.GalleryRequest;
 import fr.epicture.epicture.api.imgur.requests.RefreshTokenRequest;
 import fr.epicture.epicture.api.imgur.requests.UserInformationRequest;
 import fr.epicture.epicture.api.imgur.utils.ImgurUtils;
+import fr.epicture.epicture.interfaces.LoadImageElementInterface;
 import fr.epicture.epicture.interfaces.LoadTextInterface;
 
 public class ImgurAccount extends APIAccount {
@@ -42,10 +47,21 @@ public class ImgurAccount extends APIAccount {
     // METHODS
     // ========================================================================
 
-    public void getMainGallery(Context context, int page)
+    public static void getMainGallery(Context context, int page, LoadImageElementInterface loadImageElementInterface)
     {
         new GalleryRequest(context, "hot", "viral", page, text -> {
-            final JSONObject jsonObject =
+            try {
+                final JSONArray jsonArray = new JSONObject(text).getJSONArray("data");
+                final List<APIImageElement> imgurImageElements = new ArrayList<>();
+                for (int i = 0; i < jsonArray.length(); i++)
+                    imgurImageElements.add(new ImgurImageElement(((JSONObject) jsonArray.get(i))));
+                loadImageElementInterface.onFinish(imgurImageElements, !imgurImageElements.isEmpty());
+            }
+            catch (JSONException | ClassCastException e)
+            {
+                System.err.println("Error : Unable to convert request data to json.");
+                e.printStackTrace();
+            }
         }).execute();
     }
 
@@ -98,5 +114,14 @@ public class ImgurAccount extends APIAccount {
 
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public AccessToken getAccessToken() {
+        return accessToken;
+    }
+
+    @Override
+    public String getID() {
+        return id;
     }
 }

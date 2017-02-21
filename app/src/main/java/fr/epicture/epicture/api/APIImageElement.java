@@ -1,6 +1,7 @@
 package fr.epicture.epicture.api;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -10,13 +11,15 @@ import java.io.File;
  * Created by Stephane on 18/02/2017.
  */
 
-public abstract class APIImageElement {
+public abstract class APIImageElement implements Parcelable {
 
     private static final String DIR_THUMBNAIL = "thumbnail";
     private static final String DIR_PREVIEW = "preview";
+    private static final String DIR_ORIGINAL = "original";
 
     public static final int SIZE_THUMBNAIL = 1;
     public static final int SIZE_PREVIEW = 2;
+    public static final int SIZE_ORIGINAL = 3;
 
     private String id;
     private int size;
@@ -53,7 +56,7 @@ public abstract class APIImageElement {
         this.id = id;
     }
 
-    protected void setSize(int size) {
+    public void setSize(int size) {
         this.size = size;
     }
 
@@ -77,6 +80,9 @@ public abstract class APIImageElement {
                     break;
                 case SIZE_PREVIEW:
                     ret = path + File.separator + DIR_PREVIEW + id + ".jpg";
+                    break;
+                case SIZE_ORIGINAL:
+                    ret = path + File.separator + DIR_ORIGINAL + id + ".jpg";
                     break;
             }
         }

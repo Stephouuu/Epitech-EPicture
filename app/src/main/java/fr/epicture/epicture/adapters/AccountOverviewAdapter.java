@@ -109,7 +109,7 @@ public class AccountOverviewAdapter extends BaseAdapter {
         TextView textView = (TextView)view.findViewById(R.id.account_name);
 
         if (account != null) {
-            textView.setText(account.username);
+            textView.setText(account.getUsername());
         } else {
             textView.setText(context.getString(R.string.add_account));
         }
@@ -121,7 +121,7 @@ public class AccountOverviewAdapter extends BaseAdapter {
         if (account != null) {
             image.setImageResource(R.drawable.placeholder);
             API api = APIManager.getSelectedAPI();
-            api.loadUserAvatar(context, account.username, new LoadBitmapInterface() {
+            api.loadUserAvatar(context, account.getID(), new LoadBitmapInterface() {
                 @Override
                 public void onFinish(Bitmap bitmap) {
                     image.setImageBitmap(bitmap);

@@ -1,5 +1,8 @@
 package fr.epicture.epicture.api.flickr;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONObject;
 
 import fr.epicture.epicture.api.APIImageElement;
@@ -50,7 +53,62 @@ public class FlickrImageElement extends APIImageElement {
         else if (getSize() == SIZE_PREVIEW) {
             strSize = "_z";
         }
+        else if (getSize() == SIZE_ORIGINAL) {
+            strSize = "_h";
+        }
         return String.format(URL, farm, server, getID(), secret, strSize);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(getID());
+        dest.writeInt(getSize());
+        dest.writeString(path);
+        dest.writeString(title);
+        dest.writeString(description);
+        dest.writeString(owner);
+        dest.writeString(secret);
+        dest.writeString(server);
+        dest.writeString(secret);
+        dest.writeString(farm);
+        dest.writeInt(isPublic?1:0);
+        dest.writeInt(isFriend?1:0);
+        dest.writeInt(isFamily?1:0);
+
+    }
+
+    public static final Parcelable.Creator<FlickrImageElement> CREATOR = new Parcelable.Creator<FlickrImageElement>() {
+
+        @Override
+        public FlickrImageElement createFromParcel(Parcel in) {
+            return new FlickrImageElement(in);
+        }
+
+        @Override
+        public FlickrImageElement[] newArray(int size) {
+            return new FlickrImageElement[size];
+        }
+    };
+
+    private FlickrImageElement(Parcel in) {
+        setID(in.readString());
+        setSize(in.readInt());
+        path = in.readString();
+        title = in.readString();
+        description = in.readString();
+        owner = in.readString();
+        secret = in.readString();
+        server = in.readString();
+        secret = in.readString();
+        farm = in.readString();
+        isPublic = in.readInt() == 1;
+        isFriend = in.readInt() == 1;
+        isFamily = in.readInt() == 1;
     }
 
 }

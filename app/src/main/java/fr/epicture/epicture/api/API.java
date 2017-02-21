@@ -28,6 +28,8 @@ public interface API {
     void getInterestingnessList(Context context, int page, LoadImageElementInterface callback);
     void getMyPictures(Context context, int page, LoadImageElementInterface callback);
 
+    void search(Context context, String search, String userid, int page, LoadImageElementInterface callback);
+
     void setCurrentAccount(APIAccount account);
     APIAccount getCurrentAccount();
     Collection<APIAccount> getAccounts();

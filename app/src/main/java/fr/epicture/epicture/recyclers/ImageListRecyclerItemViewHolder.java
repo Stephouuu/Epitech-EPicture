@@ -43,6 +43,13 @@ public class ImageListRecyclerItemViewHolder extends RecyclerView.ViewHolder {
         } else {
             parent.findViewById(R.id.footer).setVisibility(View.GONE);
         }
+
+        parent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onImageClick(imageElement);
+            }
+        });
     }
 
     public void refreshImage(APIImageElement element) {

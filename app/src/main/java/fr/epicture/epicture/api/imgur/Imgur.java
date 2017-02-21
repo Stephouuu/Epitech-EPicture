@@ -32,7 +32,9 @@ public class Imgur implements API {
     // FIELDS
     // ========================================================================
 
+    private String currentAccount = null;
     private final Map<String, APIAccount> accountByID = new HashMap();
+    private AuthentificationInterface listener;
 
     // ========================================================================
     // CONSTRUCTOR
@@ -45,21 +47,23 @@ public class Imgur implements API {
     // METHODS
     // ========================================================================
 
+    private void loadAccount()
+    {
 
-    @Override
-    public Collection<APIAccount> getAccounts() {
-        return accountByID.values();
     }
 
     public void addAccount(ImgurAccount imgurAccount) {
         accountByID.put(imgurAccount.id, imgurAccount);
     }
 
+    @Override
+    public Collection<APIAccount> getAccounts() {
+        return accountByID.values();
+    }
+
     public void removeAccount(ImgurAccount imgurAccount) {
         accountByID.remove(imgurAccount.id);
     }
-
-    private AuthentificationInterface listener;
 
     @Override
     public void setAuthentificationListener(AuthentificationInterface listener) {
@@ -75,10 +79,6 @@ public class Imgur implements API {
     public void afterUserPermissionRequest(Context context, String urlResponse) {
         final Map<String, String> params = ImgurUtils.getQueryMap(urlResponse);
         listener.onUserPermissionGranted();
-    }
-
-    //@Override
-    public void loadAccounts() {
     }
 
     @Override
@@ -103,7 +103,7 @@ public class Imgur implements API {
 
     @Override
     public void getInterestingnessList(Context context, int page, LoadImageElementInterface callback) {
-
+        ImgurAccount.getMainGallery(context, page, callback);
     }
 
     @Override
@@ -112,13 +112,18 @@ public class Imgur implements API {
     }
 
     @Override
-    public void setCurrentAccount(APIAccount account) {
+    public void search(Context context, String search, String userid, int page, LoadImageElementInterface callback) {
 
     }
 
     @Override
+    public void setCurrentAccount(APIAccount account) {
+        currentAccount = account.getID();
+    }
+
+    @Override
     public APIAccount getCurrentAccount() {
-        return null;
+        return accountByID.get(currentAccount);
     }
 
     @Override

@@ -30,17 +30,13 @@ public class FlickrSQLite extends SQLiteOpenHelper {
     public static final String ACCOUNT_COL_USERNAME = "USERNAME";
     public static final int ACCOUNT_NUM_COL_USERNAME = 5;
 
-    public static final String ACCOUNT_COL_PROFILEPIC = "PROFILEPIC";
-    public static final int ACCOUNT_NUM_COL_PROFILEPIC = 6;
-
     private static final String TODO_TABLE = "CREATE TABLE " + TABLE_NAME + " ("
             + ACCOUNT_COL_DB_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + ACCOUNT_COL_FULLNAME + " TEXT NOT NULL, "
             + ACCOUNT_COL_TOKEN + " TEXT NOT NULL, "
             + ACCOUNT_COL_TOKEN_SECRET + " TEXT NOT NULL, "
             + ACCOUNT_COL_NSID + " TEXT NOT NULL, "
-            + ACCOUNT_COL_USERNAME + " TEXT NOT NULL, "
-            + ACCOUNT_COL_PROFILEPIC + " TEXT NOT NULL);";
+            + ACCOUNT_COL_USERNAME + " TEXT NOT NULL);";
 
     public FlickrSQLite(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);

@@ -16,6 +16,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
@@ -128,7 +131,26 @@ public class MyPicturesActivity extends AppCompatActivity implements ImageListIn
     }
 
     @Override
-    public void onRequestImageList(int page) {
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.search) {
+            Intent intent = new Intent(this, SearchActivity.class);
+            API api = APIManager.getSelectedAPI();
+            SearchActivity.setUserID(intent, api.getCurrentAccount().getID());
+            startActivity(intent);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onRequestImageList(int page, String search, String userID) {
         API api = APIManager.getSelectedAPI();
         api.getMyPictures(this, page, new LoadImageElementInterface() {
             @Override
@@ -138,6 +160,13 @@ public class MyPicturesActivity extends AppCompatActivity implements ImageListIn
                 }
             }
         });
+    }
+
+    @Override
+    public void onImageClick(APIImageElement element) {
+        Intent intent = new Intent(this, ImageElementActivity.class);
+        ImageElementActivity.setImageElement(intent, element);
+        startActivity(intent);
     }
 
     private void onAddButtonClick() {

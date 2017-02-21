@@ -23,6 +23,7 @@ import fr.epicture.epicture.api.flickr.modele.TokenRequest;
 import fr.epicture.epicture.api.flickr.requests.GetAccessTokenRequest;
 import fr.epicture.epicture.api.flickr.requests.GetRequestTokenRequest;
 import fr.epicture.epicture.api.flickr.requests.InterestingnessRequest;
+import fr.epicture.epicture.api.flickr.requests.SearchRequest;
 import fr.epicture.epicture.api.flickr.requests.UploadPictureRequest;
 import fr.epicture.epicture.api.flickr.requests.UserInformationRequest;
 import fr.epicture.epicture.api.flickr.requests.UserPhotosRequest;
@@ -49,6 +50,7 @@ public class Flickr implements API {
     private InterestingnessRequest interestingnessRequest;
     private UserPhotosRequest userPhotosRequest;
     private UploadPictureRequest uploadPictureRequest;
+    private SearchRequest searchRequest;
 
     private AuthentificationInterface authListener;
     private TokenRequest tokenRequest;
@@ -96,7 +98,7 @@ public class Flickr implements API {
                         TokenAccess tokenAccess = FlickrUtils.retrieveTokenAccess(text);
                         FlickrAccount user = new FlickrAccount(tokenAccess);
                         database.insertAccount(user);
-                        Accounts.put(user.username, user);
+                        Accounts.put(user.getUsername(), user);
                         authListener.onUserPermissionGranted();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -115,7 +117,7 @@ public class Flickr implements API {
                 public void onFinish(String text) {
                     try {
                         user.setData(new JSONObject(text));
-                        callback.onFinish(user.username, user);
+                        callback.onFinish(user.getUsername(), user);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -146,7 +148,7 @@ public class Flickr implements API {
     @Override
     public void uploadImage(Context context, APIAccount user, String path, String title, String description, LoadTextInterface callback) {
         if (!isRequestingUploadPicture()) {
-            FlickrAccount flickrAccount = Accounts.get(user.username);
+            FlickrAccount flickrAccount = Accounts.get(user.getUsername());
             FlickrImageElement element = new FlickrImageElement(path, title, description);
             uploadPictureRequest = new UploadPictureRequest(context, flickrAccount, element, new LoadTextInterface() {
                 @Override
@@ -215,8 +217,37 @@ public class Flickr implements API {
     }
 
     @Override
+    public void search(Context context, String search, String userid, int page, LoadImageElementInterface callback) {
+        if (!isRequestingSearch()) {
+            FlickrAccount account = Accounts.get(userid);
+            searchRequest = new SearchRequest(context, account, search, page, new LoadTextInterface() {
+                @Override
+                public void onFinish(String text) {
+                    searchRequest = null;
+                    try {
+                        JSONObject jsonObject = new JSONObject(text);
+                        int maxPage = jsonObject.getJSONObject("photos").getInt("pages");
+                        if (maxPage < page) {
+                            callback.onFinish(null, true);
+                        }
+                        List<APIImageElement> datas = new ArrayList<>();
+                        JSONArray jsonArray = jsonObject.getJSONObject("photos").getJSONArray("photo");
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject current = jsonArray.getJSONObject(i);
+                            datas.add(new FlickrImageElement(current, APIImageElement.SIZE_PREVIEW));
+                        }
+                        callback.onFinish(datas, false);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
     public void setCurrentAccount(APIAccount account) {
-        currentAccount = Accounts.get(account.username);
+        currentAccount = Accounts.get(account.getUsername());
     }
 
     @Override
@@ -247,7 +278,7 @@ public class Flickr implements API {
     private void loadAccounts() {
         List<FlickrAccount> accounts = database.getAccounts();
         for (FlickrAccount account : accounts) {
-            Accounts.put(account.username, account);
+            Accounts.put(account.getUsername(), account);
         }
     }
 
@@ -269,6 +300,10 @@ public class Flickr implements API {
 
     private boolean isRequestingUploadPicture() {
         return (uploadPictureRequest != null);
+    }
+
+    private boolean isRequestingSearch() {
+        return searchRequest != null;
     }
 
 }

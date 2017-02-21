@@ -45,4 +45,8 @@ public class FlickrAccount extends APIAccount {
         }
     }
 
+    @Override
+    public String getID() {
+        return username;
+    }
 }

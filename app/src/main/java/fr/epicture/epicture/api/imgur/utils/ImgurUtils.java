@@ -1,11 +1,8 @@
 package fr.epicture.epicture.api.imgur.utils;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
-
-/**
- * Created by Stephane on 19/02/2017.
- */
 
 public class ImgurUtils {
 
@@ -25,4 +22,8 @@ public class ImgurUtils {
         return map;
     }
 
+    public static long getTime()
+    {
+        return new Timestamp(System.currentTimeMillis()).getTime();
+    }
 }

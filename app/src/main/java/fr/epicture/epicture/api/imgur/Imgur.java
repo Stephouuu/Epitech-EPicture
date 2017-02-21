@@ -23,8 +23,8 @@ public class Imgur implements API {
     // STATIC FIELDS
     // ========================================================================
 
-    private static final String CLIENT_ID = "a754d8ce4c94e1c";
-    private static final String CLIENT_SECRET = "e6020ba810e1e7d85a756a26a666d8ea3b60a6f1";
+    public static final String CLIENT_ID = "a754d8ce4c94e1c";
+    public static final String CLIENT_SECRET = "e6020ba810e1e7d85a756a26a666d8ea3b60a6f1";
     private static final String authorizeLink = "https://api.imgur.com/oauth2/authorize?client_id=" + CLIENT_ID + "&response_type=token";
     private static final String name = "Imgur";
 
@@ -51,12 +51,12 @@ public class Imgur implements API {
         return accountByID.values();
     }
 
-    public void addAccount(ImgurAccount user) {
-        accountByID.put(user.id, user);
+    public void addAccount(ImgurAccount imgurAccount) {
+        accountByID.put(imgurAccount.id, imgurAccount);
     }
 
-    public void removeAccount(ImgurAccount user) {
-        accountByID.remove(user.id);
+    public void removeAccount(ImgurAccount imgurAccount) {
+        accountByID.remove(imgurAccount.id);
     }
 
     private AuthentificationInterface listener;

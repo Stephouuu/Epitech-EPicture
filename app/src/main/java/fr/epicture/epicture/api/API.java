@@ -20,7 +20,9 @@ public interface API {
     void afterUserPermissionRequest(Context context, String urlResponse);
 
     void loadUserInformation(Context context, LoadUserInfoInterface callback);
-    void loadUserAvatar(Context context, String id, LoadBitmapInterface callback);
+    void loadUserInformation(Context context, String id, LoadUserInfoInterface callback);
+    //void loadUserAvatar(Context context, String id, LoadBitmapInterface callback);
+    void loadUserAvatar(Context context, APIAccount account, LoadBitmapInterface callback);
 
     void loadImage(Context context, APIImageElement element, LoadBitmapInterface callback);
     void uploadImage(Context context, APIAccount user, String path, String title, String description, LoadTextInterface callback);

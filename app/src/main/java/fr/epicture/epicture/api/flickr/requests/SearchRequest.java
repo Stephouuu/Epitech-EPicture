@@ -76,6 +76,7 @@ public class SearchRequest extends TextRequest {
             list.add("page=" + page);
             list.add("per_page=20");
             list.add("text=" + search);
+            list.add("extras=description,date_upload");
             list.add("api_key=" + FlickrClient.CONSUMER_KEY);
         }
 
@@ -86,6 +87,7 @@ public class SearchRequest extends TextRequest {
                 + "&text=" + search
                 + "&method=" + METHOD
                 + "&page=" + page
+                + "&extras=description,date_upload,tags,owner_name"
                 + "&per_page=20";
 
         if (user != null) {

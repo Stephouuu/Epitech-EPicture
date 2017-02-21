@@ -47,5 +47,7 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'net.danlew:android.joda:2.7.2'
     compile 'jp.wasabeef:blurry:2.0.3'
+    compile 'org.apmem.tools:layouts:1.8@aar'
+
     testCompile 'junit:junit:4.12'
 }

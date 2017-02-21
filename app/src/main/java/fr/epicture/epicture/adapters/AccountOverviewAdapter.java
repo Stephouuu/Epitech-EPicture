@@ -121,7 +121,7 @@ public class AccountOverviewAdapter extends BaseAdapter {
         if (account != null) {
             image.setImageResource(R.drawable.placeholder);
             API api = APIManager.getSelectedAPI();
-            api.loadUserAvatar(context, account.getID(), new LoadBitmapInterface() {
+            api.loadUserAvatar(context, account, new LoadBitmapInterface() {
                 @Override
                 public void onFinish(Bitmap bitmap) {
                     image.setImageBitmap(bitmap);

@@ -6,7 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +17,6 @@ import fr.epicture.epicture.api.imgur.requests.RefreshTokenRequest;
 import fr.epicture.epicture.api.imgur.requests.UserInformationRequest;
 import fr.epicture.epicture.api.imgur.utils.ImgurUtils;
 import fr.epicture.epicture.interfaces.LoadImageElementInterface;
-import fr.epicture.epicture.interfaces.LoadTextInterface;
 
 public class ImgurAccount extends APIAccount {
 
@@ -123,5 +121,20 @@ public class ImgurAccount extends APIAccount {
     @Override
     public String getID() {
         return id;
+    }
+
+    @Override
+    public String getNSID() {
+        return null;
+    }
+
+    @Override
+    public String getIconServer() {
+        return null;
+    }
+
+    @Override
+    public String getFarm() {
+        return null;
     }
 }

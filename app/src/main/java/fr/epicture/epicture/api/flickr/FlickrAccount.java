@@ -29,6 +29,10 @@ public class FlickrAccount extends APIAccount {
         this.username = tokenAccess.username;
     }
 
+    public FlickrAccount(JSONObject jsonObject) {
+        setData(jsonObject);
+    }
+
     public void setData(JSONObject jsonObject) {
         try {
             id = jsonObject.getJSONObject("person").getString("id");
@@ -36,10 +40,17 @@ public class FlickrAccount extends APIAccount {
 
             nsid = jsonObject.getJSONObject("person").getString("nsid");
             iconserver = jsonObject.getJSONObject("person").getString("iconserver");
-            iconfarm = jsonObject.getJSONObject("person").getString("iconfarm");
-            realname = jsonObject.getJSONObject("person").getJSONObject("realname").getString("_content");
-            location = jsonObject.getJSONObject("person").getJSONObject("location").getString("_content");
-            description = jsonObject.getJSONObject("person").getJSONObject("description").getString("_content");
+            iconfarm = jsonObject.optJSONObject("person").getString("iconfarm");
+            try {
+                location = jsonObject.optJSONObject("person").optJSONObject("location").optString("_content");
+            } catch (Exception e) {}
+            try {
+                description = jsonObject.optJSONObject("person").getJSONObject("description").getString("_content");
+            } catch (Exception e) {}
+            try {
+                realname = jsonObject.optJSONObject("person").optJSONObject("realname").optString("_content");
+            } catch (Exception e) {}
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -48,5 +59,20 @@ public class FlickrAccount extends APIAccount {
     @Override
     public String getID() {
         return username;
+    }
+
+    @Override
+    public String getNSID() {
+        return nsid;
+    }
+
+    @Override
+    public String getIconServer() {
+        return iconserver;
+    }
+
+    @Override
+    public String getFarm() {
+        return iconfarm;
     }
 }

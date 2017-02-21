@@ -11,6 +11,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class ImageListFragment extends Fragment {
 
     private SwipeRefreshLayout swipe;
     private RecyclerView recyclerView;
+    private TextView noItem;
 
     private boolean init;
     private int page;
@@ -52,6 +54,7 @@ public class ImageListFragment extends Fragment {
 
         swipe = (SwipeRefreshLayout)view.findViewById(R.id.imagelist_swipe);
         recyclerView = (RecyclerView)view.findViewById(R.id.imagelist_recyclerview);
+        noItem = (TextView)view.findViewById(R.id.noitem);
 
         swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -139,7 +142,15 @@ public class ImageListFragment extends Fragment {
             ++page;
         }
         refreshSwipe(imageElementList == null);
-
+        if (imageElementList != null) {
+            if (imageElementList.isEmpty()) {
+                noItem.setVisibility(View.VISIBLE);
+            } else {
+                noItem.setVisibility(View.GONE);
+            }
+        } else {
+            noItem.setVisibility(View.GONE);
+        }
     }
 
     private void refreshSwipe(final boolean loading) {

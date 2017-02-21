@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements ImageListInterfac
         API api = APIManager.getSelectedAPI();
         APIAccount user = api.getCurrentAccount();
 
-        api.loadUserAvatar(this, user.getID(), new LoadBitmapInterface() {
+        api.loadUserAvatar(this, user, new LoadBitmapInterface() {
             @Override
             public void onFinish(Bitmap bitmap) {
                 profilePic.setImageBitmap(bitmap);

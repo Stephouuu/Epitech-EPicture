@@ -127,10 +127,30 @@ public class Flickr implements API {
     }
 
     @Override
-    public void loadUserAvatar(Context context, String id, LoadBitmapInterface callback) {
-        FlickrAccount user = Accounts.get(id);
-        if (user.iconserver != null) {
-            FlickyAvatarElement element = new FlickyAvatarElement(user.nsid, user.iconserver, user.iconfarm);
+    public void loadUserInformation(Context context, String id, LoadUserInfoInterface callback) {
+        new UserInformationRequest(context, id, new LoadTextInterface() {
+            @Override
+            public void onFinish(String text) {
+                try {
+                    FlickrAccount user = new FlickrAccount(new JSONObject(text));
+                    callback.onFinish(user.getUsername(), user);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void loadUserAvatar(Context context, APIAccount account, LoadBitmapInterface callback) {
+        FlickrAccount user = Accounts.get(account.getID());
+        if (user != null) {
+            if (user.iconserver != null) {
+                FlickyAvatarElement element = new FlickyAvatarElement(user.nsid, user.iconserver, user.iconfarm);
+                loadImage(context, element, callback);
+            }
+        } else {
+            FlickyAvatarElement element = new FlickyAvatarElement(account.getNSID(), account.getIconServer(), account.getFarm());
             loadImage(context, element, callback);
         }
     }

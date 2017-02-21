@@ -15,7 +15,6 @@ public class FlickrImageElement extends APIImageElement {
 
     private static final String URL = "https://farm%1$s.staticflickr.com/%2$s/%3$s_%4$s%5$s.jpg";
 
-    public String owner;
     public String secret;
     public String server;
     public String farm;
@@ -27,14 +26,18 @@ public class FlickrImageElement extends APIImageElement {
         try {
             setID(jsonObject.getString("id"));
             setSize(size);
-            owner = jsonObject.getString("owner");
-            secret = jsonObject.getString("secret");
-            server = jsonObject.getString("server");
-            farm = jsonObject.getString("farm");
-            title = jsonObject.getString("title");
-            isPublic = jsonObject.getInt("ispublic") != 0;
-            isFriend = jsonObject.getInt("isfriend") != 0;
-            isFamily = jsonObject.getInt("isfamily") != 0;
+            date = jsonObject.getLong("dateupload");
+            description = jsonObject.getJSONObject("description").optString("_content");
+            tags = jsonObject.optString("tags");
+            ownerid = jsonObject.optString("owner");
+            ownername = jsonObject.optString("ownername");
+            secret = jsonObject.optString("secret");
+            server = jsonObject.optString("server");
+            farm = jsonObject.optString("farm");
+            title = jsonObject.optString("title");
+            isPublic = jsonObject.optInt("ispublic") != 0;
+            isFriend = jsonObject.optInt("isfriend") != 0;
+            isFamily = jsonObject.optInt("isfamily") != 0;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -71,7 +74,9 @@ public class FlickrImageElement extends APIImageElement {
         dest.writeString(path);
         dest.writeString(title);
         dest.writeString(description);
-        dest.writeString(owner);
+        dest.writeString(tags);
+        dest.writeString(ownerid);
+        dest.writeString(ownername);
         dest.writeString(secret);
         dest.writeString(server);
         dest.writeString(secret);
@@ -79,7 +84,6 @@ public class FlickrImageElement extends APIImageElement {
         dest.writeInt(isPublic?1:0);
         dest.writeInt(isFriend?1:0);
         dest.writeInt(isFamily?1:0);
-
     }
 
     public static final Parcelable.Creator<FlickrImageElement> CREATOR = new Parcelable.Creator<FlickrImageElement>() {
@@ -101,7 +105,9 @@ public class FlickrImageElement extends APIImageElement {
         path = in.readString();
         title = in.readString();
         description = in.readString();
-        owner = in.readString();
+        tags = in.readString();
+        ownerid = in.readString();
+        ownername = in.readString();
         secret = in.readString();
         server = in.readString();
         secret = in.readString();

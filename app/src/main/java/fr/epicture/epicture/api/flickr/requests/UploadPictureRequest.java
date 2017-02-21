@@ -87,7 +87,7 @@ public class UploadPictureRequest extends UploadRequest {
 
         Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
 
-        /*float height = (float) bitmap.getHeight();
+        float height = (float) bitmap.getHeight();
         float width = (float) bitmap.getWidth();
         float ratio = height / width;
 
@@ -102,7 +102,7 @@ public class UploadPictureRequest extends UploadRequest {
                 height = 1440.0f * ratio;
             }
         }
-        bitmap = Bitmap.createScaledBitmap(bitmap, (int) width, (int) height, true);*/
+        bitmap = Bitmap.createScaledBitmap(bitmap, (int) width, (int) height, true);
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);

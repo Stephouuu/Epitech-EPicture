@@ -23,7 +23,8 @@ public class InterestingnessRequest extends TextRequest {
                 + "&page=" + page
                 + "&api_key=" + FlickrClient.CONSUMER_KEY
                 + "&method=" + METHOD
-                + "&per_page=20",
+                + "&per_page=20"
+                + "&extras=description,date_upload,tags,owner_name",
                 listener);
         execute();
     }

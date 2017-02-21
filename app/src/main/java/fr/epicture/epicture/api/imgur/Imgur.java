@@ -87,7 +87,12 @@ public class Imgur implements API {
     }
 
     @Override
-    public void loadUserAvatar(Context context, String id, LoadBitmapInterface callback) {
+    public void loadUserInformation(Context context, String id, LoadUserInfoInterface callback) {
+
+    }
+
+    @Override
+    public void loadUserAvatar(Context context, APIAccount user, LoadBitmapInterface callback) {
 
     }
 

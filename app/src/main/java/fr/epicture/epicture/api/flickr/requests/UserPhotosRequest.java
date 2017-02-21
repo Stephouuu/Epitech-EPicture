@@ -66,6 +66,7 @@ public class UserPhotosRequest extends TextRequest {
                 "oauth_token=" + user.token,
                 "method=" + METHOD,
                 "page=" + page,
+                "extras=description,date_upload,tags,owner_name",
                 "per_page=20",
                 "user_id=" + user.id
         };
@@ -80,6 +81,7 @@ public class UserPhotosRequest extends TextRequest {
                 + "&oauth_signature=" + FlickrUtils.getURLSignature(part1, part2, params, user.tokenSecret)
                 + "&method=" + METHOD
                 + "&page=" + page
+                + "&extras=description,date_upload,tags,owner_name"
                 + "&per_page=20"
                 + "&user_id=" + user.id;
     }

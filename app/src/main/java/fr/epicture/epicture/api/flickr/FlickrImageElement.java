@@ -63,6 +63,22 @@ public class FlickrImageElement extends APIImageElement {
     }
 
     @Override
+    public float getWidthSize() {
+        if (getSize() == SIZE_PREVIEW) {
+            return 640;
+        }
+        return 0;
+    }
+
+    @Override
+    public float getHeightSize() {
+        if (getSize() == SIZE_PREVIEW) {
+            return 640;
+        }
+        return 0;
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }
@@ -71,6 +87,7 @@ public class FlickrImageElement extends APIImageElement {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(getID());
         dest.writeInt(getSize());
+        dest.writeLong(date);
         dest.writeString(path);
         dest.writeString(title);
         dest.writeString(description);
@@ -102,6 +119,7 @@ public class FlickrImageElement extends APIImageElement {
     private FlickrImageElement(Parcel in) {
         setID(in.readString());
         setSize(in.readInt());
+        date = in.readLong();
         path = in.readString();
         title = in.readString();
         description = in.readString();

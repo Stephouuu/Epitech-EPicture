@@ -36,6 +36,16 @@ public class FlickyAvatarElement extends APIImageElement {
     }
 
     @Override
+    public float getWidthSize() {
+        return 0;
+    }
+
+    @Override
+    public float getHeightSize() {
+        return 0;
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }

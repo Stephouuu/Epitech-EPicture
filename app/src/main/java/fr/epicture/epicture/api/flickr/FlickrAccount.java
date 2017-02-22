@@ -41,15 +41,9 @@ public class FlickrAccount extends APIAccount {
             nsid = jsonObject.getJSONObject("person").getString("nsid");
             iconserver = jsonObject.getJSONObject("person").getString("iconserver");
             iconfarm = jsonObject.optJSONObject("person").getString("iconfarm");
-            try {
-                location = jsonObject.optJSONObject("person").optJSONObject("location").optString("_content");
-            } catch (Exception e) {}
-            try {
-                description = jsonObject.optJSONObject("person").getJSONObject("description").getString("_content");
-            } catch (Exception e) {}
-            try {
-                realname = jsonObject.optJSONObject("person").optJSONObject("realname").optString("_content");
-            } catch (Exception e) {}
+            try {location = jsonObject.optJSONObject("person").optJSONObject("location").optString("_content");} catch (Exception e) {}
+            try {description = jsonObject.optJSONObject("person").getJSONObject("description").getString("_content");} catch (Exception e) {}
+            try {realname = jsonObject.optJSONObject("person").optJSONObject("realname").optString("_content");} catch (Exception e) {}
 
         } catch (Exception e) {
             e.printStackTrace();

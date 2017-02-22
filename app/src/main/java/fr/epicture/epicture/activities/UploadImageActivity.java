@@ -9,6 +9,7 @@ import fr.epicture.epicture.R;
 import fr.epicture.epicture.api.API;
 import fr.epicture.epicture.api.APIManager;
 import fr.epicture.epicture.interfaces.LoadTextInterface;
+import fr.epicture.epicture.utils.BitmapCache;
 
 public class UploadImageActivity extends AppCompatActivity {
 
@@ -64,6 +65,7 @@ public class UploadImageActivity extends AppCompatActivity {
 
     private void upload() {
         API api = APIManager.getSelectedAPI();
+        BitmapCache.deleteAllCache();
         api.uploadImage(this, api.getCurrentAccount(), path, title, description, new LoadTextInterface() {
             @Override
             public void onFinish(String text) {

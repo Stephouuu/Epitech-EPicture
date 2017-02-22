@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import java.io.File;
 
 import fr.epicture.epicture.R;
+import fr.epicture.epicture.utils.BitmapCache;
 
 public class AddPictureActivity extends AppCompatActivity {
 
@@ -70,6 +71,7 @@ public class AddPictureActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_UPLOAD) {
             if (resultCode == RESULT_OK) {
+                BitmapCache.deleteAllCache();
                 setResult(RESULT_OK);
                 finish();
             }

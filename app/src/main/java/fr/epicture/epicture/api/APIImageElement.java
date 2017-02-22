@@ -107,5 +107,7 @@ public abstract class APIImageElement implements Parcelable {
     }
 
     public abstract String getURL();
+    public abstract float getWidthSize();
+    public abstract float getHeightSize();
 
 }

@@ -89,6 +89,11 @@ public class ImageListFragment extends Fragment {
             public void onImageClick(APIImageElement element) {
                 ((ImageListInterface)getActivity()).onImageClick(element);
             }
+
+            @Override
+            public void onImageDelete(APIImageElement element) {
+                refresh();
+            }
         });
         recyclerView.setAdapter(adapter);
 
@@ -116,10 +121,6 @@ public class ImageListFragment extends Fragment {
         this.textToSearch = text;
     }
 
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -142,12 +143,8 @@ public class ImageListFragment extends Fragment {
             ++page;
         }
         refreshSwipe(imageElementList == null);
-        if (imageElementList != null) {
-            if (imageElementList.isEmpty()) {
-                noItem.setVisibility(View.VISIBLE);
-            } else {
-                noItem.setVisibility(View.GONE);
-            }
+        if (adapter.getItemCount() == 0) {
+            noItem.setVisibility(View.VISIBLE);
         } else {
             noItem.setVisibility(View.GONE);
         }

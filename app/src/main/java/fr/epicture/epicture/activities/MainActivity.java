@@ -125,8 +125,6 @@ public class MainActivity extends AppCompatActivity implements ImageListInterfac
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.search) {
             Intent intent = new Intent(this, SearchActivity.class);
-            //API api = APIManager.getSelectedAPI();
-            //SearchActivity.setUserID(intent, api.getCurrentAccount().getID());
             startActivity(intent);
             return true;
         }

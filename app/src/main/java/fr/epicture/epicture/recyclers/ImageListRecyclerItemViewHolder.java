@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -17,6 +18,7 @@ import fr.epicture.epicture.api.APIImageElement;
 import fr.epicture.epicture.api.APIManager;
 import fr.epicture.epicture.interfaces.ImageListAdapterInterface;
 import fr.epicture.epicture.interfaces.LoadBitmapInterface;
+import fr.epicture.epicture.interfaces.LoadTextInterface;
 import fr.epicture.epicture.interfaces.LoadUserInfoInterface;
 import fr.epicture.epicture.utils.DateTimeManager;
 
@@ -58,15 +60,27 @@ public class ImageListRecyclerItemViewHolder extends RecyclerView.ViewHolder {
 
     public void refreshImage(APIImageElement element) {
         final ImageView imageView = (ImageView)parent.findViewById(R.id.image);
+        final View imageContainer = parent.findViewById(R.id.image_container);
         final ProgressBar progressBar = (ProgressBar)parent.findViewById(R.id.download_progress);
+        final float height = element.getHeightSize();
 
         imageView.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
+
+        DisplayMetrics screen = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(screen);
+
+        if (height > 0) {
+            imageContainer.getLayoutParams().width = screen.widthPixels;
+            imageContainer.getLayoutParams().height = (int)height;
+            imageContainer.requestLayout();
+        }
 
         API api = APIManager.getSelectedAPI();
         api.loadImage(activity, element, new LoadBitmapInterface() {
             @Override
             public void onFinish(Bitmap bitmap){
+
                 imageView.setImageBitmap(bitmap);
                 progressBar.setVisibility(View.GONE);
                 imageView.setVisibility(View.VISIBLE);
@@ -92,6 +106,19 @@ public class ImageListRecyclerItemViewHolder extends RecyclerView.ViewHolder {
         final ImageView ownerPicture = (ImageView)parent.findViewById(R.id.owner_picture);
 
         ownerName.setText(element.ownername);
+
+        parent.findViewById(R.id.header_container).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                API api = APIManager.getSelectedAPI();
+                api.deletePhoto(activity, element.getID(), api.getCurrentAccount().getID(), new LoadTextInterface() {
+                    @Override
+                    public void onFinish(String text) {
+                        listener.onImageDelete(element);
+                    }
+                });
+            }
+        });
 
         if (element.ownerid.equals(APIManager.getSelectedAPI().getCurrentAccount().id)) {
             parent.findViewById(R.id.expand).setVisibility(View.VISIBLE);

@@ -20,7 +20,8 @@
 
             <TextView
                 android:id="@+id/picture_title"
-                android:text="@string/add_picture"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
@@ -31,10 +32,46 @@
     </android.support.design.widget.AppBarLayout>
 
     <ScrollView
+        android:fillViewport="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include layout="@layout/imagelist_item" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <include layout="@layout/imagelist_item" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="12dp"
+                android:background="@color/background" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ProgressBar
+                    android:visibility="gone"
+                    android:theme="@style/AppTheme.ColorControlPrimary"
+                    android:id="@+id/comments_progress"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp"
+                    android:layout_gravity="center"
+                    android:indeterminate="true" />
+
+                <LinearLayout
+                    android:id="@+id/comments_container"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </FrameLayout>
+
+        </LinearLayout>
 
     </ScrollView>
 

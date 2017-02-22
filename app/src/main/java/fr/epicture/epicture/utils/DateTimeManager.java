@@ -31,19 +31,6 @@ public class DateTimeManager {
     public static String getUserFriendlyDateTime(Context context, long ms) {
         String ret = "null";
 
-        /*try {
-            Date date = new Date(ms * 1000L);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
-            ret = sdf.format(date);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-
-
-        /*String stringYear = String.valueOf(year);
-        String stringMonth = getMonth(month);
-        String stringDay = getDay(day);*/
-
         try {
             Date date = new Date(ms * 1000L);
             DateTime dateTime = new DateTime(date.getTime());
@@ -89,7 +76,7 @@ public class DateTimeManager {
     }
 
     public static String getMonth(int month) {
-        return (MonthArray[month]);
+        return (MonthArray[month - 1]);
     }
 
     public static String getYear(int year) {

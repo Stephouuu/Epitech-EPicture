@@ -27,7 +27,7 @@ public class LogoutActivity extends AppCompatActivity {
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
-        }, 2000);
+        }, 1000);
 
     }
 }

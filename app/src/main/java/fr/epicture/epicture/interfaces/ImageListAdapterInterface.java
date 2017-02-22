@@ -9,5 +9,6 @@ import fr.epicture.epicture.api.APIImageElement;
 public interface ImageListAdapterInterface {
 
     void onImageClick(APIImageElement element);
+    void onImageDelete(APIImageElement element);
 
 }

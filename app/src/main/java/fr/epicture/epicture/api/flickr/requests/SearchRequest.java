@@ -3,6 +3,7 @@ package fr.epicture.epicture.api.flickr.requests;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +34,6 @@ public class SearchRequest extends TextRequest {
         this.user = user;
         this.search = search;
         this.page = page;
-
-        //Log.i("search", "text: " + search + " userid: " + user.getID());
 
         try {
             setUrl(getURL());
@@ -76,7 +75,7 @@ public class SearchRequest extends TextRequest {
             list.add("page=" + page);
             list.add("per_page=20");
             list.add("text=" + search);
-            list.add("extras=description,date_upload");
+            list.add("extras=description,date_upload,tags,owner_name");
             list.add("api_key=" + FlickrClient.CONSUMER_KEY);
         }
 
@@ -84,7 +83,7 @@ public class SearchRequest extends TextRequest {
                 + "?nojsoncallback=1"
                 + "&api_key=" + FlickrClient.CONSUMER_KEY
                 + "&format=json"
-                + "&text=" + search
+                + "&text=" + URLEncoder.encode(search, "UTF-8")
                 + "&method=" + METHOD
                 + "&page=" + page
                 + "&extras=description,date_upload,tags,owner_name"

@@ -48,6 +48,7 @@ dependencies {
     compile 'net.danlew:android.joda:2.7.2'
     compile 'jp.wasabeef:blurry:2.0.3'
     compile 'org.apmem.tools:layouts:1.8@aar'
+    compile 'com.github.michaelye.easydialog:easydialog:1.4'
 
     testCompile 'junit:junit:4.12'
 }

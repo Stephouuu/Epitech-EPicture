@@ -63,4 +63,9 @@
         <item name="colorControlHighlight">@color/colorPrimary75</item>
     </style>
 
+    <style name="Theme.CustomDialog" parent="@android:style/Theme.Translucent.NoTitleBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
 </resources>

@@ -9,10 +9,12 @@ import java.util.Map;
 import fr.epicture.epicture.R;
 import fr.epicture.epicture.api.API;
 import fr.epicture.epicture.api.APIAccount;
+import fr.epicture.epicture.api.APICommentElement;
 import fr.epicture.epicture.api.APIImageElement;
 import fr.epicture.epicture.api.imgur.utils.ImgurUtils;
 import fr.epicture.epicture.interfaces.AuthentificationInterface;
 import fr.epicture.epicture.interfaces.LoadBitmapInterface;
+import fr.epicture.epicture.interfaces.LoadCommentElementInterface;
 import fr.epicture.epicture.interfaces.LoadImageElementInterface;
 import fr.epicture.epicture.interfaces.LoadTextInterface;
 import fr.epicture.epicture.interfaces.LoadUserInfoInterface;
@@ -97,6 +99,11 @@ public class Imgur implements API {
     }
 
     @Override
+    public void loadUserAvatar(Context context, APICommentElement commentElement, LoadBitmapInterface callback) {
+
+    }
+
+    @Override
     public void loadImage(Context context, APIImageElement element, LoadBitmapInterface callback) {
 
     }
@@ -117,7 +124,17 @@ public class Imgur implements API {
     }
 
     @Override
+    public void getComments(Context context, String photoid, LoadCommentElementInterface callback) {
+
+    }
+
+    @Override
     public void search(Context context, String search, String userid, int page, LoadImageElementInterface callback) {
+
+    }
+
+    @Override
+    public void deletePhoto(Context context, String photoid, String userid, LoadTextInterface callback) {
 
     }
 

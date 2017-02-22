@@ -8,7 +8,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import fr.epicture.epicture.api.APIImageElement;
-import fr.epicture.epicture.api.flickr.FlickrImageElement;
 
 public class ImgurImageElement extends APIImageElement {
     private long dateTime;
@@ -100,6 +99,16 @@ public class ImgurImageElement extends APIImageElement {
     @Override
     public String getURL() {
         return url;
+    }
+
+    @Override
+    public float getWidthSize() {
+        return 0;
+    }
+
+    @Override
+    public float getHeightSize() {
+        return 0;
     }
 
     @Override

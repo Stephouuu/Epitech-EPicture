@@ -2,14 +2,19 @@ package fr.epicture.epicture.api.imgur;
 
 import android.content.Context;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import fr.epicture.epicture.R;
 import fr.epicture.epicture.api.API;
 import fr.epicture.epicture.api.APIAccount;
 import fr.epicture.epicture.api.APIImageElement;
+import fr.epicture.epicture.api.imgur.database.ImgurDatabase;
+import fr.epicture.epicture.api.imgur.requests.RefreshTokenRequest;
 import fr.epicture.epicture.api.imgur.utils.ImgurUtils;
 import fr.epicture.epicture.interfaces.AuthentificationInterface;
 import fr.epicture.epicture.interfaces.LoadBitmapInterface;
@@ -33,23 +38,28 @@ public class Imgur implements API {
     // ========================================================================
 
     private String currentAccount = null;
-    private final Map<String, APIAccount> accountByID = new HashMap();
+    private final Map<String, ImgurAccount> accountByID = new HashMap();
+    private final ImgurDatabase database;
     private AuthentificationInterface listener;
 
     // ========================================================================
     // CONSTRUCTOR
     // ========================================================================
 
-    public Imgur() {
+    public Imgur(Context context) {
+        this.database = new ImgurDatabase(context);
+        this.database.open();
+        loadAccount();
     }
 
     // ========================================================================
     // METHODS
     // ========================================================================
 
-    private void loadAccount()
-    {
-
+    private void loadAccount() {
+        final List<ImgurAccount> accounts = database.getAccounts();
+        for (ImgurAccount imgurAccount : accounts)
+            addAccount(imgurAccount);
     }
 
     public void addAccount(ImgurAccount imgurAccount) {
@@ -58,7 +68,7 @@ public class Imgur implements API {
 
     @Override
     public Collection<APIAccount> getAccounts() {
-        return accountByID.values();
+        return new ArrayList<>(accountByID.values());
     }
 
     public void removeAccount(ImgurAccount imgurAccount) {
@@ -77,13 +87,22 @@ public class Imgur implements API {
 
     @Override
     public void afterUserPermissionRequest(Context context, String urlResponse) {
-        final Map<String, String> params = ImgurUtils.getQueryMap(urlResponse);
-        listener.onUserPermissionGranted();
+        try {
+            final ImgurAccount imgurAccount = new ImgurAccount(ImgurUtils.getQueryMap(urlResponse));
+            accountByID.put(imgurAccount.getID(), imgurAccount);
+            listener.onUserPermissionGranted();
+            imgurAccount.updateInformation(context);
+        } catch (InstantiationException e) {
+            System.err.println("Error : unable to instantiate ImgurAccount");
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void loadUserInformation(Context context, LoadUserInfoInterface callback) {
-        // get user information from the imgur server (if possible)
+        for (ImgurAccount imgurAccount : accountByID.values()) {
+            imgurAccount.updateAccessTokenAndUserInformation(context, callback);
+        }
     }
 
     @Override

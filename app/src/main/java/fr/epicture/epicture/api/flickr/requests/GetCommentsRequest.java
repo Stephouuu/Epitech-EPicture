@@ -8,23 +8,20 @@ import fr.epicture.epicture.interfaces.LoadTextInterface;
 import fr.epicture.epicture.requests.TextRequest;
 
 /**
- * Created by Stephane on 15/02/2017.
+ * Created by Stephane on 21/02/2017.
  */
 
-public class InterestingnessRequest extends TextRequest {
+public class GetCommentsRequest extends TextRequest {
 
     private static final String URL = "https://www.flickr.com/services/rest";
-    private static final String METHOD = "flickr.interestingness.getList";
+    private static final String METHOD = "flickr.photos.comments.getList";
 
-    public InterestingnessRequest(@NonNull Context context, int page, LoadTextInterface listener) {
-        super(context,
-                URL + "?nojsoncallback=1"
+    public GetCommentsRequest(@NonNull Context context, String photoid, LoadTextInterface listener) {
+        super(context, URL + "?nojsoncallback=1"
                 + "&format=json"
-                + "&page=" + page
                 + "&api_key=" + FlickrClient.CONSUMER_KEY
-                + "&method=" + METHOD
-                + "&per_page=20"
-                + "&extras=description,date_upload,tags,owner_name",
+                + "&photo_id=" + photoid
+                + "&method=" + METHOD,
                 listener);
         execute();
     }

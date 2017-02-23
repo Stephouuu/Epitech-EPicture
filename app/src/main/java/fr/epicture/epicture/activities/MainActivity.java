@@ -125,8 +125,6 @@ public class MainActivity extends AppCompatActivity implements ImageListInterfac
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.search) {
             Intent intent = new Intent(this, SearchActivity.class);
-            //API api = APIManager.getSelectedAPI();
-            //SearchActivity.setUserID(intent, api.getCurrentAccount().getID());
             startActivity(intent);
             return true;
         }
@@ -152,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements ImageListInterfac
         API api = APIManager.getSelectedAPI();
         APIAccount user = api.getCurrentAccount();
 
-        api.loadUserAvatar(this, user.getID(), new LoadBitmapInterface() {
+        api.loadUserAvatar(this, user, new LoadBitmapInterface() {
             @Override
             public void onFinish(Bitmap bitmap) {
                 profilePic.setImageBitmap(bitmap);

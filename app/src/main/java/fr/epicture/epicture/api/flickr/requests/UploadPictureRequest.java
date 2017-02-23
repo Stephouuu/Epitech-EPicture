@@ -14,6 +14,8 @@ import fr.epicture.epicture.api.flickr.FlickrImageElement;
 import fr.epicture.epicture.api.flickr.utils.FlickrUtils;
 import fr.epicture.epicture.interfaces.LoadTextInterface;
 import fr.epicture.epicture.requests.UploadRequest;
+import fr.epicture.epicture.utils.BitmapCache;
+import fr.epicture.epicture.utils.ImageDiskCache;
 import fr.epicture.epicture.utils.RequestIdentifierGenerator;
 import fr.epicture.epicture.utils.StaticTools;
 
@@ -61,7 +63,15 @@ public class UploadPictureRequest extends UploadRequest {
             addParam(new ParamBody("description", element.description));
         }
 
-        byte[] bytes = this.createByteArray(element.path);
+        Bitmap bitmap = BitmapCache.getInCache(ImageDiskCache.CACHE_TAG + element.getID() + element.getSize());
+        byte[] bytes;
+        if (bitmap != null) {
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            bytes = stream.toByteArray();
+        } else {
+            bytes = this.createByteArray(element.path);
+        }
         addParam(new ParamFile("img.jpg", "photo", bytes, bytes.length, "image/jpeg"));
     }
 
@@ -87,22 +97,22 @@ public class UploadPictureRequest extends UploadRequest {
 
         Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
 
-        /*float height = (float) bitmap.getHeight();
+        float height = (float) bitmap.getHeight();
         float width = (float) bitmap.getWidth();
         float ratio = height / width;
 
         if (ratio > 1) {
-            if (bitmap.getHeight() > 1440) {
-                height = 1440.0f;
-                width = 1440.0f / ratio;
+            if (bitmap.getHeight() > 640) {
+                height = 640.0f;
+                width = 640.0f / ratio;
             }
         } else {
-            if (bitmap.getWidth() > 1440) {
-                width = 1440.0f;
-                height = 1440.0f * ratio;
+            if (bitmap.getWidth() > 640) {
+                width = 640.0f;
+                height = 640.0f * ratio;
             }
         }
-        bitmap = Bitmap.createScaledBitmap(bitmap, (int) width, (int) height, true);*/
+        bitmap = Bitmap.createScaledBitmap(bitmap, (int) width, (int) height, true);
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);

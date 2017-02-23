@@ -8,13 +8,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import fr.epicture.epicture.api.APIImageElement;
-import fr.epicture.epicture.api.flickr.FlickrImageElement;
 
 public class ImgurImageElement extends APIImageElement {
     private long dateTime;
-
-    private String type;
-    private boolean animated;
 
     private String tags = "";
 
@@ -38,8 +34,6 @@ public class ImgurImageElement extends APIImageElement {
             title = jsonObject.getString("title");
             description = jsonObject.getString("description");
             dateTime = jsonObject.getLong("datetime");
-            type = jsonObject.getString("type");
-            animated = jsonObject.getBoolean("animated");
             accountUrl = jsonObject.getString("account_url");
             accountID = jsonObject.getInt("account_id");
             url = jsonObject.getString("link");
@@ -57,7 +51,7 @@ public class ImgurImageElement extends APIImageElement {
                     tags += " ";
             }
         } catch (JSONException | ClassCastException e) {
-            System.err.println("Error : Unable to convert Json object to ImgurImageElement.");
+            System.err.println("Error : Unable to convert Json object to ImgurImageElement.\n" + jsonObject.toString());
             e.printStackTrace();
         }
     }
@@ -67,8 +61,6 @@ public class ImgurImageElement extends APIImageElement {
         title = in.readString();
         description = in.readString();
         dateTime = in.readLong();
-        type = in.readString();
-        animated = in.readInt() == 1;
         accountUrl = in.readString();
         accountID = in.readInt();
         url = in.readString();
@@ -103,6 +95,16 @@ public class ImgurImageElement extends APIImageElement {
     }
 
     @Override
+    public float getWidthSize() {
+        return 0;
+    }
+
+    @Override
+    public float getHeightSize() {
+        return 0;
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }
@@ -113,8 +115,6 @@ public class ImgurImageElement extends APIImageElement {
         parcel.writeString(title);
         parcel.writeString(description);
         parcel.writeLong(dateTime);
-        parcel.writeString(type);
-        parcel.writeInt(animated ? 1 : 0);
         parcel.writeString(accountUrl);
         parcel.writeInt(accountID);
         parcel.writeString(url);
@@ -137,22 +137,6 @@ public class ImgurImageElement extends APIImageElement {
 
     public void setDateTime(long dateTime) {
         this.dateTime = dateTime;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public boolean isAnimated() {
-        return animated;
-    }
-
-    public void setAnimated(boolean animated) {
-        this.animated = animated;
     }
 
     public String getTags() {

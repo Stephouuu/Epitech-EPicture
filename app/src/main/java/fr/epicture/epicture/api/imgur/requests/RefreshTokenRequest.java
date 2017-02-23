@@ -17,7 +17,7 @@ public class RefreshTokenRequest extends TextRequest {
                 + "refresh_token=" + refreshToken
                 + "&client_id=" + Imgur.CLIENT_ID
                 + "&client_secret=" + Imgur.CLIENT_SECRET
-                + "&grant_type=refresh_token"
+                + "&grant_type=" + refreshToken
                 , listener);
     }
 }

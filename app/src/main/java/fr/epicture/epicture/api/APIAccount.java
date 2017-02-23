@@ -32,6 +32,9 @@ public abstract class APIAccount {
 
 
     public abstract String getID();
+    public abstract String getNSID();
+    public abstract String getIconServer();
+    public abstract String getFarm();
 
     public String getRealname() {
         return realname;

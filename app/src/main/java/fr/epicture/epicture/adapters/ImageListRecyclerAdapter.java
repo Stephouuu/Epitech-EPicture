@@ -81,6 +81,9 @@ public class ImageListRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
 
             ((ImageListRecyclerItemViewHolder)holder).refreshView(item, position == getBasicItemCount() - 1);
             ((ImageListRecyclerItemViewHolder)holder).refreshImage(item);
+            ((ImageListRecyclerItemViewHolder)holder).refreshDescription(item);
+            ((ImageListRecyclerItemViewHolder)holder).refreshDate(item);
+            ((ImageListRecyclerItemViewHolder)holder).refreshOwner(item);
         }
     }
 

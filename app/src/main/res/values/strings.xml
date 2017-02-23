@@ -23,6 +23,17 @@
     <string name="description">Description</string>
     <string name="send">Send</string>
 
+    <string name="date_transform_years">Il y a %d ans</string>
+    <string name="date_transform_year">Il y a 1 an</string>
+    <string name="date_transform_mouth">Il y a %d mois</string>
+    <string name="date_transform_seconds">Il y a moins d\'une minute</string>
+    <string name="date_transform_minutes">Il y a %d minutes</string>
+    <string name="date_transform_minute">Il y a 1 minute</string>
+    <string name="date_transform_hours">Il y a %d heures</string>
+    <string name="date_transform_hour">Il y a 1 heure</string>
+    <string name="date_transform_yesterday">Hier</string>
+    <string name="date_transform_days">Il y a %d jours</string>
+
     <string name="logout">Logout</string>
 
     <string name="upload_in_progress">Upload in progress, please wait</string>
@@ -38,4 +49,5 @@
     <string name="username">\@%s</string>
 
     <string name="search">Search</string>
+    <string name="noitem">There are no item to display</string>
 </resources>

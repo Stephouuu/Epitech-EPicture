@@ -43,6 +43,7 @@ import fr.epicture.epicture.fragments.ImageListFragment;
 import fr.epicture.epicture.interfaces.ImageListInterface;
 import fr.epicture.epicture.interfaces.LoadImageElementInterface;
 import fr.epicture.epicture.interfaces.RetractableToolbarInterface;
+import fr.epicture.epicture.utils.BitmapCache;
 import fr.epicture.epicture.utils.StaticTools;
 
 public class MyPicturesActivity extends AppCompatActivity implements ImageListInterface, RetractableToolbarInterface {
@@ -82,6 +83,7 @@ public class MyPicturesActivity extends AppCompatActivity implements ImageListIn
             }
         });
 
+        BitmapCache.deleteAllCache();
         refreshFragment();
     }
 
@@ -157,6 +159,8 @@ public class MyPicturesActivity extends AppCompatActivity implements ImageListIn
             public void onFinish(List<APIImageElement> result, boolean error) {
                 if (!error) {
                     imageListFragment.refreshList(result);
+                } else {
+                    imageListFragment.refreshList(null);
                 }
             }
         });

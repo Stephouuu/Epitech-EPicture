@@ -83,7 +83,10 @@ public class ImgurDatabase {
                     cursor.getInt(ImgurSQLite.ACCOUNT_NUM_COL_DB_ID),
                     cursor.getString(ImgurSQLite.ACCOUNT_NUM_COL_ID),
                     cursor.getString(ImgurSQLite.ACCOUNT_NUM_COL_USERNAME),
-                    cursor.getString(ImgurSQLite.ACCOUNT_NUM_COL_REFRESH_TOKEN));
+                    cursor.getString(ImgurSQLite.ACCOUNT_NUM_COL_REFRESH_TOKEN),
+                    cursor.getString(ImgurSQLite.ACCOUNT_NUM_COL_ACCESS_TOKEN),
+                    Long.valueOf(cursor.getString(ImgurSQLite.ACCOUNT_NUM_COL_ACCESS_TOKEN_DATETIME)),
+                    Long.valueOf(cursor.getString(ImgurSQLite.ACCOUNT_NUM_COL_ACCESS_TOKEN_DURATION)));
         } catch (InstantiationException e) {
             System.err.println("Error : Could not instantiate Imgur account from database.");
             e.printStackTrace();

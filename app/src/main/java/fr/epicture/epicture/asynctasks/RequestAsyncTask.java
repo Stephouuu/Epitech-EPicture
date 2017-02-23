@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +40,7 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
     protected Integer httpResponseCode = null;
     protected String response;
     protected Bitmap image;
+    private List<Object> params;
 
     private Map<String, String> header;
 
@@ -47,6 +50,7 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
     public RequestAsyncTask(@NonNull Context context) {
         this.context = context;
         header = new HashMap<>();
+        params = new ArrayList<>();
     }
 
     protected void addHeader(String key, String value) {
@@ -92,6 +96,10 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    protected void addParam(Object object) {
+        params.add(object);
     }
 
     @Override
@@ -151,7 +159,61 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
         }
     }
 
-    protected void POSTMultipart(String url, List<Object> params) {
+    protected void POST(String url) {
+        try {
+            this.initHttp(url);
+
+            httpsURLConnection.setConnectTimeout(POST_CONNECTION_TIMEOUT);
+            httpsURLConnection.setReadTimeout(POST_READ_TIMEOUT);
+            httpsURLConnection.setRequestMethod("POST");
+            httpsURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            httpsURLConnection.setDoInput(true);
+            httpsURLConnection.setDoOutput(true);
+            httpsURLConnection.setUseCaches(false);
+
+            for (Map.Entry<String, String> entry : header.entrySet()) {
+                httpsURLConnection.setRequestProperty(entry.getKey(), entry.getValue());
+            }
+
+            StringBuilder postData = new StringBuilder();
+            if (params != null) {
+                for (int i = 0; i < params.size(); i++) {
+                    Object param = params.get(i);
+
+                    if (param instanceof ParamBody) {
+                        ParamBody paramBody = (ParamBody) param;
+                        if (postData.length() != 0) {
+                            postData.append('&');
+                        }
+                        postData.append(URLEncoder.encode(paramBody.getName(), "UTF-8"));
+                        postData.append('=');
+                        postData.append(URLEncoder.encode(paramBody.getContent(), "UTF-8"));
+                    }
+                }
+            }
+            DataOutputStream wr = new DataOutputStream(httpsURLConnection.getOutputStream());
+            wr.write(postData.toString().getBytes("UTF-8"));
+            wr.flush();
+            wr.close();
+
+            try {
+                this.getResponse();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                this.closeHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected void POSTMultipart(String url/*, List<Object> params*/) {
         String lineEnd = "\r\n";
         String twoHyphens = "--";
         String boundary = "---------------------------7d44e178b0434";

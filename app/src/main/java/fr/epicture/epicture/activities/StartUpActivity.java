@@ -36,7 +36,7 @@ public class StartUpActivity extends AppCompatActivity implements Authentificati
         setContentView(R.layout.startup_activity);
 
         APIManager.addAPI(new Flickr(getApplicationContext()));
-        APIManager.addAPI(new Imgur());
+        APIManager.addAPI(new Imgur(getApplicationContext()));
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

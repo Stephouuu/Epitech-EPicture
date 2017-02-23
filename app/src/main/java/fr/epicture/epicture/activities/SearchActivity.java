@@ -2,8 +2,8 @@ package fr.epicture.epicture.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -79,7 +79,8 @@ public class SearchActivity extends AppCompatActivity implements ImageListInterf
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setIconified(false);
         searchView.setQueryHint(getResources().getString(R.string.search));
-        searchView.setBackgroundColor(Color.WHITE);
+
+        searchView.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary25));
 
         String search = getSearch(getIntent());
         if (search != null && !search.isEmpty()) {
@@ -94,12 +95,7 @@ public class SearchActivity extends AppCompatActivity implements ImageListInterf
             public boolean onQueryTextSubmit(String search) {
                 if (search != null && search.length() > 0) {
                     setSearch(getIntent(), search);
-                    //imageListFragment.setAccountID(userID);
                     refreshFragment(search);
-
-                    /*imageListFragment.setSearch(search, userID);
-                    imageListFragment.refresh();*/
-
                     View view = getCurrentFocus();
                     if (view != null) {
                         InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);

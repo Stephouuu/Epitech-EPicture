@@ -16,11 +16,14 @@ import java.util.Map;
 import fr.epicture.epicture.R;
 import fr.epicture.epicture.api.API;
 import fr.epicture.epicture.api.APIAccount;
+import fr.epicture.epicture.api.APICommentElement;
 import fr.epicture.epicture.api.APIImageElement;
 import fr.epicture.epicture.api.flickr.database.FlickrDatabase;
 import fr.epicture.epicture.api.flickr.modele.TokenAccess;
 import fr.epicture.epicture.api.flickr.modele.TokenRequest;
+import fr.epicture.epicture.api.flickr.requests.DeletePhotoRequest;
 import fr.epicture.epicture.api.flickr.requests.GetAccessTokenRequest;
+import fr.epicture.epicture.api.flickr.requests.GetCommentsRequest;
 import fr.epicture.epicture.api.flickr.requests.GetRequestTokenRequest;
 import fr.epicture.epicture.api.flickr.requests.InterestingnessRequest;
 import fr.epicture.epicture.api.flickr.requests.SearchRequest;
@@ -31,6 +34,7 @@ import fr.epicture.epicture.api.flickr.utils.FlickrUtils;
 import fr.epicture.epicture.interfaces.AuthentificationInterface;
 import fr.epicture.epicture.interfaces.ImageDiskCacheInterface;
 import fr.epicture.epicture.interfaces.LoadBitmapInterface;
+import fr.epicture.epicture.interfaces.LoadCommentElementInterface;
 import fr.epicture.epicture.interfaces.LoadImageElementInterface;
 import fr.epicture.epicture.interfaces.LoadTextInterface;
 import fr.epicture.epicture.interfaces.LoadUserInfoInterface;
@@ -127,12 +131,38 @@ public class Flickr implements API {
     }
 
     @Override
-    public void loadUserAvatar(Context context, String id, LoadBitmapInterface callback) {
-        FlickrAccount user = Accounts.get(id);
-        if (user.iconserver != null) {
-            FlickyAvatarElement element = new FlickyAvatarElement(user.nsid, user.iconserver, user.iconfarm);
+    public void loadUserInformation(Context context, String id, LoadUserInfoInterface callback) {
+        new UserInformationRequest(context, id, new LoadTextInterface() {
+            @Override
+            public void onFinish(String text) {
+                try {
+                    FlickrAccount user = new FlickrAccount(new JSONObject(text));
+                    callback.onFinish(user.getUsername(), user);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void loadUserAvatar(Context context, APIAccount account, LoadBitmapInterface callback) {
+        FlickrAccount user = Accounts.get(account.getID());
+        if (user != null) {
+            if (user.iconserver != null) {
+                FlickyAvatarElement element = new FlickyAvatarElement(user.nsid, user.iconserver, user.iconfarm);
+                loadImage(context, element, callback);
+            }
+        } else {
+            FlickyAvatarElement element = new FlickyAvatarElement(account.getNSID(), account.getIconServer(), account.getFarm());
             loadImage(context, element, callback);
         }
+    }
+
+    @Override
+    public void loadUserAvatar(Context context, APICommentElement commentElement, LoadBitmapInterface callback) {
+        FlickyAvatarElement element = new FlickyAvatarElement(commentElement.getNSID(), commentElement.getIconServer(), commentElement.getIconFarm());
+        loadImage(context, element, callback);
     }
 
     @Override
@@ -217,6 +247,28 @@ public class Flickr implements API {
     }
 
     @Override
+    public void getComments(Context context, String photoid, LoadCommentElementInterface callback) {
+        new GetCommentsRequest(context, photoid, new LoadTextInterface() {
+            @Override
+            public void onFinish(String text) {
+                try {
+                    JSONObject jsonObject = new JSONObject(text);
+                    List<APICommentElement> datas = new ArrayList<>();
+                    JSONArray jsonArray = jsonObject.getJSONObject("comments").getJSONArray("comment");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject current = jsonArray.getJSONObject(i);
+                        datas.add(new FlickrCommentElement(current));
+                    }
+                    callback.onFinish(datas, false);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    callback.onFinish(null, true);
+                }
+            }
+        });
+    }
+
+    @Override
     public void search(Context context, String search, String userid, int page, LoadImageElementInterface callback) {
         if (!isRequestingSearch()) {
             FlickrAccount account = Accounts.get(userid);
@@ -243,6 +295,12 @@ public class Flickr implements API {
                 }
             });
         }
+    }
+
+    @Override
+    public void deletePhoto(Context context, String photoid, String userid, LoadTextInterface callback) {
+        FlickrAccount account = Accounts.get(userid);
+        new DeletePhotoRequest(context, account, photoid, callback);
     }
 
     @Override

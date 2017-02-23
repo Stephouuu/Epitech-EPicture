@@ -18,21 +18,33 @@ public class ImgurSQLite extends SQLiteOpenHelper {
     public static final String ACCOUNT_COL_ID = "ID";
     public static final int ACCOUNT_NUM_COL_ID = 1;
 
+    public static final String ACCOUNT_COL_NSID = "NSID";
+    public static final int ACCOUNT_NUM_COL_NSID = 2;
+
     public static final String ACCOUNT_COL_USERNAME = "USERNAME";
-    public static final int ACCOUNT_NUM_COL_USERNAME = 2;
+    public static final int ACCOUNT_NUM_COL_USERNAME = 3;
 
     public static final String ACCOUNT_COL_REFRESH_TOKEN = "REFRESH_TOKEN";
-    public static final int ACCOUNT_NUM_COL_REFRESH_TOKEN = 3;
+    public static final int ACCOUNT_NUM_COL_REFRESH_TOKEN = 4;
 
-    public static final String ACCOUNT_COL_NSID = "NSID";
-    public static final int ACCOUNT_NUM_COL_NSID = 4;
+    public static final String ACCOUNT_COL_ACCESS_TOKEN = "ACCESS_TOKEN";
+    public static final int ACCOUNT_NUM_COL_ACCESS_TOKEN = 5;
+
+    public static final String ACCOUNT_COL_ACCESS_TOKEN_DATETIME = "ACCESS_TOKEN_DATETIME";
+    public static final int ACCOUNT_NUM_COL_ACCESS_TOKEN_DATETIME = 6;
+
+    public static final String ACCOUNT_COL_ACCESS_TOKEN_DURATION = "ACCESS_TOKEN_DURATION";
+    public static final int ACCOUNT_NUM_COL_ACCESS_TOKEN_DURATION = 7;
 
     private static final String TODO_TABLE = "CREATE TABLE " + TABLE_NAME + " ("
             + ACCOUNT_COL_DB_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + ACCOUNT_COL_ID + " TEXT NOT NULL"
+            + ACCOUNT_COL_ID + " TEXT NOT NULL,"
             + ACCOUNT_COL_NSID + " TEXT NOT NULL, "
+            + ACCOUNT_COL_USERNAME + " TEXT NOT NULL, "
             + ACCOUNT_COL_REFRESH_TOKEN + " TEXT NOT NULL, "
-            + ACCOUNT_COL_USERNAME + " TEXT NOT NULL);";
+            + ACCOUNT_COL_ACCESS_TOKEN + " TEXT NOT NULL, "
+            + ACCOUNT_COL_ACCESS_TOKEN_DATETIME + " TEXT NOT NULL, "
+            + ACCOUNT_COL_ACCESS_TOKEN_DURATION + " TEXT NOT NULL);";
 
     // ========================================================================
     // CONSTRUCTOR

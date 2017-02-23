@@ -6,7 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,9 +44,11 @@ public class ImgurAccount extends APIAccount {
         accessToken = new AccessToken(params.get("access_token"), Long.parseLong(params.get("expires_in")), ImgurUtils.getTime());
     }
 
-    public ImgurAccount(int nsid, String id, String username, String refreshToken) throws InstantiationException {
+    public ImgurAccount(int nsid, String id, String username, String refreshToken, String accessToken, long datetime, long duration) throws InstantiationException {
         super(id, username);
         this.nsid = nsid;
+        this.refreshToken = refreshToken;
+        this.accessToken = new AccessToken(accessToken, datetime, duration);
     }
 
     // ========================================================================
@@ -80,16 +81,7 @@ public class ImgurAccount extends APIAccount {
     // Data update
     // ------------------------------------------------------------------------
 
-    public void updateAccessTokenAndUserInformation(Context context, LoadUserInfoInterface callback) {
-        // I know that's disgusting but it's just an epitech project.
-        new RefreshTokenRequest(context, refreshToken, text -> updateAccessToken(context, text, true, callback)).execute();
-    }
-
-    public void updateAccessToken(Context context) {
-        new RefreshTokenRequest(context, refreshToken, text -> updateAccessToken(context, text, false, null)).execute();
-    }
-
-    private void updateAccessToken(Context context, String text, boolean updateInformation, LoadUserInfoInterface callback) {
+    public void updateAccessToken(String text) {
         try {
             final JSONObject jsonObject = new JSONObject(text);
             accessToken.update(
@@ -97,16 +89,8 @@ public class ImgurAccount extends APIAccount {
                     ImgurUtils.getTime(),
                     jsonObject.getLong("expires_in")
             );
-            if (updateInformation)
-            {
-                new UserInformationRequest(context, username, accessToken.getAccessToken(), text1 -> {
-                    updateInformation(text);
-                    getMyGallery(context, null); // TODO remove
-                    callback.onFinish(getID(), this);
-                }).execute();
-            }
         } catch (JSONException e) {
-            System.err.println("Failed to update access token.");
+            System.err.println("Failed to update access token.\n" + text);
             e.printStackTrace();
         }
     }
@@ -115,7 +99,7 @@ public class ImgurAccount extends APIAccount {
         new UserInformationRequest(context, username, accessToken.getAccessToken(), this::updateInformation).execute();
     }
 
-    private void updateInformation(String text) {
+    public void updateInformation(String text) {
         try {
             JSONObject jsonObject = new JSONObject(text);
             if (jsonObject.getBoolean("success")) {
@@ -159,5 +143,20 @@ public class ImgurAccount extends APIAccount {
     @Override
     public String getID() {
         return id;
+    }
+
+    @Override
+    public String getNSID() {
+        return null;
+    }
+
+    @Override
+    public String getIconServer() {
+        return null;
+    }
+
+    @Override
+    public String getFarm() {
+        return null;
     }
 }

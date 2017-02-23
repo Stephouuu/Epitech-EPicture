@@ -27,6 +27,10 @@ public abstract class APIImageElement implements Parcelable {
     public String path;
     public String title;
     public String description;
+    public String tags;
+    public String ownerid;
+    public String ownername;
+    public long date;
 
     protected APIImageElement() {
         this.id = "undefined";
@@ -103,5 +107,7 @@ public abstract class APIImageElement implements Parcelable {
     }
 
     public abstract String getURL();
+    public abstract float getWidthSize();
+    public abstract float getHeightSize();
 
 }

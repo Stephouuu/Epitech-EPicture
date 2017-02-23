@@ -12,12 +12,15 @@ import java.util.Map;
 import fr.epicture.epicture.R;
 import fr.epicture.epicture.api.API;
 import fr.epicture.epicture.api.APIAccount;
+import fr.epicture.epicture.api.APICommentElement;
 import fr.epicture.epicture.api.APIImageElement;
 import fr.epicture.epicture.api.imgur.database.ImgurDatabase;
 import fr.epicture.epicture.api.imgur.requests.RefreshTokenRequest;
+import fr.epicture.epicture.api.imgur.requests.UserInformationRequest;
 import fr.epicture.epicture.api.imgur.utils.ImgurUtils;
 import fr.epicture.epicture.interfaces.AuthentificationInterface;
 import fr.epicture.epicture.interfaces.LoadBitmapInterface;
+import fr.epicture.epicture.interfaces.LoadCommentElementInterface;
 import fr.epicture.epicture.interfaces.LoadImageElementInterface;
 import fr.epicture.epicture.interfaces.LoadTextInterface;
 import fr.epicture.epicture.interfaces.LoadUserInfoInterface;
@@ -101,12 +104,35 @@ public class Imgur implements API {
     @Override
     public void loadUserInformation(Context context, LoadUserInfoInterface callback) {
         for (ImgurAccount imgurAccount : accountByID.values()) {
-            imgurAccount.updateAccessTokenAndUserInformation(context, callback);
+            if (ImgurUtils.getTime() >= imgurAccount.getAccessToken().getDate() + imgurAccount.getAccessToken().getExpiration()) {
+                new RefreshTokenRequest(context, imgurAccount.getRefreshToken(), text -> {
+                    imgurAccount.updateAccessToken(text);
+                    new UserInformationRequest(context, imgurAccount.getUsername(), imgurAccount.getAccessToken().getAccessToken(), text1 -> {
+                        imgurAccount.updateInformation(text1);
+                        callback.onFinish(imgurAccount.getID(), imgurAccount);
+                    });
+                });
+            } else {
+                new UserInformationRequest(context, imgurAccount.getUsername(), imgurAccount.getAccessToken().getAccessToken(), text1 -> {
+                    imgurAccount.updateInformation(text1);
+                    callback.onFinish(imgurAccount.getID(), imgurAccount);
+                });
+            }
         }
     }
 
     @Override
-    public void loadUserAvatar(Context context, String id, LoadBitmapInterface callback) {
+    public void loadUserInformation(Context context, String id, LoadUserInfoInterface callback) {
+
+    }
+
+    @Override
+    public void loadUserAvatar(Context context, APIAccount user, LoadBitmapInterface callback) {
+
+    }
+
+    @Override
+    public void loadUserAvatar(Context context, APICommentElement commentElement, LoadBitmapInterface callback) {
 
     }
 
@@ -131,7 +157,17 @@ public class Imgur implements API {
     }
 
     @Override
+    public void getComments(Context context, String photoid, LoadCommentElementInterface callback) {
+
+    }
+
+    @Override
     public void search(Context context, String search, String userid, int page, LoadImageElementInterface callback) {
+
+    }
+
+    @Override
+    public void deletePhoto(Context context, String photoid, String userid, LoadTextInterface callback) {
 
     }
 

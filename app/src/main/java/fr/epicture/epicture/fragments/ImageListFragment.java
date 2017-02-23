@@ -11,6 +11,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class ImageListFragment extends Fragment {
 
     private SwipeRefreshLayout swipe;
     private RecyclerView recyclerView;
+    private TextView noItem;
 
     private boolean init;
     private int page;
@@ -52,6 +54,7 @@ public class ImageListFragment extends Fragment {
 
         swipe = (SwipeRefreshLayout)view.findViewById(R.id.imagelist_swipe);
         recyclerView = (RecyclerView)view.findViewById(R.id.imagelist_recyclerview);
+        noItem = (TextView)view.findViewById(R.id.noitem);
 
         swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -86,6 +89,11 @@ public class ImageListFragment extends Fragment {
             public void onImageClick(APIImageElement element) {
                 ((ImageListInterface)getActivity()).onImageClick(element);
             }
+
+            @Override
+            public void onImageDelete(APIImageElement element) {
+                refresh();
+            }
         });
         recyclerView.setAdapter(adapter);
 
@@ -113,10 +121,6 @@ public class ImageListFragment extends Fragment {
         this.textToSearch = text;
     }
 
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -139,7 +143,11 @@ public class ImageListFragment extends Fragment {
             ++page;
         }
         refreshSwipe(imageElementList == null);
-
+        if (adapter.getItemCount() == 0) {
+            noItem.setVisibility(View.VISIBLE);
+        } else {
+            noItem.setVisibility(View.GONE);
+        }
     }
 
     private void refreshSwipe(final boolean loading) {

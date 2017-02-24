@@ -28,9 +28,11 @@ import fr.epicture.epicture.api.APIAccount;
 import fr.epicture.epicture.api.APICommentElement;
 import fr.epicture.epicture.api.APIImageElement;
 import fr.epicture.epicture.api.APIManager;
+import fr.epicture.epicture.asynctasks.ShareAsyncTask;
 import fr.epicture.epicture.interfaces.AddCommentInterface;
 import fr.epicture.epicture.interfaces.LoadBitmapInterface;
 import fr.epicture.epicture.interfaces.LoadCommentElementInterface;
+import fr.epicture.epicture.interfaces.LoadTextInterface;
 import fr.epicture.epicture.interfaces.LoadUserInfoInterface;
 import fr.epicture.epicture.utils.BitmapCache;
 import fr.epicture.epicture.utils.DateTimeManager;
@@ -39,6 +41,7 @@ import fr.epicture.epicture.utils.StaticTools;
 public class ImageElementActivity extends AppCompatActivity {
 
     public static final String EXTRA_IMAGE_ELEMENT = "image";
+    public static final String EXTRA_COMMENT = "comment";
 
     public static void setImageElement(Intent intent, APIImageElement element) {
         intent.putExtra(EXTRA_IMAGE_ELEMENT, element);
@@ -46,6 +49,14 @@ public class ImageElementActivity extends AppCompatActivity {
 
     public static APIImageElement getImageElement(Intent intent) {
         return intent.getParcelableExtra(EXTRA_IMAGE_ELEMENT);
+    }
+
+    public static void setComment(Intent intent, boolean value) {
+        intent.putExtra(EXTRA_COMMENT, value);
+    }
+
+    public static boolean getComment(Intent intent) {
+        return intent.getBooleanExtra(EXTRA_COMMENT, false);
     }
 
     private ImageView imageView;
@@ -57,6 +68,7 @@ public class ImageElementActivity extends AppCompatActivity {
     private ScrollView page;
 
     private APIImageElement element;
+    private boolean comment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +76,7 @@ public class ImageElementActivity extends AppCompatActivity {
         setContentView(R.layout.image_element_activity);
 
         element = getImageElement(getIntent());
+        comment = getComment(getIntent());
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         ((TextView)toolbar.findViewById(R.id.picture_title)).setText(element.title);
@@ -125,6 +138,7 @@ public class ImageElementActivity extends AppCompatActivity {
         refreshTags();
         refreshOwner();
         refreshComments();
+        refreshIcons();
     }
 
     @Override
@@ -226,6 +240,12 @@ public class ImageElementActivity extends AppCompatActivity {
                     }
                     container.setVisibility(View.VISIBLE);
                 }
+                if (comment) {
+                    commentEditText.clearFocus();
+                    commentEditText.requestLayout();
+                    StaticTools.showSoftKeyboard(ImageElementActivity.this, commentEditText);
+                    comment = false;
+                }
                 progressBar.setVisibility(View.GONE);
             }
         });
@@ -268,7 +288,72 @@ public class ImageElementActivity extends AppCompatActivity {
             addComments(inflater, container, element);
             container.setVisibility(View.VISIBLE);
             commentSubmitButton.setTextColor(ContextCompat.getColor(ImageElementActivity.this, R.color.colorPrimary100));
+            page.post(new Runnable() {
+                @Override
+                public void run() {
+                    page.fullScroll(View.FOCUS_DOWN);
+                }
+            });
         }
+    }
+
+    private void refreshIcons() {
+        View commentContainer = findViewById(R.id.comment_container);
+        View favoriteContainer = findViewById(R.id.favorite_container);
+        View shareContainer = findViewById(R.id.share_container);
+
+        ImageView favoriteIcon = (ImageView)findViewById(R.id.favorite_icon);
+
+        API api = APIManager.getSelectedAPI();
+
+        if (element.favorite) {
+            favoriteIcon.setImageResource(R.mipmap.ic_star_on);
+        } else {
+            favoriteIcon.setImageResource(R.mipmap.ic_star_off);
+        }
+
+        commentEditText.clearFocus();
+        commentContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                commentEditText.clearFocus();
+                commentEditText.requestFocus();
+                StaticTools.showSoftKeyboard(ImageElementActivity.this, commentEditText);
+            }
+        });
+
+        favoriteContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                API api = APIManager.getSelectedAPI();
+                APIAccount account = api.getCurrentAccount();
+
+                if (!element.favorite) {
+                    api.addFavorite(ImageElementActivity.this, account.getID(), element.getID(), new LoadTextInterface() {
+                        @Override
+                        public void onFinish(String text) {
+                            element.favorite = true;
+                            favoriteIcon.setImageResource(R.mipmap.ic_star_on);
+                        }
+                    });
+                } else {
+                    api.deleteFavorite(ImageElementActivity.this, account.getID(), element.getID(), new LoadTextInterface() {
+                        @Override
+                        public void onFinish(String text) {
+                            element.favorite = false;
+                            favoriteIcon.setImageResource(R.mipmap.ic_star_off);
+                        }
+                    });
+                }
+            }
+        });
+
+        shareContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new ShareAsyncTask(ImageElementActivity.this, element).execute();
+            }
+        });
     }
 
     private void submitComment() {

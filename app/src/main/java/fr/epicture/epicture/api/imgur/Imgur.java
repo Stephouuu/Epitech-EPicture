@@ -185,7 +185,7 @@ public class Imgur implements API {
     }
 
     @Override
-    public void getFavorites(Context context, String userid, String photoid, LoadImageElementInterface callback) {
+    public void getFavorites(Context context, String userid, int page, LoadImageElementInterface callback) {
 
     }
 

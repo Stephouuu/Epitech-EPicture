@@ -22,15 +22,6 @@ public class TextPostRequest extends RequestAsyncTask {
         this.listener = listener;
     }
 
-    protected TextPostRequest(@NonNull Context context, LoadTextInterface listener) {
-        super(context);
-        this.listener = listener;
-    }
-
-    protected void setUrl(String url) {
-        this.url = url;
-    }
-
     @Override
     protected Void doInBackground(Void... params) {
         try {

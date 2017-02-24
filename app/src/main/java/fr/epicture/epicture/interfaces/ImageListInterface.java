@@ -10,5 +10,6 @@ public interface ImageListInterface extends RetractableToolbarInterface {
 
     void onRequestImageList(int page, String search, String userID);
     void onImageClick(APIImageElement element);
+    void onCommentClick(APIImageElement element);
 
 }

@@ -19,6 +19,7 @@ import fr.epicture.epicture.api.API;
 import fr.epicture.epicture.api.APIAccount;
 import fr.epicture.epicture.api.APIImageElement;
 import fr.epicture.epicture.api.APIManager;
+import fr.epicture.epicture.asynctasks.ShareAsyncTask;
 import fr.epicture.epicture.interfaces.ImageListAdapterInterface;
 import fr.epicture.epicture.interfaces.LoadBitmapInterface;
 import fr.epicture.epicture.interfaces.LoadTextInterface;
@@ -59,6 +60,8 @@ public class ImageListRecyclerItemViewHolder extends RecyclerView.ViewHolder {
         parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Boolean favorite = FavoritesArray.get(imageElement.getID());
+                imageElement.favorite = (favorite != null) ? favorite : false;
                 listener.onImageClick(imageElement);
             }
         });
@@ -86,7 +89,6 @@ public class ImageListRecyclerItemViewHolder extends RecyclerView.ViewHolder {
         api.loadImage(activity, element, new LoadBitmapInterface() {
             @Override
             public void onFinish(Bitmap bitmap){
-
                 imageView.setImageBitmap(bitmap);
                 progressBar.setVisibility(View.GONE);
                 imageView.setVisibility(View.VISIBLE);
@@ -99,7 +101,9 @@ public class ImageListRecyclerItemViewHolder extends RecyclerView.ViewHolder {
 
         description.setEllipsize(TextUtils.TruncateAt.END);
         description.setMaxLines(3);
-        description.setText(Html.fromHtml(element.description));
+        if (element.description != null) {
+            description.setText(Html.fromHtml(element.description));
+        }
     }
 
     public void refreshDate(APIImageElement element) {
@@ -148,40 +152,33 @@ public class ImageListRecyclerItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void refreshIcons(APIImageElement element) {
-        //View commentContainer = parent.findViewById(R.id.comment_container);
+        View commentContainer = parent.findViewById(R.id.comment_container);
         View favoriteContainer = parent.findViewById(R.id.favorite_container);
-        //View shareContainer = parent.findViewById(R.id.share_container);
+        View shareContainer = parent.findViewById(R.id.share_container);
 
         ImageView favoriteIcon = (ImageView)parent.findViewById(R.id.favorite_icon);
 
         API api = APIManager.getSelectedAPI();
         APIAccount account = api.getCurrentAccount();
 
-        Boolean inFavorite = FavoritesArray.get(element.getID());
-        if (inFavorite == null) {
-            api.isFavorite(activity, account.getID(), element.getID(), new PhotoIsInFavoritesInterface() {
-                @Override
-                public void onFinish(boolean response) {
-                    if (response) {
-                        favoriteIcon.setImageResource(R.mipmap.ic_star_on);
-                    } else {
-                        favoriteIcon.setImageResource(R.mipmap.ic_star_off);
-                    }
-                    FavoritesArray.put(element.getID(), response);
+        api.isFavorite(activity, account.getID(), element.getID(), new PhotoIsInFavoritesInterface() {
+            @Override
+            public void onFinish(boolean response) {
+                if (response) {
+                    favoriteIcon.setImageResource(R.mipmap.ic_star_on);
+                } else {
+                    favoriteIcon.setImageResource(R.mipmap.ic_star_off);
                 }
-            });
-        } else if (inFavorite) {
-            favoriteIcon.setImageResource(R.mipmap.ic_star_on);
-        } else {
-            favoriteIcon.setImageResource(R.mipmap.ic_star_off);
-        }
+                FavoritesArray.put(element.getID(), response);
+            }
+        });
 
-        /*commentContainer.setOnClickListener(new View.OnClickListener() {
+        commentContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                listener.onCommentClick(element);
             }
-        });*/
+        });
 
         favoriteContainer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -210,12 +207,12 @@ public class ImageListRecyclerItemViewHolder extends RecyclerView.ViewHolder {
             }
         });
 
-        /*shareContainer.setOnClickListener(new View.OnClickListener() {
+        shareContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                new ShareAsyncTask(activity, element).execute();
             }
-        });*/
+        });
     }
 
 }

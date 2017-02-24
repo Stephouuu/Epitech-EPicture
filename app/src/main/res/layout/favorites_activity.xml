@@ -25,7 +25,7 @@
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/my_pictures"
+                android:text="@string/favorites"
                 android:textColor="@android:color/white"
                 android:textSize="20sp" />
 

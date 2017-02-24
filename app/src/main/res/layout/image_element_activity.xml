@@ -71,6 +71,8 @@
             </FrameLayout>
 
             <RelativeLayout
+                android:descendantFocusability="beforeDescendants"
+                android:focusableInTouchMode="true"
                 android:id="@+id/add_comment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

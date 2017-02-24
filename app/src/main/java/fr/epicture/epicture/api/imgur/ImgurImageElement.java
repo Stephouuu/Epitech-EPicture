@@ -72,6 +72,7 @@ public class ImgurImageElement extends APIImageElement {
         points = in.readInt();
         score = in.readInt();
         tags = in.readString();
+        favorite = in.readInt() == 1;
     }
 
     // ========================================================================
@@ -125,6 +126,7 @@ public class ImgurImageElement extends APIImageElement {
         parcel.writeInt(points);
         parcel.writeInt(score);
         parcel.writeString(tags);
+        parcel.writeInt(favorite?1:0);
     }
 
     // ------------------------------------------------------------------------

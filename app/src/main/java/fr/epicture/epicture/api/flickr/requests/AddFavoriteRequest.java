@@ -13,10 +13,6 @@ import fr.epicture.epicture.requests.TextPostRequest;
 import fr.epicture.epicture.utils.RequestIdentifierGenerator;
 import fr.epicture.epicture.utils.StaticTools;
 
-/**
- * Created by Stephane on 24/02/2017.
- */
-
 public class AddFavoriteRequest extends TextPostRequest {
 
     private static final String URL = "https://www.flickr.com/services/rest";

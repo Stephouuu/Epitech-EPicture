@@ -153,7 +153,9 @@ public class Imgur implements API {
 
     @Override
     public void getMyPictures(Context context, int page, LoadImageElementInterface callback) {
-
+        if (currentAccount != null) {
+            accountByID.get(currentAccount).getMyGallery(context, page, callback);
+        }
     }
 
     @Override

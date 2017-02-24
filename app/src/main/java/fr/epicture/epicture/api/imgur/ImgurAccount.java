@@ -67,11 +67,11 @@ public class ImgurAccount extends APIAccount {
         }).execute();
     }
 
-    public void getMyGallery(Context context, LoadImageElementInterface loadImageElementInterface)
-    {
+    public void getMyGallery(Context context, int page, LoadImageElementInterface loadImageElementInterface) {
+        System.out.println("AccessToken == " + accessToken.getAccessToken());
         new AlbumRequest(context, username, accessToken.getAccessToken(), text -> {
             System.out.println("\n\n\n\n------------------------------------------------------------\n" + text);
-        });
+        }).execute();
     }
 
     // ------------------------------------------------------------------------

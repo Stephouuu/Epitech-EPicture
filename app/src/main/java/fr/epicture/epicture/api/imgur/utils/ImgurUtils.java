@@ -7,7 +7,7 @@ import java.util.Map;
 public class ImgurUtils {
 
     public static Map<String, String> getQueryMap(String url) {
-        url = url.replaceAll(".*/", "");
+        url = url.replaceAll(".*#", "");
         final String[] params = url.split("&");
         final Map<String, String> map = new HashMap<>();
         for (String param : params) {

@@ -11,6 +11,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import fr.epicture.epicture.R;
 import fr.epicture.epicture.api.API;
 import fr.epicture.epicture.api.APIAccount;
@@ -20,6 +23,7 @@ import fr.epicture.epicture.interfaces.ImageListAdapterInterface;
 import fr.epicture.epicture.interfaces.LoadBitmapInterface;
 import fr.epicture.epicture.interfaces.LoadTextInterface;
 import fr.epicture.epicture.interfaces.LoadUserInfoInterface;
+import fr.epicture.epicture.interfaces.PhotoIsInFavoritesInterface;
 import fr.epicture.epicture.utils.DateTimeManager;
 
 /**
@@ -27,6 +31,8 @@ import fr.epicture.epicture.utils.DateTimeManager;
  */
 
 public class ImageListRecyclerItemViewHolder extends RecyclerView.ViewHolder {
+
+    private static Map<String, Boolean> FavoritesArray = new HashMap<>();
 
     private Activity activity;
     private View parent;
@@ -120,13 +126,11 @@ public class ImageListRecyclerItemViewHolder extends RecyclerView.ViewHolder {
             }
         });
 
-        //if (element.ownerid != null) {
-            if (element.ownerid.equals(APIManager.getSelectedAPI().getCurrentAccount().id)) {
-                parent.findViewById(R.id.expand).setVisibility(View.VISIBLE);
-            } else {
-                parent.findViewById(R.id.expand).setVisibility(View.GONE);
-            }
-        //}
+        if (element.ownerid.equals(APIManager.getSelectedAPI().getCurrentAccount().id)) {
+            parent.findViewById(R.id.expand).setVisibility(View.VISIBLE);
+        } else {
+            parent.findViewById(R.id.expand).setVisibility(View.GONE);
+        }
 
         ownerPicture.setImageResource(R.drawable.placeholder);
         API api = APIManager.getSelectedAPI();
@@ -141,6 +145,77 @@ public class ImageListRecyclerItemViewHolder extends RecyclerView.ViewHolder {
                 });
             }
         });
+    }
+
+    public void refreshIcons(APIImageElement element) {
+        //View commentContainer = parent.findViewById(R.id.comment_container);
+        View favoriteContainer = parent.findViewById(R.id.favorite_container);
+        //View shareContainer = parent.findViewById(R.id.share_container);
+
+        ImageView favoriteIcon = (ImageView)parent.findViewById(R.id.favorite_icon);
+
+        API api = APIManager.getSelectedAPI();
+        APIAccount account = api.getCurrentAccount();
+
+        Boolean inFavorite = FavoritesArray.get(element.getID());
+        if (inFavorite == null) {
+            api.isFavorite(activity, account.getID(), element.getID(), new PhotoIsInFavoritesInterface() {
+                @Override
+                public void onFinish(boolean response) {
+                    if (response) {
+                        favoriteIcon.setImageResource(R.mipmap.ic_star_on);
+                    } else {
+                        favoriteIcon.setImageResource(R.mipmap.ic_star_off);
+                    }
+                    FavoritesArray.put(element.getID(), response);
+                }
+            });
+        } else if (inFavorite) {
+            favoriteIcon.setImageResource(R.mipmap.ic_star_on);
+        } else {
+            favoriteIcon.setImageResource(R.mipmap.ic_star_off);
+        }
+
+        /*commentContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });*/
+
+        favoriteContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                API api = APIManager.getSelectedAPI();
+                APIAccount account = api.getCurrentAccount();
+
+                Boolean inFavorite = FavoritesArray.get(element.getID());
+                if (inFavorite == null || !inFavorite) {
+                    api.addFavorite(activity, account.getID(), element.getID(), new LoadTextInterface() {
+                        @Override
+                        public void onFinish(String text) {
+                            FavoritesArray.put(element.getID(), true);
+                            favoriteIcon.setImageResource(R.mipmap.ic_star_on);
+                        }
+                    });
+                } else {
+                    api.deleteFavorite(activity, account.getID(), element.getID(), new LoadTextInterface() {
+                        @Override
+                        public void onFinish(String text) {
+                            FavoritesArray.put(element.getID(), false);
+                            favoriteIcon.setImageResource(R.mipmap.ic_star_off);
+                        }
+                    });
+                }
+            }
+        });
+
+        /*shareContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });*/
     }
 
 }

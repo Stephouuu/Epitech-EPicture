@@ -24,6 +24,7 @@ import fr.epicture.epicture.interfaces.LoadCommentElementInterface;
 import fr.epicture.epicture.interfaces.LoadImageElementInterface;
 import fr.epicture.epicture.interfaces.LoadTextInterface;
 import fr.epicture.epicture.interfaces.LoadUserInfoInterface;
+import fr.epicture.epicture.interfaces.PhotoIsInFavoritesInterface;
 
 public class Imgur implements API {
 
@@ -116,7 +117,7 @@ public class Imgur implements API {
                 new UserInformationRequest(context, imgurAccount.getUsername(), imgurAccount.getAccessToken().getAccessToken(), text1 -> {
                     imgurAccount.updateInformation(text1);
                     callback.onFinish(imgurAccount.getID(), imgurAccount);
-                });
+                }).execute();
             }
         }
     }
@@ -165,6 +166,26 @@ public class Imgur implements API {
 
     @Override
     public void getComments(Context context, String userid, String photoid, LoadCommentElementInterface callback) {
+
+    }
+
+    @Override
+    public void addFavorite(Context context, String userid, String photoid, LoadTextInterface callback) {
+
+    }
+
+    @Override
+    public void deleteFavorite(Context context, String userid, String photoid, LoadTextInterface callback) {
+
+    }
+
+    @Override
+    public void isFavorite(Context context, String userid, String photoid, PhotoIsInFavoritesInterface callback) {
+
+    }
+
+    @Override
+    public void getFavorites(Context context, String userid, String photoid, LoadImageElementInterface callback) {
 
     }
 

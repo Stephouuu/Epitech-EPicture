@@ -22,11 +22,15 @@ import fr.epicture.epicture.api.flickr.database.FlickrDatabase;
 import fr.epicture.epicture.api.flickr.modele.TokenAccess;
 import fr.epicture.epicture.api.flickr.modele.TokenRequest;
 import fr.epicture.epicture.api.flickr.requests.AddCommentRequest;
+import fr.epicture.epicture.api.flickr.requests.AddFavoriteRequest;
+import fr.epicture.epicture.api.flickr.requests.DeleteFavoriteRequest;
 import fr.epicture.epicture.api.flickr.requests.DeletePhotoRequest;
 import fr.epicture.epicture.api.flickr.requests.GetAccessTokenRequest;
 import fr.epicture.epicture.api.flickr.requests.GetCommentsRequest;
 import fr.epicture.epicture.api.flickr.requests.GetRequestTokenRequest;
+import fr.epicture.epicture.api.flickr.requests.GetUserFavoritesRequest;
 import fr.epicture.epicture.api.flickr.requests.InterestingnessRequest;
+import fr.epicture.epicture.api.flickr.requests.PhotoIsInFavoritesRequest;
 import fr.epicture.epicture.api.flickr.requests.SearchRequest;
 import fr.epicture.epicture.api.flickr.requests.UploadPictureRequest;
 import fr.epicture.epicture.api.flickr.requests.UserInformationRequest;
@@ -40,6 +44,7 @@ import fr.epicture.epicture.interfaces.LoadCommentElementInterface;
 import fr.epicture.epicture.interfaces.LoadImageElementInterface;
 import fr.epicture.epicture.interfaces.LoadTextInterface;
 import fr.epicture.epicture.interfaces.LoadUserInfoInterface;
+import fr.epicture.epicture.interfaces.PhotoIsInFavoritesInterface;
 import fr.epicture.epicture.utils.ImageDiskCache;
 
 public class Flickr implements API {
@@ -58,6 +63,10 @@ public class Flickr implements API {
     private UploadPictureRequest uploadPictureRequest;
     private SearchRequest searchRequest;
     private AddCommentRequest addCommentRequest;
+    private AddFavoriteRequest addFavoriteRequest;
+    private PhotoIsInFavoritesRequest photoIsInFavoritesRequest;
+    private GetUserFavoritesRequest getUserFavoritesRequest;
+    private DeleteFavoriteRequest deleteFavoriteRequest;
 
     private AuthentificationInterface authListener;
     private TokenRequest tokenRequest;
@@ -292,6 +301,52 @@ public class Flickr implements API {
     }
 
     @Override
+    public void addFavorite(Context context, String userid, String photoid, LoadTextInterface callback) {
+        if (!isRequestingAddFavorite()) {
+            FlickrAccount account = Accounts.get(userid);
+            addFavoriteRequest = new AddFavoriteRequest(context, account, photoid, new LoadTextInterface() {
+                @Override
+                public void onFinish(String text) {
+                    addFavoriteRequest = null;
+                    callback.onFinish(text);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void deleteFavorite(Context context, String userid, String photoid, LoadTextInterface callback) {
+        FlickrAccount account = Accounts.get(userid);
+        deleteFavoriteRequest = new DeleteFavoriteRequest(context, account, photoid, new LoadTextInterface() {
+            @Override
+            public void onFinish(String text) {
+                callback.onFinish(text);
+            }
+        });
+    }
+
+    @Override
+    public void isFavorite(Context context, String userid, String photoid, PhotoIsInFavoritesInterface callback) {
+        FlickrAccount account = Accounts.get(userid);
+        photoIsInFavoritesRequest = new PhotoIsInFavoritesRequest(context, account.id, photoid, new LoadTextInterface() {
+            @Override
+            public void onFinish(String text) {
+                try {
+                    JSONObject jsonObject = new JSONObject(text);
+                    callback.onFinish(!jsonObject.getString("stat").equals("fail"));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void getFavorites(Context context, String userid, String photoid, LoadImageElementInterface callback) {
+
+    }
+
+    @Override
     public void search(Context context, String search, String userid, int page, LoadImageElementInterface callback) {
         if (!isRequestingSearch()) {
             FlickrAccount account = Accounts.get(userid);
@@ -389,6 +444,18 @@ public class Flickr implements API {
 
     private boolean isRequestingAddComment() {
         return addCommentRequest != null;
+    }
+
+    private boolean isRequestingAddFavorite() {
+        return addFavoriteRequest != null;
+    }
+
+    private boolean isRequestingIsInFavoritesRequest() {
+        return photoIsInFavoritesRequest != null;
+    }
+
+    private boolean isRequestingGetUserFavoritesRequest() {
+        return getUserFavoritesRequest != null;
     }
 
 }

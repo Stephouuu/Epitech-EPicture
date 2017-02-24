@@ -3,11 +3,10 @@ package fr.epicture.epicture.api.imgur.requests;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import fr.epicture.epicture.api.imgur.ImgurAccount;
 import fr.epicture.epicture.interfaces.LoadTextInterface;
-import fr.epicture.epicture.requests.TextRequest;
+import fr.epicture.epicture.requests.TextPostRequest;
 
-public class UserInformationRequest extends TextRequest {
+public class UserInformationRequest extends TextPostRequest {
 
     // ========================================================================
     // STATIC FIELDS

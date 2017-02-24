@@ -54,4 +54,7 @@
     <string name="comment">Comment</string>
     <string name="submit">Submit</string>
     <string name="tags">Tags (separated by space)</string>
+
+    <string name="favorites">Favorites</string>
+    <string name="share">Share</string>
 </resources>

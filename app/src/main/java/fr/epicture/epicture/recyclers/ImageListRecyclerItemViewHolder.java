@@ -19,6 +19,7 @@ import fr.epicture.epicture.api.API;
 import fr.epicture.epicture.api.APIAccount;
 import fr.epicture.epicture.api.APIImageElement;
 import fr.epicture.epicture.api.APIManager;
+import fr.epicture.epicture.asynctasks.ShareAsyncTask;
 import fr.epicture.epicture.interfaces.ImageListAdapterInterface;
 import fr.epicture.epicture.interfaces.LoadBitmapInterface;
 import fr.epicture.epicture.interfaces.LoadTextInterface;
@@ -153,7 +154,7 @@ public class ImageListRecyclerItemViewHolder extends RecyclerView.ViewHolder {
     public void refreshIcons(APIImageElement element) {
         View commentContainer = parent.findViewById(R.id.comment_container);
         View favoriteContainer = parent.findViewById(R.id.favorite_container);
-        //View shareContainer = parent.findViewById(R.id.share_container);
+        View shareContainer = parent.findViewById(R.id.share_container);
 
         ImageView favoriteIcon = (ImageView)parent.findViewById(R.id.favorite_icon);
 
@@ -206,12 +207,12 @@ public class ImageListRecyclerItemViewHolder extends RecyclerView.ViewHolder {
             }
         });
 
-        /*shareContainer.setOnClickListener(new View.OnClickListener() {
+        shareContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                new ShareAsyncTask(activity, element).execute();
             }
-        });*/
+        });
     }
 
 }

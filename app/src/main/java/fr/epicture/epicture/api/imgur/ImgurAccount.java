@@ -69,8 +69,17 @@ public class ImgurAccount extends APIAccount {
 
     public void getMyGallery(Context context, int page, LoadImageElementInterface loadImageElementInterface) {
         System.out.println("AccessToken == " + accessToken.getAccessToken());
-        new AlbumRequest(context, username, accessToken.getAccessToken(), text -> {
-            System.out.println("\n\n\n\n------------------------------------------------------------\n" + text);
+        new AlbumRequest(context, accessToken.getAccessToken(), text -> {
+            try {
+                final JSONArray jsonArray = new JSONObject(text).getJSONArray("data");
+                final List<APIImageElement> imgurImageElements = new ArrayList<>();
+                for (int i = 0; i < jsonArray.length(); i++)
+                    imgurImageElements.add(new ImgurImageElement((JSONObject) jsonArray.get(i)));
+                loadImageElementInterface.onFinish(imgurImageElements, imgurImageElements.isEmpty());
+            } catch (JSONException | ClassCastException e) {
+                System.err.println("Error : Unable to convert request data to json.");
+                e.printStackTrace();
+            }
         }).execute();
     }
 
@@ -101,7 +110,7 @@ public class ImgurAccount extends APIAccount {
             JSONObject jsonObject = new JSONObject(text);
             if (jsonObject.getBoolean("success")) {
                 jsonObject = ((JSONObject) jsonObject.get("data"));
-                id = String.valueOf(jsonObject.getInt("access_token"));
+                id = String.valueOf(jsonObject.getInt("id"));
                 username = jsonObject.getString("url");
                 bio = jsonObject.getString("bio");
                 reputation = jsonObject.getDouble("reputation");

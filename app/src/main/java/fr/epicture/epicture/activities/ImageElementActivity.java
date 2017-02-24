@@ -31,6 +31,7 @@ import fr.epicture.epicture.api.APIManager;
 import fr.epicture.epicture.interfaces.AddCommentInterface;
 import fr.epicture.epicture.interfaces.LoadBitmapInterface;
 import fr.epicture.epicture.interfaces.LoadCommentElementInterface;
+import fr.epicture.epicture.interfaces.LoadTextInterface;
 import fr.epicture.epicture.interfaces.LoadUserInfoInterface;
 import fr.epicture.epicture.utils.BitmapCache;
 import fr.epicture.epicture.utils.DateTimeManager;
@@ -125,6 +126,7 @@ public class ImageElementActivity extends AppCompatActivity {
         refreshTags();
         refreshOwner();
         refreshComments();
+        refreshIcons();
     }
 
     @Override
@@ -269,6 +271,62 @@ public class ImageElementActivity extends AppCompatActivity {
             container.setVisibility(View.VISIBLE);
             commentSubmitButton.setTextColor(ContextCompat.getColor(ImageElementActivity.this, R.color.colorPrimary100));
         }
+    }
+
+    private void refreshIcons() {
+        //View commentContainer = parent.findViewById(R.id.comment_container);
+        View favoriteContainer = findViewById(R.id.favorite_container);
+        //View shareContainer = parent.findViewById(R.id.share_container);
+
+        ImageView favoriteIcon = (ImageView)findViewById(R.id.favorite_icon);
+
+        API api = APIManager.getSelectedAPI();
+        APIAccount account = api.getCurrentAccount();
+
+        if (element.favorite) {
+            favoriteIcon.setImageResource(R.mipmap.ic_star_on);
+        } else {
+            favoriteIcon.setImageResource(R.mipmap.ic_star_off);
+        }
+        /*commentContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });*/
+
+        favoriteContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                API api = APIManager.getSelectedAPI();
+                APIAccount account = api.getCurrentAccount();
+
+                if (!element.favorite) {
+                    api.addFavorite(ImageElementActivity.this, account.getID(), element.getID(), new LoadTextInterface() {
+                        @Override
+                        public void onFinish(String text) {
+                            element.favorite = true;
+                            favoriteIcon.setImageResource(R.mipmap.ic_star_on);
+                        }
+                    });
+                } else {
+                    api.deleteFavorite(ImageElementActivity.this, account.getID(), element.getID(), new LoadTextInterface() {
+                        @Override
+                        public void onFinish(String text) {
+                            element.favorite = false;
+                            favoriteIcon.setImageResource(R.mipmap.ic_star_off);
+                        }
+                    });
+                }
+            }
+        });
+
+        /*shareContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });*/
     }
 
     private void submitComment() {

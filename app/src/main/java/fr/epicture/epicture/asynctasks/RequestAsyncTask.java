@@ -116,6 +116,10 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
             httpsURLConnection.setRequestMethod("GET");
             httpsURLConnection.setUseCaches(false);
 
+            for (Map.Entry<String, String> entry : header.entrySet()) {
+                httpsURLConnection.setRequestProperty(entry.getKey(), entry.getValue());
+            }
+
             try {
                 this.getResponse();
             } catch (Exception e) {
@@ -141,6 +145,10 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
             httpsURLConnection.setReadTimeout(GET_READ_TIMEOUT);
             httpsURLConnection.setRequestMethod("GET");
             httpsURLConnection.setUseCaches(false);
+
+            for (Map.Entry<String, String> entry : header.entrySet()) {
+                httpsURLConnection.setRequestProperty(entry.getKey(), entry.getValue());
+            }
 
             try {
                 this.getResponseImage();

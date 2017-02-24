@@ -32,6 +32,7 @@ public abstract class APIImageElement implements Parcelable {
     public String ownername;
     public int commentCount;
     public long date;
+    public boolean favorite;
 
     protected APIImageElement() {
         this.id = "undefined";
@@ -41,6 +42,7 @@ public abstract class APIImageElement implements Parcelable {
     protected APIImageElement(String id, int size) {
         this.id = id;
         this.size = size;
+        favorite = false;
     }
 
     protected APIImageElement(String path, String title, String description, String tags) {
@@ -48,6 +50,7 @@ public abstract class APIImageElement implements Parcelable {
         this.title = title;
         this.description = description;
         this.tags = tags;
+        favorite = false;
     }
 
     public String getID() {

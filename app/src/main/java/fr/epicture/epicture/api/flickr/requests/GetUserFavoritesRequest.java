@@ -16,13 +16,16 @@ public class GetUserFavoritesRequest extends TextRequest {
     private static final String URL = "https://www.flickr.com/services/rest";
     private static final String METHOD = "flickr.favorites.getList";
 
-    public GetUserFavoritesRequest(@NonNull Context context, String userid, LoadTextInterface listener) {
+    public GetUserFavoritesRequest(@NonNull Context context, String userid, int page, LoadTextInterface listener) {
         super(context,
                 URL + "?nojsoncallback=1"
                 + "&format=json"
                 + "&api_key=" + FlickrClient.CONSUMER_KEY
                 + "&user_id=" + userid
                 + "&method=" + METHOD
+                + "&page=" + page
+                + "&per_page=20"
+                + "&extras=description,date_upload,tags,owner_name"
                 , listener);
         execute();
     }

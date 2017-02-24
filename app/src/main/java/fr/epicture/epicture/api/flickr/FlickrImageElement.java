@@ -26,8 +26,10 @@ public class FlickrImageElement extends APIImageElement {
         try {
             setID(jsonObject.getString("id"));
             setSize(size);
-            date = jsonObject.getLong("dateupload");
-            description = jsonObject.getJSONObject("description").optString("_content");
+            date = jsonObject.optLong("dateupload");
+            try {
+                description = jsonObject.optJSONObject("description").optString("_content");
+            } catch (Exception e) {}
             tags = jsonObject.optString("tags");
             ownerid = jsonObject.optString("owner");
             ownername = jsonObject.optString("ownername");
@@ -101,6 +103,7 @@ public class FlickrImageElement extends APIImageElement {
         dest.writeInt(isPublic?1:0);
         dest.writeInt(isFriend?1:0);
         dest.writeInt(isFamily?1:0);
+        dest.writeInt(favorite?1:0);
     }
 
     public static final Parcelable.Creator<FlickrImageElement> CREATOR = new Parcelable.Creator<FlickrImageElement>() {
@@ -133,6 +136,7 @@ public class FlickrImageElement extends APIImageElement {
         isPublic = in.readInt() == 1;
         isFriend = in.readInt() == 1;
         isFamily = in.readInt() == 1;
+        favorite = in.readInt() == 1;
     }
 
 }

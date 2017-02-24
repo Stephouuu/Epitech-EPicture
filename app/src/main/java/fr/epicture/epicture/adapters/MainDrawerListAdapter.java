@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.epicture.epicture.R;
+import fr.epicture.epicture.activities.FavoritesActivity;
 import fr.epicture.epicture.activities.LogoutActivity;
 import fr.epicture.epicture.activities.MyPicturesActivity;
 import fr.epicture.epicture.interfaces.MainDrawerInterface;
@@ -22,8 +23,9 @@ import fr.epicture.epicture.interfaces.MainDrawerInterface;
 
 public class MainDrawerListAdapter extends BaseAdapter {
 
-    public static final int MY_PICTURES = 0;
-    public static final int LOG_OUT = 1;
+    private static final int MY_PICTURES = 0;
+    private static final int MY_FAVORITES = 1;
+    private static final int LOG_OUT = 2;
 
     private Context context;
     private List<String> contents;
@@ -37,9 +39,11 @@ public class MainDrawerListAdapter extends BaseAdapter {
         this.listener = listener;
 
         contents.add(context.getString(R.string.my_pictures));
+        contents.add(context.getString(R.string.favorites));
         contents.add(context.getString(R.string.logout));
 
         intents.add(MY_PICTURES, new Intent(context, MyPicturesActivity.class));
+        intents.add(MY_FAVORITES, new Intent(context, FavoritesActivity.class));
         intents.add(LOG_OUT, new Intent(context, LogoutActivity.class));
     }
 

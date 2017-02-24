@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements ImageListInterfac
 
     private void refreshProfileName() {
         APIAccount account = APIManager.getSelectedAPI().getCurrentAccount();
-        realnameTextView.setText(account.getUsername());
+        realnameTextView.setText(account.getRealname());
         usernameTextView.setText(getString(R.string.username, account.getUsername()));
     }
 

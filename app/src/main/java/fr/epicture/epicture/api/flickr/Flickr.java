@@ -342,8 +342,29 @@ public class Flickr implements API {
     }
 
     @Override
-    public void getFavorites(Context context, String userid, String photoid, LoadImageElementInterface callback) {
-
+    public void getFavorites(Context context, String userid, int page, LoadImageElementInterface callback) {
+        FlickrAccount account = Accounts.get(userid);
+        getUserFavoritesRequest = new GetUserFavoritesRequest(context, account.id, page, new LoadTextInterface() {
+            @Override
+            public void onFinish(String text) {
+                try {
+                    JSONObject jsonObject = new JSONObject(text);
+                    int maxPage = jsonObject.getJSONObject("photos").getInt("pages");
+                    if (maxPage < page) {
+                        callback.onFinish(null, true);
+                    }
+                    List<APIImageElement> datas = new ArrayList<>();
+                    JSONArray jsonArray = jsonObject.getJSONObject("photos").getJSONArray("photo");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject current = jsonArray.getJSONObject(i);
+                        datas.add(new FlickrImageElement(current, APIImageElement.SIZE_PREVIEW));
+                    }
+                    callback.onFinish(datas, false);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override

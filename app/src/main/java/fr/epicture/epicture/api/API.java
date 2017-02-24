@@ -42,7 +42,7 @@ public interface API {
     void addFavorite(Context context, String userid, String photoid, LoadTextInterface callback);
     void deleteFavorite(Context context, String userid, String photoid, LoadTextInterface callback);
     void isFavorite(Context context, String userid, String photoid, PhotoIsInFavoritesInterface callback);
-    void getFavorites(Context context, String userid, String photoid, LoadImageElementInterface callback);
+    void getFavorites(Context context, String userid, int page, LoadImageElementInterface callback);
 
     void setCurrentAccount(APIAccount account);
     APIAccount getCurrentAccount();

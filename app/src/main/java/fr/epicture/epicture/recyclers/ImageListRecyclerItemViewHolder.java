@@ -120,11 +120,13 @@ public class ImageListRecyclerItemViewHolder extends RecyclerView.ViewHolder {
             }
         });
 
-        if (element.ownerid.equals(APIManager.getSelectedAPI().getCurrentAccount().id)) {
-            parent.findViewById(R.id.expand).setVisibility(View.VISIBLE);
-        } else {
-            parent.findViewById(R.id.expand).setVisibility(View.GONE);
-        }
+        //if (element.ownerid != null) {
+            if (element.ownerid.equals(APIManager.getSelectedAPI().getCurrentAccount().id)) {
+                parent.findViewById(R.id.expand).setVisibility(View.VISIBLE);
+            } else {
+                parent.findViewById(R.id.expand).setVisibility(View.GONE);
+            }
+        //}
 
         ownerPicture.setImageResource(R.drawable.placeholder);
         API api = APIManager.getSelectedAPI();

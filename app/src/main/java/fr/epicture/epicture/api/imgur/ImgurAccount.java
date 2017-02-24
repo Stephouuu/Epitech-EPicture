@@ -14,12 +14,9 @@ import fr.epicture.epicture.api.APIAccount;
 import fr.epicture.epicture.api.APIImageElement;
 import fr.epicture.epicture.api.imgur.requests.AlbumRequest;
 import fr.epicture.epicture.api.imgur.requests.GalleryRequest;
-import fr.epicture.epicture.api.imgur.requests.RefreshTokenRequest;
 import fr.epicture.epicture.api.imgur.requests.UserInformationRequest;
 import fr.epicture.epicture.api.imgur.utils.ImgurUtils;
 import fr.epicture.epicture.interfaces.LoadImageElementInterface;
-import fr.epicture.epicture.interfaces.LoadTextInterface;
-import fr.epicture.epicture.interfaces.LoadUserInfoInterface;
 
 public class ImgurAccount extends APIAccount {
 
@@ -62,7 +59,7 @@ public class ImgurAccount extends APIAccount {
                 final List<APIImageElement> imgurImageElements = new ArrayList<>();
                 for (int i = 0; i < jsonArray.length(); i++)
                     imgurImageElements.add(new ImgurImageElement(((JSONObject) jsonArray.get(i))));
-                loadImageElementInterface.onFinish(imgurImageElements, !imgurImageElements.isEmpty());
+                loadImageElementInterface.onFinish(imgurImageElements, imgurImageElements.isEmpty());
             } catch (JSONException | ClassCastException e) {
                 System.err.println("Error : Unable to convert request data to json.");
                 e.printStackTrace();

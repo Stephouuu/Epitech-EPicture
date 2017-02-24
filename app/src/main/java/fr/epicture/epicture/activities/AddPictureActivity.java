@@ -39,6 +39,7 @@ public class AddPictureActivity extends AppCompatActivity {
     private EditText titleEditText;
     private ImageView imageView;
     private EditText descriptionEditText;
+    private EditText tagsEditText;
 
     private String photo;
 
@@ -56,6 +57,7 @@ public class AddPictureActivity extends AppCompatActivity {
         titleEditText = (EditText)findViewById(R.id.title);
         imageView = (ImageView)findViewById(R.id.picture_preview);
         descriptionEditText = (EditText)findViewById(R.id.description);
+        tagsEditText = (EditText)findViewById(R.id.tags);
 
         photo = getPhotos(getIntent());
         refreshPhoto();
@@ -141,6 +143,7 @@ public class AddPictureActivity extends AppCompatActivity {
         UploadImageActivity.setTitle(intent, titleEditText.getText().toString());
         UploadImageActivity.setPhotoPath(intent, photo);
         UploadImageActivity.setDescription(intent, descriptionEditText.getText().toString());
+        UploadImageActivity.setTags(intent, tagsEditText.getText().toString());
         startActivityForResult(intent, REQUEST_UPLOAD);
     }
 

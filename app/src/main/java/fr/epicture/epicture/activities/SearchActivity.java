@@ -3,6 +3,7 @@ package fr.epicture.epicture.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
@@ -89,7 +92,6 @@ public class SearchActivity extends AppCompatActivity implements ImageListInterf
             searchView.clearFocus();
         }
 
-        // Définit l'action lors de la recherche d'un terme
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String search) {
@@ -112,22 +114,6 @@ public class SearchActivity extends AppCompatActivity implements ImageListInterf
                 return false;
             }
         });
-
-        /*MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
-                String search = getSearch(getIntent());
-                if (search != null && !search.isEmpty() && search.length() > 2) {
-
-                }
-                return true;
-            }
-
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem menuItem) {
-                return true;
-            }
-        });*/
 
         return true;
     }
@@ -154,16 +140,20 @@ public class SearchActivity extends AppCompatActivity implements ImageListInterf
 
     @Override
     public void onImageClick(APIImageElement element) {
-
+        Intent intent = new Intent(this, ImageElementActivity.class);
+        ImageElementActivity.setImageElement(intent, element);
+        startActivity(intent);
     }
 
     @Override
     public void onHideToolbar() {
-
+        AppBarLayout toolbar = (AppBarLayout)findViewById(R.id.appbarlayout);
+        toolbar.animate().setDuration(200).translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
     }
 
     @Override
     public void onShowToolbar() {
-
+        AppBarLayout toolbar = (AppBarLayout)findViewById(R.id.appbarlayout);
+        toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
     }
 }

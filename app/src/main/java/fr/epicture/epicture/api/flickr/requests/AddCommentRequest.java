@@ -14,22 +14,24 @@ import fr.epicture.epicture.utils.RequestIdentifierGenerator;
 import fr.epicture.epicture.utils.StaticTools;
 
 /**
- * Created by Stephane on 21/02/2017.
+ * Created by Stephane on 24/02/2017.
  */
 
-public class DeletePhotoRequest extends TextPostRequest {
+public class AddCommentRequest extends TextPostRequest {
 
     private static final String URL = "https://www.flickr.com/services/rest";
-    private static final String METHOD = "flickr.photos.delete";
+    private static final String METHOD = "flickr.photos.comments.addComment";
 
-    private FlickrAccount user;
     private String photoid;
+    private String comment;
+    private FlickrAccount user;
 
-    public DeletePhotoRequest(@NonNull Context context, FlickrAccount user, String photoid, LoadTextInterface listener) {
+    public AddCommentRequest(@NonNull Context context, FlickrAccount user, String photoid, String comment, LoadTextInterface listener) {
         super(context, URL, listener);
 
-        this.user = user;
         this.photoid = photoid;
+        this.comment = comment;
+        this.user = user;
 
         addHeader();
         addParam();
@@ -54,8 +56,11 @@ public class DeletePhotoRequest extends TextPostRequest {
     }
 
     private void addParam() {
+        addParam(new ParamBody("nojsoncallback", "1"));
+        addParam(new ParamBody("format", "json"));
         addParam(new ParamBody("method", METHOD));
         addParam(new ParamBody("photo_id", photoid));
+        addParam(new ParamBody("comment_text", comment));
     }
 
     private String getSignature(String random, long unixTime) {
@@ -68,11 +73,13 @@ public class DeletePhotoRequest extends TextPostRequest {
                 "oauth_timestamp=" + unixTime,
                 "oauth_signature_method=HMAC-SHA1",
                 "oauth_token=" + user.token,
+                "method=" + METHOD,
                 "photo_id=" + photoid,
-                "method=" + METHOD
+                "comment_text=" + comment,
+                "nojsoncallback=1",
+                "format=json"
         };
 
         return FlickrUtils.getPOSTSignature(part1, part2, params, user.tokenSecret);
     }
-
 }

@@ -35,8 +35,8 @@ public class TextPostRequest extends RequestAsyncTask {
     protected Void doInBackground(Void... params) {
         try {
             POST(url);
-            Log.i("TextRequest", "POST " + url);
-            Log.i("TextRequest", "BODY " + response);
+            Log.i("TextPostRequest", "POST " + url);
+            Log.i("TextPostRequest", "BODY " + response);
         } catch (Exception e) {
             e.printStackTrace();
         }

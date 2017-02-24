@@ -21,6 +21,7 @@ import fr.epicture.epicture.api.APIImageElement;
 import fr.epicture.epicture.api.flickr.database.FlickrDatabase;
 import fr.epicture.epicture.api.flickr.modele.TokenAccess;
 import fr.epicture.epicture.api.flickr.modele.TokenRequest;
+import fr.epicture.epicture.api.flickr.requests.AddCommentRequest;
 import fr.epicture.epicture.api.flickr.requests.DeletePhotoRequest;
 import fr.epicture.epicture.api.flickr.requests.GetAccessTokenRequest;
 import fr.epicture.epicture.api.flickr.requests.GetCommentsRequest;
@@ -31,6 +32,7 @@ import fr.epicture.epicture.api.flickr.requests.UploadPictureRequest;
 import fr.epicture.epicture.api.flickr.requests.UserInformationRequest;
 import fr.epicture.epicture.api.flickr.requests.UserPhotosRequest;
 import fr.epicture.epicture.api.flickr.utils.FlickrUtils;
+import fr.epicture.epicture.interfaces.AddCommentInterface;
 import fr.epicture.epicture.interfaces.AuthentificationInterface;
 import fr.epicture.epicture.interfaces.ImageDiskCacheInterface;
 import fr.epicture.epicture.interfaces.LoadBitmapInterface;
@@ -55,6 +57,7 @@ public class Flickr implements API {
     private UserPhotosRequest userPhotosRequest;
     private UploadPictureRequest uploadPictureRequest;
     private SearchRequest searchRequest;
+    private AddCommentRequest addCommentRequest;
 
     private AuthentificationInterface authListener;
     private TokenRequest tokenRequest;
@@ -176,10 +179,10 @@ public class Flickr implements API {
     }
 
     @Override
-    public void uploadImage(Context context, APIAccount user, String path, String title, String description, LoadTextInterface callback) {
+    public void uploadImage(Context context, APIAccount user, String path, String title, String description, String tags, LoadTextInterface callback) {
         if (!isRequestingUploadPicture()) {
             FlickrAccount flickrAccount = Accounts.get(user.getUsername());
-            FlickrImageElement element = new FlickrImageElement(path, title, description);
+            FlickrImageElement element = new FlickrImageElement(path, title, description, tags);
             uploadPictureRequest = new UploadPictureRequest(context, flickrAccount, element, new LoadTextInterface() {
                 @Override
                 public void onFinish(String text) {
@@ -247,8 +250,28 @@ public class Flickr implements API {
     }
 
     @Override
-    public void getComments(Context context, String photoid, LoadCommentElementInterface callback) {
-        new GetCommentsRequest(context, photoid, new LoadTextInterface() {
+    public void addComment(Context context, String userid, String photoid, String comment, AddCommentInterface callback) {
+        if (!isRequestingAddComment()) {
+            FlickrAccount user = Accounts.get(userid);
+            addCommentRequest = new AddCommentRequest(context, user, photoid, comment, new LoadTextInterface() {
+                @Override
+                public void onFinish(String text) {
+                    addCommentRequest = null;
+                    try {
+                        JSONObject jsonObject = new JSONObject(text);
+                        callback.onFinish(new FlickrCommentElement(jsonObject.getJSONObject("comment")));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void getComments(Context context, String userid, String photoid, LoadCommentElementInterface callback) {
+        FlickrAccount account = Accounts.get(userid);
+        new GetCommentsRequest(context, account, photoid, new LoadTextInterface() {
             @Override
             public void onFinish(String text) {
                 try {
@@ -362,6 +385,10 @@ public class Flickr implements API {
 
     private boolean isRequestingSearch() {
         return searchRequest != null;
+    }
+
+    private boolean isRequestingAddComment() {
+        return addCommentRequest != null;
     }
 
 }

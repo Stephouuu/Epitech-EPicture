@@ -43,8 +43,8 @@ public class FlickrImageElement extends APIImageElement {
         }
     }
 
-    public FlickrImageElement(String path, String title, String description) {
-        super(path, title, description);
+    public FlickrImageElement(String path, String title, String description, String tags) {
+        super(path, title, description, tags);
     }
 
     @Override

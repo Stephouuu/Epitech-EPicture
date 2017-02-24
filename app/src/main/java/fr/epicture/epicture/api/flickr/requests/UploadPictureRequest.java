@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.net.URLEncoder;
 
 import fr.epicture.epicture.api.flickr.FlickrAccount;
 import fr.epicture.epicture.api.flickr.FlickrClient;
@@ -47,12 +48,16 @@ public class UploadPictureRequest extends UploadRequest {
         String random = RequestIdentifierGenerator.Generate();
         long unixTime = StaticTools.GetCurrentUnixTime();
 
-        addHeader("Authorization", "OAuth oauth_nonce=\"" + random + "\""
-                + ",oauth_timestamp=\"" + unixTime + "\""
-                + ",oauth_consumer_key=\"" + FlickrClient.CONSUMER_KEY + "\""
-                + ",oauth_signature_method=\"HMAC-SHA1\""
-                + ",oauth_signature=\"" + getSignature(random, unixTime) + "\""
-                + ",oauth_token=\"" + user.token + "\"");
+        try {
+            addHeader("Authorization", "OAuth oauth_nonce=\"" + random + "\""
+                    + ",oauth_timestamp=\"" + unixTime + "\""
+                    + ",oauth_consumer_key=\"" + FlickrClient.CONSUMER_KEY + "\""
+                    + ",oauth_signature_method=\"HMAC-SHA1\""
+                    + ",oauth_signature=\"" + URLEncoder.encode(getSignature(random, unixTime), "UTF-8") + "\""
+                    + ",oauth_token=\"" + user.token + "\"");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void addParam() {
@@ -61,6 +66,9 @@ public class UploadPictureRequest extends UploadRequest {
         }
         if (element.description != null && !element.description.isEmpty()) {
             addParam(new ParamBody("description", element.description));
+        }
+        if (element.tags != null && !element.tags.isEmpty()) {
+            addParam(new ParamBody("tags", element.tags));
         }
 
         Bitmap bitmap = BitmapCache.getInCache(ImageDiskCache.CACHE_TAG + element.getID() + element.getSize());
@@ -79,16 +87,16 @@ public class UploadPictureRequest extends UploadRequest {
         String part1 = "POST";
         String part2 = URL;
 
-        String[] params = new String[] {
+        String[] params = new String[]{
                 "oauth_nonce=" + random,
                 "oauth_consumer_key=" + FlickrClient.CONSUMER_KEY,
                 "oauth_timestamp=" + unixTime,
                 "oauth_signature_method=HMAC-SHA1",
                 "oauth_token=" + user.token,
                 "title=" + element.title,
-                "description=" + element.description
+                "description=" + element.description,
+                "tags=" + element.tags
         };
-
         return FlickrUtils.getPOSTSignature(part1, part2, params, user.tokenSecret);
     }
 

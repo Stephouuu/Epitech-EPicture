@@ -50,4 +50,8 @@
 
     <string name="search">Search</string>
     <string name="noitem">There are no item to display</string>
+
+    <string name="comment">Comment</string>
+    <string name="submit">Submit</string>
+    <string name="tags">Tags (separated by space)</string>
 </resources>

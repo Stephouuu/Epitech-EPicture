@@ -43,10 +43,11 @@ public abstract class APIImageElement implements Parcelable {
         this.size = size;
     }
 
-    protected APIImageElement(String path, String title, String description) {
+    protected APIImageElement(String path, String title, String description, String tags) {
         this.path = path;
         this.title = title;
         this.description = description;
+        this.tags = tags;
     }
 
     public String getID() {

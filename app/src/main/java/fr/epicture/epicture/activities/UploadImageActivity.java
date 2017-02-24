@@ -16,6 +16,7 @@ public class UploadImageActivity extends AppCompatActivity {
     public static final String EXTRA_PATH = "photo.path";
     public static final String EXTRA_TITLE = "photo.title";
     public static final String EXTRA_DESCRIPTION = "photo.description";
+    public static final String EXTRA_TAGS = "photo.tags";
 
     public static void setPhotoPath(Intent intent, String value) {
         intent.putExtra(EXTRA_PATH, value);
@@ -41,9 +42,18 @@ public class UploadImageActivity extends AppCompatActivity {
         return intent.getStringExtra(EXTRA_DESCRIPTION);
     }
 
+    public static void setTags(Intent intent, String value) {
+        intent.putExtra(EXTRA_TAGS, value);
+    }
+
+    public static String getTags(Intent intent) {
+        return intent.getStringExtra(EXTRA_TAGS);
+    }
+
     private String path;
     private String title;
     private String description;
+    private String tags;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +69,7 @@ public class UploadImageActivity extends AppCompatActivity {
         path = getPhotoPath(getIntent());
         title = getTitle(getIntent());
         description = getDescription(getIntent());
+        tags = getTags(getIntent());
 
         upload();
     }
@@ -66,7 +77,7 @@ public class UploadImageActivity extends AppCompatActivity {
     private void upload() {
         API api = APIManager.getSelectedAPI();
         BitmapCache.deleteAllCache();
-        api.uploadImage(this, api.getCurrentAccount(), path, title, description, new LoadTextInterface() {
+        api.uploadImage(this, api.getCurrentAccount(), path, title, description, tags, new LoadTextInterface() {
             @Override
             public void onFinish(String text) {
                 setResult(RESULT_OK);

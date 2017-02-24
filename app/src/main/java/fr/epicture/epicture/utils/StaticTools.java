@@ -5,6 +5,8 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import org.apache.commons.codec.binary.Base64;
 import org.json.JSONArray;
@@ -132,6 +134,11 @@ public class StaticTools {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public static void hideSoftKeyboard(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
 }

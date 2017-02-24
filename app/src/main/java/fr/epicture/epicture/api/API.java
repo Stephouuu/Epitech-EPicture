@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.util.Collection;
 
+import fr.epicture.epicture.interfaces.AddCommentInterface;
 import fr.epicture.epicture.interfaces.AuthentificationInterface;
 import fr.epicture.epicture.interfaces.LoadBitmapInterface;
 import fr.epicture.epicture.interfaces.LoadCommentElementInterface;
@@ -27,12 +28,13 @@ public interface API {
     void loadUserAvatar(Context context, APICommentElement commentElement, LoadBitmapInterface callback);
 
     void loadImage(Context context, APIImageElement element, LoadBitmapInterface callback);
-    void uploadImage(Context context, APIAccount user, String path, String title, String description, LoadTextInterface callback);
+    void uploadImage(Context context, APIAccount user, String path, String title, String description, String tags, LoadTextInterface callback);
 
     void getInterestingnessList(Context context, int page, LoadImageElementInterface callback);
     void getMyPictures(Context context, int page, LoadImageElementInterface callback);
 
-    void getComments(Context context, String photoid, LoadCommentElementInterface callback);
+    void addComment(Context context, String userid, String photoid, String comment, AddCommentInterface callback);
+    void getComments(Context context, String userid, String photoid, LoadCommentElementInterface callback);
 
     void search(Context context, String search, String userid, int page, LoadImageElementInterface callback);
 

@@ -4,7 +4,6 @@ import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +17,7 @@ import fr.epicture.epicture.api.imgur.database.ImgurDatabase;
 import fr.epicture.epicture.api.imgur.requests.RefreshTokenRequest;
 import fr.epicture.epicture.api.imgur.requests.UserInformationRequest;
 import fr.epicture.epicture.api.imgur.utils.ImgurUtils;
+import fr.epicture.epicture.interfaces.AddCommentInterface;
 import fr.epicture.epicture.interfaces.AuthentificationInterface;
 import fr.epicture.epicture.interfaces.LoadBitmapInterface;
 import fr.epicture.epicture.interfaces.LoadCommentElementInterface;
@@ -142,7 +142,7 @@ public class Imgur implements API {
     }
 
     @Override
-    public void uploadImage(Context context, APIAccount user, String path, String title, String description, LoadTextInterface callback) {
+    public void uploadImage(Context context, APIAccount user, String path, String title, String description, String tags, LoadTextInterface callback) {
 
     }
 
@@ -157,7 +157,12 @@ public class Imgur implements API {
     }
 
     @Override
-    public void getComments(Context context, String photoid, LoadCommentElementInterface callback) {
+    public void addComment(Context context, String userid, String photoid, String comment, AddCommentInterface callback) {
+
+    }
+
+    @Override
+    public void getComments(Context context, String userid, String photoid, LoadCommentElementInterface callback) {
 
     }
 

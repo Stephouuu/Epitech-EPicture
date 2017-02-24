@@ -4,9 +4,9 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import fr.epicture.epicture.interfaces.LoadTextInterface;
-import fr.epicture.epicture.requests.TextPostRequest;
+import fr.epicture.epicture.requests.TextRequest;
 
-public class UserInformationRequest extends TextPostRequest {
+public class UserInformationRequest extends TextRequest {
 
     // ========================================================================
     // STATIC FIELDS

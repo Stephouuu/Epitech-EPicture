@@ -28,6 +28,7 @@ import fr.epicture.epicture.api.APIAccount;
 import fr.epicture.epicture.api.APICommentElement;
 import fr.epicture.epicture.api.APIImageElement;
 import fr.epicture.epicture.api.APIManager;
+import fr.epicture.epicture.asynctasks.ShareAsyncTask;
 import fr.epicture.epicture.interfaces.AddCommentInterface;
 import fr.epicture.epicture.interfaces.LoadBitmapInterface;
 import fr.epicture.epicture.interfaces.LoadCommentElementInterface;
@@ -299,12 +300,11 @@ public class ImageElementActivity extends AppCompatActivity {
     private void refreshIcons() {
         View commentContainer = findViewById(R.id.comment_container);
         View favoriteContainer = findViewById(R.id.favorite_container);
-        //View shareContainer = parent.findViewById(R.id.share_container);
+        View shareContainer = findViewById(R.id.share_container);
 
         ImageView favoriteIcon = (ImageView)findViewById(R.id.favorite_icon);
 
         API api = APIManager.getSelectedAPI();
-        APIAccount account = api.getCurrentAccount();
 
         if (element.favorite) {
             favoriteIcon.setImageResource(R.mipmap.ic_star_on);
@@ -348,12 +348,12 @@ public class ImageElementActivity extends AppCompatActivity {
             }
         });
 
-        /*shareContainer.setOnClickListener(new View.OnClickListener() {
+        shareContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                new ShareAsyncTask(ImageElementActivity.this, element).execute();
             }
-        });*/
+        });
     }
 
     private void submitComment() {

@@ -30,6 +30,7 @@ public abstract class APIImageElement implements Parcelable {
     public String tags;
     public String ownerid;
     public String ownername;
+    public int commentCount;
     public long date;
 
     protected APIImageElement() {

@@ -12,7 +12,6 @@ public abstract class APICommentElement {
     public String authorName;
     public String content;
 
-
     public abstract String getIconServer();
     public abstract String getIconFarm();
     public abstract String getNSID();

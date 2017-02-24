@@ -12,13 +12,12 @@ import fr.epicture.epicture.api.APIImageElement;
 public class ImgurImageElement extends APIImageElement {
     //private long dateTime;
 
-    private String tags = "";
+    //private String tags = "";
 
-    private String accountUrl;
+    //private String accountUrl;
     //private int accountID;
 
     private String url;
-    private int commentCount;
     private int ups;
     private int downs;
     private int points;
@@ -33,8 +32,11 @@ public class ImgurImageElement extends APIImageElement {
             setID(jsonObject.getString("id"));
             title = jsonObject.getString("title");
             description = jsonObject.getString("description");
+            if (description.equals("null")) {
+                description = "";
+            }
             date = jsonObject.getLong("datetime");
-            accountUrl = jsonObject.getString("account_url");
+            ownername = jsonObject.getString("account_url");
             ownerid = jsonObject.getString("account_id");
             url = jsonObject.getString("link");
             commentCount = jsonObject.getInt("comment_count");
@@ -43,6 +45,7 @@ public class ImgurImageElement extends APIImageElement {
             points = jsonObject.getInt("points");
             score = jsonObject.getInt("score");
 
+            tags = "";
             final JSONArray jsonArray = jsonObject.getJSONArray("tags");
             for (int i = 0; i < jsonArray.length(); i++) {
                 final JSONObject tag = ((JSONObject) jsonArray.get(i));
@@ -61,7 +64,7 @@ public class ImgurImageElement extends APIImageElement {
         title = in.readString();
         description = in.readString();
         date = in.readLong();
-        accountUrl = in.readString();
+        ownername = in.readString();
         url = in.readString();
         commentCount = in.readInt();
         ups = in.readInt();
@@ -114,7 +117,7 @@ public class ImgurImageElement extends APIImageElement {
         parcel.writeString(title);
         parcel.writeString(description);
         parcel.writeLong(date);
-        parcel.writeString(accountUrl);
+        parcel.writeString(ownername);
         parcel.writeString(url);
         parcel.writeInt(commentCount);
         parcel.writeInt(ups);
@@ -146,11 +149,11 @@ public class ImgurImageElement extends APIImageElement {
     }
 
     public String getAccountUrl() {
-        return accountUrl;
+        return ownername;
     }
 
     public void setAccountUrl(String accountUrl) {
-        this.accountUrl = accountUrl;
+        this.ownername = accountUrl;
     }
 
     public String getAccountID() {

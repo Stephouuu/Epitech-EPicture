@@ -151,7 +151,7 @@ public class ImageListRecyclerItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void refreshIcons(APIImageElement element) {
-        //View commentContainer = parent.findViewById(R.id.comment_container);
+        View commentContainer = parent.findViewById(R.id.comment_container);
         View favoriteContainer = parent.findViewById(R.id.favorite_container);
         //View shareContainer = parent.findViewById(R.id.share_container);
 
@@ -172,12 +172,12 @@ public class ImageListRecyclerItemViewHolder extends RecyclerView.ViewHolder {
             }
         });
 
-        /*commentContainer.setOnClickListener(new View.OnClickListener() {
+        commentContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                listener.onCommentClick(element);
             }
-        });*/
+        });
 
         favoriteContainer.setOnClickListener(new View.OnClickListener() {
             @Override

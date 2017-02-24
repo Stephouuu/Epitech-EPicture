@@ -40,6 +40,7 @@ import fr.epicture.epicture.utils.StaticTools;
 public class ImageElementActivity extends AppCompatActivity {
 
     public static final String EXTRA_IMAGE_ELEMENT = "image";
+    public static final String EXTRA_COMMENT = "comment";
 
     public static void setImageElement(Intent intent, APIImageElement element) {
         intent.putExtra(EXTRA_IMAGE_ELEMENT, element);
@@ -47,6 +48,14 @@ public class ImageElementActivity extends AppCompatActivity {
 
     public static APIImageElement getImageElement(Intent intent) {
         return intent.getParcelableExtra(EXTRA_IMAGE_ELEMENT);
+    }
+
+    public static void setComment(Intent intent, boolean value) {
+        intent.putExtra(EXTRA_COMMENT, value);
+    }
+
+    public static boolean getComment(Intent intent) {
+        return intent.getBooleanExtra(EXTRA_COMMENT, false);
     }
 
     private ImageView imageView;
@@ -58,6 +67,7 @@ public class ImageElementActivity extends AppCompatActivity {
     private ScrollView page;
 
     private APIImageElement element;
+    private boolean comment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +75,7 @@ public class ImageElementActivity extends AppCompatActivity {
         setContentView(R.layout.image_element_activity);
 
         element = getImageElement(getIntent());
+        comment = getComment(getIntent());
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         ((TextView)toolbar.findViewById(R.id.picture_title)).setText(element.title);
@@ -228,6 +239,12 @@ public class ImageElementActivity extends AppCompatActivity {
                     }
                     container.setVisibility(View.VISIBLE);
                 }
+                if (comment) {
+                    commentEditText.clearFocus();
+                    commentEditText.requestLayout();
+                    StaticTools.showSoftKeyboard(ImageElementActivity.this, commentEditText);
+                    comment = false;
+                }
                 progressBar.setVisibility(View.GONE);
             }
         });
@@ -270,11 +287,17 @@ public class ImageElementActivity extends AppCompatActivity {
             addComments(inflater, container, element);
             container.setVisibility(View.VISIBLE);
             commentSubmitButton.setTextColor(ContextCompat.getColor(ImageElementActivity.this, R.color.colorPrimary100));
+            page.post(new Runnable() {
+                @Override
+                public void run() {
+                    page.fullScroll(View.FOCUS_DOWN);
+                }
+            });
         }
     }
 
     private void refreshIcons() {
-        //View commentContainer = parent.findViewById(R.id.comment_container);
+        View commentContainer = findViewById(R.id.comment_container);
         View favoriteContainer = findViewById(R.id.favorite_container);
         //View shareContainer = parent.findViewById(R.id.share_container);
 
@@ -288,12 +311,16 @@ public class ImageElementActivity extends AppCompatActivity {
         } else {
             favoriteIcon.setImageResource(R.mipmap.ic_star_off);
         }
-        /*commentContainer.setOnClickListener(new View.OnClickListener() {
+
+        commentEditText.clearFocus();
+        commentContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                commentEditText.clearFocus();
+                commentEditText.requestFocus();
+                StaticTools.showSoftKeyboard(ImageElementActivity.this, commentEditText);
             }
-        });*/
+        });
 
         favoriteContainer.setOnClickListener(new View.OnClickListener() {
             @Override

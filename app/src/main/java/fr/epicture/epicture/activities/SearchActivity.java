@@ -146,6 +146,14 @@ public class SearchActivity extends AppCompatActivity implements ImageListInterf
     }
 
     @Override
+    public void onCommentClick(APIImageElement element) {
+        Intent intent = new Intent(this, ImageElementActivity.class);
+        ImageElementActivity.setImageElement(intent, element);
+        ImageElementActivity.setComment(intent, true);
+        startActivity(intent);
+    }
+
+    @Override
     public void onHideToolbar() {
         AppBarLayout toolbar = (AppBarLayout)findViewById(R.id.appbarlayout);
         toolbar.animate().setDuration(200).translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));

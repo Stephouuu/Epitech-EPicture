@@ -173,6 +173,14 @@ public class MyPicturesActivity extends AppCompatActivity implements ImageListIn
         startActivity(intent);
     }
 
+    @Override
+    public void onCommentClick(APIImageElement element) {
+        Intent intent = new Intent(this, ImageElementActivity.class);
+        ImageElementActivity.setImageElement(intent, element);
+        ImageElementActivity.setComment(intent, true);
+        startActivity(intent);
+    }
+
     private void onAddButtonClick() {
         selectPhotoSource();
     }

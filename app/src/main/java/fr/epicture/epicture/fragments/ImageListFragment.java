@@ -91,6 +91,11 @@ public class ImageListFragment extends Fragment {
             }
 
             @Override
+            public void onCommentClick(APIImageElement element) {
+                ((ImageListInterface)getActivity()).onCommentClick(element);
+            }
+
+            @Override
             public void onImageDelete(APIImageElement element) {
                 refresh();
             }

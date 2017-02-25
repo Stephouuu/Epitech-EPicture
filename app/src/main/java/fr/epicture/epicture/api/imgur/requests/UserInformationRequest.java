@@ -12,14 +12,14 @@ public class UserInformationRequest extends TextRequest {
     // STATIC FIELDS
     // ========================================================================
 
-    private static final String BASE_URL = "https://api.imgur.com/3/account/";
+    private static final String URL = "https://api.imgur.com/3/account/me";
 
     // ========================================================================
     // CONSTRUCTOR
     // ========================================================================
 
     public UserInformationRequest(@NonNull Context context, String username, String accessToken, LoadTextInterface listener) {
-        super(context, BASE_URL + username, listener);
+        super(context, URL, listener);
         addHeader("Authorization", "Bearer " + accessToken);
     }
 }

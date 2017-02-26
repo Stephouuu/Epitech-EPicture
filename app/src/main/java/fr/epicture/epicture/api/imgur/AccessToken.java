@@ -15,6 +15,7 @@ public class AccessToken {
     // ========================================================================
 
     public AccessToken(String accessToken, long date, long expiration) {
+        this.accessToken = "";
         update(accessToken, date, expiration);
     }
 

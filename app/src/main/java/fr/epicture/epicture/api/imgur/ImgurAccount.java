@@ -25,7 +25,7 @@ public class ImgurAccount extends APIAccount {
     // ========================================================================
 
     private int nsid;
-    private AccessToken accessToken;
+    public static AccessToken accessToken;
     private String refreshToken;
 
     private String bio;
@@ -39,6 +39,7 @@ public class ImgurAccount extends APIAccount {
     public ImgurAccount(Map<String, String> params) throws InstantiationException {
         super(params.get("account_id"), params.get("account_username"));
         accessToken = new AccessToken(params.get("access_token"), Long.parseLong(params.get("expires_in")), ImgurUtils.getTime());
+        refreshToken = "";
     }
 
     public ImgurAccount(int nsid, String id, String username, String refreshToken, String accessToken, long datetime, long duration) throws InstantiationException {

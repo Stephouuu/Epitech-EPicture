@@ -1,6 +1,8 @@
 package fr.epicture.epicture.api.imgur;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,12 +21,14 @@ import fr.epicture.epicture.api.imgur.requests.UserInformationRequest;
 import fr.epicture.epicture.api.imgur.utils.ImgurUtils;
 import fr.epicture.epicture.interfaces.AddCommentInterface;
 import fr.epicture.epicture.interfaces.AuthentificationInterface;
+import fr.epicture.epicture.interfaces.ImageDiskCacheInterface;
 import fr.epicture.epicture.interfaces.LoadBitmapInterface;
 import fr.epicture.epicture.interfaces.LoadCommentElementInterface;
 import fr.epicture.epicture.interfaces.LoadImageElementInterface;
 import fr.epicture.epicture.interfaces.LoadTextInterface;
 import fr.epicture.epicture.interfaces.LoadUserInfoInterface;
 import fr.epicture.epicture.interfaces.PhotoIsInFavoritesInterface;
+import fr.epicture.epicture.utils.ImageDiskCache;
 
 public class Imgur implements API {
 
@@ -94,6 +98,7 @@ public class Imgur implements API {
         try {
             final ImgurAccount imgurAccount = new ImgurAccount(ImgurUtils.getQueryMap(urlResponse));
             accountByID.put(imgurAccount.getID(), imgurAccount);
+            database.insertAccount(imgurAccount);
             listener.onUserPermissionGranted();
             imgurAccount.updateInformation(context);
         } catch (InstantiationException e) {
@@ -139,7 +144,16 @@ public class Imgur implements API {
 
     @Override
     public void loadImage(Context context, APIImageElement element, LoadBitmapInterface callback) {
-
+        ImageDiskCache.load(context, element, new ImageDiskCacheInterface() {
+            @Override
+            public void onFinish(APIImageElement element, Bitmap bitmap) {
+                if (bitmap != null)
+                    Log.i("bitmap", "h: " + bitmap.getHeight());
+                else
+                    Log.i("bitmap", "null");
+                //callback.onFinish(bitmap);
+            }
+        });
     }
 
     @Override
@@ -155,7 +169,7 @@ public class Imgur implements API {
     @Override
     public void getMyPictures(Context context, int page, LoadImageElementInterface callback) {
         if (currentAccount != null) {
-            accountByID.get(currentAccount).getMyGallery(context, page, callback);
+            accountByID.get(currentAccount).getMyGallery(context, page - 1, callback);
         }
     }
 

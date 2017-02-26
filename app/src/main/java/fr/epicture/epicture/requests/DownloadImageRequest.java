@@ -34,9 +34,10 @@ public class DownloadImageRequest extends RequestAsyncTask {
     @Override
     protected Void doInBackground(Void... params) {
         try {
-            Log.i("imageRequest", "url: " + element.getURL());
-
             GETImage(element.getURL());
+
+            Log.i("imageRequest", "GET " + element.getURL());
+            Log.i("imageRequest", "BODY " + response);
 
             makeBitmap();
         } catch (Exception e) {

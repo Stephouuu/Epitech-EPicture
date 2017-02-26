@@ -13,6 +13,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
     private static final Integer POST_READ_TIMEOUT = 15 * SECONDE;
 
     private HttpsURLConnection httpsURLConnection;
+    private HttpURLConnection httpURLConnection;
     protected Integer httpResponseCode = null;
     protected String response;
     protected Bitmap image;
@@ -109,7 +111,7 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
 
     protected void GET(String url) {
         try {
-            this.initHttp(url);
+            this.initHttps(url);
 
             httpsURLConnection.setConnectTimeout(GET_CONNECTION_TIMEOUT);
             httpsURLConnection.setReadTimeout(GET_READ_TIMEOUT);
@@ -127,7 +129,7 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
             }
 
             try {
-                this.closeHttpClient();
+                this.closeHttpsClient();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -139,7 +141,7 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
 
     protected void GETImage(String url) {
         try {
-            this.initHttp(url);
+            this.initHttps(url);
 
             httpsURLConnection.setConnectTimeout(GET_CONNECTION_TIMEOUT);
             httpsURLConnection.setReadTimeout(GET_READ_TIMEOUT);
@@ -151,25 +153,24 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
             }
 
             try {
-                this.getResponseImage();
+                this.getHttpsResponseImage();
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
             try {
-                this.closeHttpClient();
+                this.closeHttpsClient();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception er) {
+            er.printStackTrace();
         }
     }
 
     protected void POST(String url) {
         try {
-            this.initHttp(url);
+            this.initHttps(url);
 
             httpsURLConnection.setConnectTimeout(POST_CONNECTION_TIMEOUT);
             httpsURLConnection.setReadTimeout(POST_READ_TIMEOUT);
@@ -211,7 +212,7 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
             }
 
             try {
-                this.closeHttpClient();
+                this.closeHttpsClient();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -227,7 +228,7 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
         String boundary = "---------------------------7d44e178b0434";
 
         try {
-            this.initHttp(url);
+            this.initHttps(url);
 
             httpsURLConnection.setConnectTimeout(POST_CONNECTION_TIMEOUT);
             httpsURLConnection.setReadTimeout(POST_READ_TIMEOUT);
@@ -288,7 +289,7 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
             }
 
             try {
-                this.closeHttpClient();
+                this.closeHttpsClient();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -298,7 +299,7 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
         }
     }
 
-    private void initHttp(String path) throws IOException {
+    private void initHttps(String path) throws IOException {
         URL url = new URL(path);
         httpsURLConnection = (HttpsURLConnection)url.openConnection();
     }
@@ -339,7 +340,7 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
         }
     }
 
-    private void getResponseImage() throws Exception {
+    private void getHttpsResponseImage() throws Exception {
         httpResponseCode = httpsURLConnection.getResponseCode();
 
         if (httpResponseCode == 200) {
@@ -370,7 +371,7 @@ public class RequestAsyncTask extends AsyncTask<Void, Integer, Void> {
         }
     }
 
-    private void closeHttpClient() {
+    private void closeHttpsClient() {
         running = false;
         try {
             if (httpsURLConnection != null) {

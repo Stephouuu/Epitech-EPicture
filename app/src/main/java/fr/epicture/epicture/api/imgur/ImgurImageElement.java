@@ -16,6 +16,7 @@ public class ImgurImageElement extends APIImageElement {
 
     //private String accountUrl;
     //private int accountID;
+    private static final String BASE_URL = "http://i.imgur.com/%s.jpg";
 
     private String url;
     private int ups;
@@ -95,6 +96,7 @@ public class ImgurImageElement extends APIImageElement {
     @Override
     public String getURL() {
         return url;
+        //return String.format(BASE_URL, getID());
     }
 
     @Override
@@ -166,9 +168,10 @@ public class ImgurImageElement extends APIImageElement {
         this.ownerid = accountID;
     }
 
-    public String getUrl() {
-        return url;
-    }
+    /*public String getUrl() {
+        //return url;
+        return String.format(BASE_URL, getID());
+    }*/
 
     public void setUrl(String url) {
         this.url = url;

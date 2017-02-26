@@ -38,6 +38,7 @@ public class DownloadImageRequest extends RequestAsyncTask {
 
             Log.i("imageRequest", "GET " + element.getURL());
             Log.i("imageRequest", "BODY " + response);
+            Log.i("imageRequest", "RESPONSE CODE " + httpResponseCode);
 
             makeBitmap();
         } catch (Exception e) {

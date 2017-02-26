@@ -2,7 +2,10 @@ package fr.epicture.epicture.api.imgur;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,7 +19,11 @@ import fr.epicture.epicture.api.APIAccount;
 import fr.epicture.epicture.api.APICommentElement;
 import fr.epicture.epicture.api.APIImageElement;
 import fr.epicture.epicture.api.imgur.database.ImgurDatabase;
+import fr.epicture.epicture.api.imgur.requests.AlbumRequest;
+import fr.epicture.epicture.api.imgur.requests.GalleryRequest;
+import fr.epicture.epicture.api.imgur.requests.GetFavoritesRequest;
 import fr.epicture.epicture.api.imgur.requests.RefreshTokenRequest;
+import fr.epicture.epicture.api.imgur.requests.UploadImageRequest;
 import fr.epicture.epicture.api.imgur.requests.UserInformationRequest;
 import fr.epicture.epicture.api.imgur.utils.ImgurUtils;
 import fr.epicture.epicture.interfaces.AddCommentInterface;
@@ -147,30 +154,61 @@ public class Imgur implements API {
         ImageDiskCache.load(context, element, new ImageDiskCacheInterface() {
             @Override
             public void onFinish(APIImageElement element, Bitmap bitmap) {
-                if (bitmap != null)
-                    Log.i("bitmap", "h: " + bitmap.getHeight());
-                else
-                    Log.i("bitmap", "null");
-                //callback.onFinish(bitmap);
+                callback.onFinish(bitmap);
             }
         });
     }
 
     @Override
     public void uploadImage(Context context, APIAccount user, String path, String title, String description, String tags, LoadTextInterface callback) {
-
+        ImgurAccount account = accountByID.get(currentAccount);
+        ImgurImageElement element = new ImgurImageElement(path, title, description, tags);
+        new UploadImageRequest(context, element, account.getAccessToken().getAccessToken(), new LoadTextInterface() {
+            @Override
+            public void onFinish(String text) {
+                callback.onFinish(text);
+            }
+        });
     }
 
     @Override
     public void getInterestingnessList(Context context, int page, LoadImageElementInterface callback) {
-        ImgurAccount.getMainGallery(context, page, callback);
+        new GalleryRequest(context, "hot", "viral", page, text -> {
+            try {
+                final JSONArray jsonArray = new JSONObject(text).getJSONArray("data");
+                final List<APIImageElement> imgurImageElements = new ArrayList<>();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    ImgurImageElement element = new ImgurImageElement(jsonObject, APIImageElement.SIZE_PREVIEW);
+                    imgurImageElements.add(element);
+                }
+                callback.onFinish(imgurImageElements, imgurImageElements.isEmpty());
+            } catch (JSONException | ClassCastException e) {
+                System.err.println("Error : Unable to convert request data to json.");
+                e.printStackTrace();
+            }
+        }).execute();
     }
 
     @Override
     public void getMyPictures(Context context, int page, LoadImageElementInterface callback) {
-        if (currentAccount != null) {
-            accountByID.get(currentAccount).getMyGallery(context, page - 1, callback);
-        }
+        ImgurAccount account = accountByID.get(currentAccount);
+        String accessToken = account.getAccessToken().getAccessToken();
+        new AlbumRequest(context, accessToken, text -> {
+            try {
+                final JSONArray jsonArray = new JSONObject(text).getJSONArray("data");
+                final List<APIImageElement> imgurImageElements = new ArrayList<>();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    ImgurImageElement element = new ImgurImageElement(jsonObject, APIImageElement.SIZE_PREVIEW);
+                    imgurImageElements.add(element);
+                }
+                callback.onFinish(imgurImageElements, imgurImageElements.isEmpty());
+            } catch (JSONException | ClassCastException e) {
+                System.err.println("Error : Unable to convert request data to json.");
+                e.printStackTrace();
+            }
+        }).execute();
     }
 
     @Override
@@ -185,7 +223,14 @@ public class Imgur implements API {
 
     @Override
     public void addFavorite(Context context, String userid, String photoid, LoadTextInterface callback) {
-
+        ImgurAccount account = accountByID.get(currentAccount);
+        String accessToken = account.getAccessToken().getAccessToken();
+        new fr.epicture.epicture.api.imgur.requests.AddFavoriteRequest(context, photoid, accessToken, new LoadTextInterface() {
+            @Override
+            public void onFinish(String text) {
+                callback.onFinish(text);
+            }
+        });
     }
 
     @Override
@@ -195,12 +240,32 @@ public class Imgur implements API {
 
     @Override
     public void isFavorite(Context context, String userid, String photoid, PhotoIsInFavoritesInterface callback) {
-
+        // unused
     }
 
     @Override
     public void getFavorites(Context context, String userid, int page, LoadImageElementInterface callback) {
+        ImgurAccount account = accountByID.get(currentAccount);
+        String accessToken = account.getAccessToken().getAccessToken();
 
+        new GetFavoritesRequest(context, account.getUsername(), accessToken, page - 1, new LoadTextInterface() {
+            @Override
+            public void onFinish(String text) {
+                try {
+                    final JSONArray jsonArray = new JSONObject(text).getJSONArray("data");
+                    final List<APIImageElement> imgurImageElements = new ArrayList<>();
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        ImgurImageElement element = new ImgurImageElement(jsonObject, APIImageElement.SIZE_PREVIEW);
+                        imgurImageElements.add(element);
+                    }
+                    callback.onFinish(imgurImageElements, imgurImageElements.isEmpty());
+                } catch (JSONException | ClassCastException e) {
+                    System.err.println("Error : Unable to convert request data to json.");
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override

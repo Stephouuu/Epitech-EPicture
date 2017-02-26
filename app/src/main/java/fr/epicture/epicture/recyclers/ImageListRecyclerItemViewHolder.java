@@ -161,17 +161,21 @@ public class ImageListRecyclerItemViewHolder extends RecyclerView.ViewHolder {
         API api = APIManager.getSelectedAPI();
         APIAccount account = api.getCurrentAccount();
 
-        api.isFavorite(activity, account.getID(), element.getID(), new PhotoIsInFavoritesInterface() {
-            @Override
-            public void onFinish(boolean response) {
-                if (response) {
-                    favoriteIcon.setImageResource(R.mipmap.ic_star_on);
-                } else {
-                    favoriteIcon.setImageResource(R.mipmap.ic_star_off);
+        if (element.isFavorite()) {
+            favoriteIcon.setImageResource(R.mipmap.ic_star_on);
+        } else {
+            api.isFavorite(activity, account.getID(), element.getID(), new PhotoIsInFavoritesInterface() {
+                @Override
+                public void onFinish(boolean response) {
+                    if (response) {
+                        favoriteIcon.setImageResource(R.mipmap.ic_star_on);
+                    } else {
+                        favoriteIcon.setImageResource(R.mipmap.ic_star_off);
+                    }
+                    FavoritesArray.put(element.getID(), response);
                 }
-                FavoritesArray.put(element.getID(), response);
-            }
-        });
+            });
+        }
 
         commentContainer.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -16,7 +16,7 @@ public class ImgurImageElement extends APIImageElement {
 
     //private String accountUrl;
     //private int accountID;
-    private static final String BASE_URL = "http://i.imgur.com/%s.jpg";
+    private static final String BASE_URL = "https://i.imgur.com/%s.jpg";
 
     private String url;
     private int ups;
@@ -28,9 +28,10 @@ public class ImgurImageElement extends APIImageElement {
     // CONSTRUCTOR
     // ========================================================================
 
-    public ImgurImageElement(JSONObject jsonObject) {
+    public ImgurImageElement(JSONObject jsonObject, int size) {
         try {
             setID(jsonObject.getString("id"));
+            setSize(size);
             title = jsonObject.getString("title");
             description = jsonObject.getString("description");
             if (description.equals("null")) {
@@ -40,19 +41,22 @@ public class ImgurImageElement extends APIImageElement {
             ownername = jsonObject.getString("account_url");
             ownerid = jsonObject.getString("account_id");
             url = jsonObject.getString("link");
-            commentCount = jsonObject.getInt("comment_count");
-            ups = jsonObject.getInt("ups");
-            downs = jsonObject.getInt("downs");
-            points = jsonObject.getInt("points");
-            score = jsonObject.getInt("score");
+            commentCount = jsonObject.optInt("comment_count");
+            ups = jsonObject.optInt("ups");
+            downs = jsonObject.optInt("downs");
+            points = jsonObject.optInt("points");
+            score = jsonObject.optInt("score");
+            favorite = jsonObject.getBoolean("favorite");
 
             tags = "";
-            final JSONArray jsonArray = jsonObject.getJSONArray("tags");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                final JSONObject tag = ((JSONObject) jsonArray.get(i));
-                tags += tag.getString("name");
-                if (i + 1 < jsonArray.length())
-                    tags += " ";
+            final JSONArray jsonArray = jsonObject.optJSONArray("tags");
+            if (jsonArray != null) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    final JSONObject tag = ((JSONObject) jsonArray.get(i));
+                    tags += tag.getString("name");
+                    if (i + 1 < jsonArray.length())
+                        tags += " ";
+                }
             }
         } catch (JSONException | ClassCastException e) {
             System.err.println("Error : Unable to convert Json object to ImgurImageElement.\n" + jsonObject.toString());
@@ -60,7 +64,13 @@ public class ImgurImageElement extends APIImageElement {
         }
     }
 
+    public ImgurImageElement(String path, String title, String description, String tags) {
+        super(path, title, description, tags);
+    }
+
     private ImgurImageElement(Parcel in) {
+        setID(in.readString());
+        setSize(in.readInt());
         ownerid = in.readString();
         title = in.readString();
         description = in.readString();
@@ -95,8 +105,8 @@ public class ImgurImageElement extends APIImageElement {
 
     @Override
     public String getURL() {
-        return url;
-        //return String.format(BASE_URL, getID());
+        //return url;
+        return String.format(BASE_URL, getID());
     }
 
     @Override
@@ -110,12 +120,19 @@ public class ImgurImageElement extends APIImageElement {
     }
 
     @Override
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(getID());
+        parcel.writeInt(getSize());
         parcel.writeString(ownerid);
         parcel.writeString(title);
         parcel.writeString(description);

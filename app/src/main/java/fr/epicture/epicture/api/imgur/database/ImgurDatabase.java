@@ -38,9 +38,9 @@ public class ImgurDatabase {
         if (result.size() == 0) {
             ContentValues values = new ContentValues();
             values.put(ImgurSQLite.ACCOUNT_COL_REFRESH_TOKEN, item.getRefreshToken());
-            values.put(ImgurSQLite.ACCOUNT_COL_ACCESS_TOKEN, "");
-            values.put(ImgurSQLite.ACCOUNT_COL_ACCESS_TOKEN_DATETIME, "0");
-            values.put(ImgurSQLite.ACCOUNT_COL_ACCESS_TOKEN_DURATION, "0");
+            values.put(ImgurSQLite.ACCOUNT_COL_ACCESS_TOKEN, item.getAccessToken().getAccessToken());
+            values.put(ImgurSQLite.ACCOUNT_COL_ACCESS_TOKEN_DATETIME, item.getAccessToken().getDate());
+            values.put(ImgurSQLite.ACCOUNT_COL_ACCESS_TOKEN_DURATION, item.getAccessToken().getExpiration());
             values.put(ImgurSQLite.ACCOUNT_COL_ID, item.getID());
             values.put(ImgurSQLite.ACCOUNT_COL_USERNAME, item.getUsername());
             item.setNsid((int) database.insert(ImgurSQLite.TABLE_NAME, null, values));

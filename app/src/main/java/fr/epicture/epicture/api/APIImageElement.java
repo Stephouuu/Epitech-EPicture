@@ -84,14 +84,14 @@ public abstract class APIImageElement implements Parcelable {
         if (dir != null) {
             String path = dir.getAbsolutePath();
             switch (size) {
-                case SIZE_THUMBNAIL:
-                    ret = path + File.separator + DIR_THUMBNAIL + id + ".jpg";
-                    break;
                 case SIZE_PREVIEW:
                     ret = path + File.separator + DIR_PREVIEW + id + ".jpg";
                     break;
                 case SIZE_ORIGINAL:
                     ret = path + File.separator + DIR_ORIGINAL + id + ".jpg";
+                    break;
+                default:
+                    ret = path + File.separator + DIR_THUMBNAIL + id + ".jpg";
                     break;
             }
         }
@@ -114,5 +114,5 @@ public abstract class APIImageElement implements Parcelable {
     public abstract String getURL();
     public abstract float getWidthSize();
     public abstract float getHeightSize();
-
+    public abstract boolean isFavorite();
 }

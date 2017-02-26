@@ -81,6 +81,11 @@ public class FlickrImageElement extends APIImageElement {
     }
 
     @Override
+    public boolean isFavorite() {
+        return false;
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }
